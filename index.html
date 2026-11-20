@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPF Korat · Industrial SCADA (TNNN-Link™ Enterprise)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-dark: #0a0f1d;
+      --card-bg: #111726;
+      --card-border: #1e293b;
+      --inner-bg: #0c1220;
+    }
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+      color: #e2e8f0;
+      font-family: 'Prompt', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .scada-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+    .scada-inner {
+      background: var(--inner-bg);
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+    }
+    .nav-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+      background: #0d1424;
+      border: 1px solid #1e293b;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-tab-btn:hover {
+      color: #f8fafc;
+      background: #1e293b;
+      border-color: #334155;
+    }
+    .nav-tab-btn.active {
+      color: #ffffff;
+      background: #1e293b;
+      border-color: #3b82f6;
+      border-bottom: 2px solid #3b82f6;
+      font-weight: 600;
+    }
+    /* Stable Telemetry Callouts on 3D Stage */
+    .telemetry-hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: rgba(13, 20, 35, 0.95);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #f8fafc;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      white-space: nowrap;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .telemetry-hotspot:hover {
+      transform: translate(-50%, -50%) scale(1.04);
+      border-color: #64748b;
+      background: #0f172a;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-6 text-sm antialiased">
+  <div class="max-w-7xl mx-auto space-y-4">
+
+    <!-- ============================================== -->
+    <!-- TOP MASTER HEADER -->
+    <!-- ============================================== -->
+    <header class="scada-card p-4 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800">
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl font-bold text-white tracking-wide">
+            TNNN-Link <span class="text-slate-400 font-normal">|</span> <span class="text-slate-200 font-semibold">CPF Korat</span>
+          </h1>
+          <span class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider bg-slate-800 text-slate-300 border border-slate-700">
+            ENTERPRISE
+          </span>
+        </div>
+        <div class="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+          <span>Plant Gateway · B0-19-21-7D-96-12</span>
+          <span>•</span>
+          <span class="flex items-center gap-1.5 text-emerald-400 font-medium" id="topBridgeStatusBadge">
+            <span class="w-2 h-2 rounded-full bg-emerald-500" id="topBridgeStatusDot"></span>
+            <span id="topBridgeStatusText">LIVE DATA BRIDGE (10s)</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick KPI Strip -->
+      <div class="flex flex-wrap items-center gap-2.5 text-xs">
+        <div class="scada-inner px-3 py-1.5 flex items-center gap-2">
+          <span class="text-slate-400">กำลังไฟฟ้ารวม:</span>
+          <span id="topTotalPower" class="font-mono-num font-bold text-white text-sm">4,825.8</span>
+          <span class="text-slate-500 text-[10px]">kW/h</span>
+        </div>
+
+        <div class="scada-inner px-3 py-1.5 flex items-center gap-2">
+          <span class="text-slate-400">ค่าไฟเฉลี่ย:</span>
+          <span id="topCostHr" class="font-mono-num font-bold text-slate-200 text-sm">16,890</span>
+          <span class="text-slate-500 text-[10px]">฿/ชม.</span>
+        </div>
+
+        <div class="scada-inner px-3 py-1.5 flex items-center gap-2">
+          <span class="text-slate-400">สถานะเดินเครื่อง:</span>
+          <span id="topFleetRun" class="font-mono-num font-bold text-emerald-400 text-sm">33 / 46</span>
+          <span class="text-slate-500 text-[10px]">เครื่อง</span>
+        </div>
+
+        <div class="scada-inner px-3 py-1.5 text-slate-400 font-mono-num text-[11px]" id="liveMasterClock">
+          --:--:--
+        </div>
+
+        <!-- Small Settings Gear Button (Hidden/Subtle beside Clock) -->
+        <button id="btnHeaderSettings" onclick="toggleSettingsTab()" title="ตั้งค่าระบบ Data Bridge (Data Source & Credentials)" class="scada-inner px-2.5 py-1.5 text-slate-400 hover:text-white hover:border-slate-500 border border-slate-800 rounded transition flex items-center justify-center group" aria-label="Settings">
+          <span class="text-sm transition-transform group-hover:rotate-45">⚙️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================================== -->
+    <!-- MAIN NAVIGATION TABS (Clean Operational View) -->
+    <!-- ============================================== -->
+    <nav class="scada-card p-2 flex flex-wrap items-center gap-2">
+      <button class="nav-tab-btn active" data-tab="summary" onclick="switchMainTab('summary')">
+        <span>📊</span> สรุปภาพรวม (Executive Summary)
+      </button>
+      <button class="nav-tab-btn" data-tab="fleet-a" onclick="switchMainTab('fleet-a')">
+        <span>❄️</span> NO.1 - 22 (กลุ่มคอมเพรสเซอร์ 1)
+      </button>
+      <button class="nav-tab-btn" data-tab="fleet-b" onclick="switchMainTab('fleet-b')">
+        <span>❄️</span> NO.23 - 46 (กลุ่มคอมเพรสเซอร์ 2)
+      </button>
+      <button class="nav-tab-btn" data-tab="analytics" onclick="switchMainTab('analytics')">
+        <span>📈</span> วิเคราะห์การใช้พลังงาน & ค่าไฟ
+      </button>
+    </nav>
+
+    <!-- ============================================== -->
+    <!-- TAB 1: EXECUTIVE SUMMARY -->
+    <!-- ============================================== -->
+    <div id="tab-summary" class="space-y-4">
+      
+      <!-- 3 Hero Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Power -->
+        <div class="scada-card p-4 relative overflow-hidden">
+          <div class="flex justify-between items-center text-slate-400 text-xs mb-1">
+            <span class="font-semibold text-slate-300">กำลังไฟฟ้ารวมทั้งโรงงาน (Plant Power)</span>
+            <span class="font-mono-num text-[10px] text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">REAL-TIME</span>
+          </div>
+          <div class="flex items-baseline gap-2 my-2">
+            <span id="sumTotalPower" class="text-3xl font-bold font-mono-num text-white">4,825.8</span>
+            <span class="text-sm text-slate-400 font-semibold">kW/h</span>
+            <span class="ml-auto text-xs text-slate-400 font-medium">โหลดเฉลี่ย 74.2%</span>
+          </div>
+          <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800 my-2">
+            <div id="sumPowerBar" class="bg-blue-600 h-full" style="width: 74%;"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-500">
+            <span>0 kW/h</span>
+            <span>กำลังผลิตสูงสุด 6,500 kW/h</span>
+          </div>
+        </div>
+
+        <!-- Fleet Ratio -->
+        <div class="scada-card p-4 relative overflow-hidden">
+          <div class="flex justify-between items-center text-slate-400 text-xs mb-1">
+            <span class="font-semibold text-slate-300">สถานะฝูงเครื่องจักร (Fleet Status)</span>
+            <span class="text-[10px] text-slate-500">รวม 46 เครื่อง</span>
+          </div>
+          <div class="flex items-baseline gap-2 my-2">
+            <span id="sumRunCount" class="text-3xl font-bold font-mono-num text-white">33</span>
+            <span class="text-sm text-slate-400 font-semibold">เครื่องกำลังทำงาน</span>
+          </div>
+          <div class="flex gap-2 my-2 text-xs">
+            <span class="px-2.5 py-1 rounded bg-slate-800/80 text-emerald-400 border border-slate-700 font-medium flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 33 รันปกติ
+            </span>
+            <span class="px-2.5 py-1 rounded bg-slate-800/80 text-slate-400 border border-slate-700 font-medium flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-slate-500"></span> 4 ปิดพัก
+            </span>
+            <span class="px-2.5 py-1 rounded bg-slate-800/80 text-amber-400 border border-slate-700 font-medium flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span> 9 หลุดสัญญาณ
+            </span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-1">
+            แผนกเชือด (SLT), ฟรีซแช่แข็ง (SPF), แปรรูป (FUT), คลังเย็น (DOM)
+          </div>
+        </div>
+
+        <!-- Cost -->
+        <div class="scada-card p-4 relative overflow-hidden">
+          <div class="flex justify-between items-center text-slate-400 text-xs mb-1">
+            <span class="font-semibold text-slate-300">ประมาณการค่าไฟฟ้า (Est. Cost)</span>
+            <span class="font-mono-num text-[10px] text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">เรต 3.50 ฿/หน่วย</span>
+          </div>
+          <div class="flex items-baseline justify-between my-2">
+            <div>
+              <span id="sumCostHr" class="text-3xl font-bold font-mono-num text-white">16,890</span>
+              <span class="text-sm text-slate-400 font-semibold ml-1">บาท / ชม.</span>
+            </div>
+            <div class="text-right">
+              <span id="sumCostDay" class="font-mono-num font-semibold text-slate-300 text-sm">~405,360</span>
+              <div class="text-[10px] text-slate-500">บาท / วัน (24 ชม.)</div>
+            </div>
+          </div>
+          <div class="scada-inner p-2 text-xs text-slate-400 flex justify-between items-center">
+            <span>คำนวณจาก: กำลังไฟฟ้ารวม × 3.50 บาท</span>
+            <span class="text-slate-300 font-medium">อัตราปกติ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Process Allocation Grid (From Master Engineering Allocation Table) -->
+      <div class="scada-card p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+          <div>
+            <span class="text-sm font-bold text-white flex items-center gap-2">
+              <span>🏭</span> การจัดสรรคอมเพรสเซอร์ตามกระบวนการผลิต (Process & Stage Allocation)
+            </span>
+            <div class="text-xs text-slate-400 mt-0.5">อ้างอิงผังจัดสรรเครื่องจักรแท้ 46 เครื่อง โรงงานแปรรูปเนื้อไก่ นครราชสีมา (CPF Korat)</div>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="px-2.5 py-1 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 font-mono font-semibold">Booster Stage: 19 เครื่อง</span>
+            <span class="px-2.5 py-1 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/60 font-mono font-semibold">High Stage: 27 เครื่อง</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 text-xs">
+          <!-- 1. IQF -->
+          <div class="scada-inner p-2.5 hover:border-slate-600 transition cursor-pointer" onclick="filterByLocation('IQF')">
+            <div class="text-slate-400 text-[11px] flex justify-between">
+              <span>อุโมงค์ฟรีซไก่</span>
+              <span class="text-cyan-400 font-bold">9 เครื่อง</span>
+            </div>
+            <div class="font-bold text-white text-xs mt-1">IQF 1-6</div>
+            <div class="text-[10px] text-slate-500 mt-1">Booster 6 | High 3</div>
+            <div class="text-[10px] text-cyan-300 mt-0.5">-38°C แช่แข็งเร็ว</div>
+          </div>
+
+          <!-- 2. Air Blast Freezer -->
+          <div class="scada-inner p-2.5 hover:border-slate-600 transition cursor-pointer" onclick="filterByLocation('Air Blast')">
+            <div class="text-slate-400 text-[11px] flex justify-between">
+              <span>ตู้แช่แข็งลมเป่า</span>
+              <span class="text-cyan-400 font-bold">11 เครื่อง</span>
+            </div>
+            <div class="font-bold text-white text-xs mt-1">Air Blast Freezer</div>
+            <div class="text-[10px] text-slate-500 mt-1">Booster 8 | High 3</div>
+            <div class="text-[10px] text-cyan-300 mt-0.5">-40°C ฟรีซกล่อง</div>
+          </div>
+
+          <!-- 3. Cold Storage -->
+          <div class="scada-inner p-2.5 hover:border-slate-600 transition cursor-pointer" onclick="filterByLocation('Cold')">
+            <div class="text-slate-400 text-[11px] flex justify-between">
+              <span>ห้องเย็นจัดเก็บ</span>
+              <span class="text-slate-300 font-bold">9 เครื่อง</span>
+            </div>
+            <div class="font-bold text-white text-xs mt-1">Cold Storage</div>
+            <div class="text-[10px] text-slate-500 mt-1">Booster 4 | High 5</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">-25°C คลังสินค้า</div>
+          </div>
+
+          <!-- 4. Chill & Air Chill -->
+          <div class="scada-inner p-2.5 hover:border-slate-600 transition cursor-pointer" onclick="filterByLocation('Chill')">
+            <div class="text-slate-400 text-[11px] flex justify-between">
+              <span>ลดอุณหภูมิไก่</span>
+              <span class="text-indigo-300 font-bold">7 เครื่อง</span>
+            </div>
+            <div class="font-bold text-white text-xs mt-1">Chill / Air Chill</div>
+            <div class="text-[10px] text-slate-500 mt-1">High Stage 7 เครื่อง</div>
+            <div class="text-[10px] text-indigo-300 mt-0.5">0°C ถึง +4°C</div>
+          </div>
+
+          <!-- 5. Glycol & Water Chill -->
+          <div class="scada-inner p-2.5 hover:border-slate-600 transition cursor-pointer" onclick="filterByLocation('Glycol')">
+            <div class="text-slate-400 text-[11px] flex justify-between">
+              <span>ไกลคอล / ชิลเลอร์</span>
+              <span class="text-indigo-300 font-bold">6 เครื่อง</span>
+            </div>
+            <div class="font-bold text-white text-xs mt-1">Glycol & Chiller</div>
+            <div class="text-[10px] text-slate-500 mt-1">High Stage 6 เครื่อง</div>
+            <div class="text-[10px] text-indigo-300 mt-0.5">หล่อเย็นกระบวนการ</div>
+          </div>
+
+          <!-- 6. Office HVAC -->
+          <div class="scada-inner p-2.5 hover:border-slate-600 transition cursor-pointer" onclick="filterByLocation('Office')">
+            <div class="text-slate-400 text-[11px] flex justify-between">
+              <span>ปรับอากาศ</span>
+              <span class="text-slate-300 font-bold">2 เครื่อง</span>
+            </div>
+            <div class="font-bold text-white text-xs mt-1">Office HVAC</div>
+            <div class="text-[10px] text-slate-500 mt-1">High Stage 2 เครื่อง</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">+24°C สำนักงาน</div>
+          </div>
+
+          <!-- 7. Spare -->
+          <div class="scada-inner p-2.5 hover:border-slate-600 transition cursor-pointer" onclick="filterByLocation('Spare')">
+            <div class="text-slate-400 text-[11px] flex justify-between">
+              <span>เครื่องสแตนด์บาย</span>
+              <span class="text-slate-400 font-bold">2 เครื่อง</span>
+            </div>
+            <div class="font-bold text-white text-xs mt-1">Spare Units</div>
+            <div class="text-[10px] text-slate-500 mt-1">High Stage 2 เครื่อง</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">พร้อมสลับโหลด</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 46 Compressors Matrix -->
+      <div class="scada-card p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-white">แผนผังสถานะคอมเพรสเซอร์ 46 เครื่อง</span>
+            <span class="text-xs text-slate-400">(คลิกตัวเลขเครื่องเพื่อเปิดดูข้อมูลพารามิเตอร์)</span>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> รัน (33)</span>
+            <span class="flex items-center gap-1.5 text-slate-400"><span class="w-2 h-2 rounded-full bg-slate-500"></span> พัก (4)</span>
+            <span class="flex items-center gap-1.5 text-amber-300"><span class="w-2 h-2 rounded-full bg-amber-500"></span> สายหลุด (9)</span>
+          </div>
+        </div>
+
+        <div id="summaryDotsGrid" class="grid grid-cols-6 sm:grid-cols-11 gap-2">
+          <!-- Dynamically generated 46 buttons -->
+        </div>
+      </div>
+
+      <!-- 4 Departments & Watchlist -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dept Breakdown -->
+        <div class="scada-card p-4 space-y-2.5">
+          <div class="text-xs font-bold text-slate-400 pb-2 border-b border-slate-800 flex justify-between">
+            <span>การใช้พลังงานแยกตามแผนกการผลิต</span>
+            <span>สัดส่วนค่าไฟ / ชม.</span>
+          </div>
+          
+          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('SLT')">
+            <div>
+              <div class="font-bold text-white text-sm">1. แผนกโรงเชือดไก่ (SLT)</div>
+              <div class="text-xs text-slate-400">27 เครื่อง (รัน 20, พัก 2, หลุด 5)</div>
+            </div>
+            <div class="text-right">
+              <div class="font-mono-num font-bold text-white text-sm">2,414.6 kW/h</div>
+              <div class="text-xs text-slate-400 font-mono-num">~8,451 ฿/ชม.</div>
+            </div>
+          </div>
+
+          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('SPF')">
+            <div>
+              <div class="font-bold text-white text-sm">2. แผนกตู้ฟรีซแช่แข็งไก่ (SPF)</div>
+              <div class="text-xs text-slate-400">9 เครื่อง (รัน 7, พัก 1, หลุด 1)</div>
+            </div>
+            <div class="text-right">
+              <div class="font-mono-num font-bold text-white text-sm">1,483.5 kW/h</div>
+              <div class="text-xs text-slate-400 font-mono-num">~5,192 ฿/ชม.</div>
+            </div>
+          </div>
+
+          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('FUT')">
+            <div>
+              <div class="font-bold text-white text-sm">3. แผนกปรุงสุกแปรรูป (FUT)</div>
+              <div class="text-xs text-slate-400">8 เครื่อง (รัน 5, พัก 1, หลุด 2)</div>
+            </div>
+            <div class="text-right">
+              <div class="font-mono-num font-bold text-white text-sm">805.6 kW/h</div>
+              <div class="text-xs text-slate-400 font-mono-num">~2,820 ฿/ชม.</div>
+            </div>
+          </div>
+
+          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('DOM')">
+            <div>
+              <div class="font-bold text-white text-sm">4. แผนกคลังสินค้าห้องเย็น (DOM)</div>
+              <div class="text-xs text-slate-400">2 เครื่อง (รัน 1, หลุด 1)</div>
+            </div>
+            <div class="text-right">
+              <div class="font-mono-num font-bold text-white text-sm">122.1 kW/h</div>
+              <div class="text-xs text-slate-400 font-mono-num">~427 ฿/ชม.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Watchlist -->
+        <div class="scada-card p-4 space-y-2.5">
+          <div class="text-xs font-bold text-slate-400 pb-2 border-b border-slate-800 flex justify-between items-center">
+            <span>รายการเฝ้าระวังสำหรับวิศวกรซ่อมบำรุง</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700 font-semibold text-[10px]">2 รายการเฝ้าระวัง</span>
+          </div>
+
+          <div class="scada-inner p-3 border-l-4 border-l-amber-600">
+            <div class="font-bold text-white text-sm flex items-center gap-2">
+              <span>⚠️</span> 1. ตรวจสอบสายสัญญาณ Modbus / LAN หลุด (9 เครื่อง)
+            </div>
+            <p class="text-xs text-slate-300 mt-1">
+              ตู้คอนโทรลเลอร์ไม่ตอบสนองต่อเกตเวย์: <strong class="text-amber-300">NO. 2, 6, 9, 11, 16, 21, 23, 35, 44</strong> แนะนำตรวจสอบไฟสถานะพอร์ต Switch ในห้องควบคุม
+            </p>
+          </div>
+
+          <div class="scada-inner p-3 border-l-4 border-l-slate-600">
+            <div class="font-bold text-white text-sm flex items-center gap-2">
+              <span>🔍</span> 2. ตรวจสอบเซนเซอร์วัดแรงดันดูด Suction (6 เครื่อง)
+            </div>
+            <p class="text-xs text-slate-300 mt-1">
+              พบค่าความดันดูดต่ำกว่าเกณฑ์ปกติ: <strong class="text-slate-200">NO. 7, 8, 10, 29, 32, 37</strong> ควรส่งทีมช่างเทียบเกจเข็มหน้างานเพื่อยืนยันพารามิเตอร์
+            </p>
+          </div>
+
+          <div class="scada-inner p-3 border-l-4 border-l-blue-600">
+            <div class="font-bold text-white text-sm flex items-center gap-2">
+              <span>💡</span> แนะนำการประหยัดพลังงาน (Energy Optimization)
+            </div>
+            <p class="text-xs text-slate-300 mt-1">
+              เครื่อง NO.1 และ NO.4 ทำงานที่ Slide Valve 95-100% ต่อเนื่อง หากช่วง Off-Peak สามารถปรับเกลี่ยโหลดเพื่อลด Peak Demand ค่าไฟฟ้าได้
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TABS 2 & 3: COMPRESSOR FLEET VIEW (A & B) -->
+    <!-- ============================================== -->
+    <div id="tab-fleet" class="hidden space-y-4">
+      
+      <!-- Sub-view Mode Switcher: Stage Focus vs 22 Cards Grid -->
+      <div class="scada-card p-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span id="fleetHeaderGroupTitle" class="font-bold text-white text-base">กลุ่มคอมเพรสเซอร์ 1 (NO.1 - 22)</span>
+          <span id="fleetHeaderDeptCount" class="text-xs text-slate-400">แผนก SLT โรงเชือดไก่</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btnViewModeStage" onclick="switchFleetViewMode('stage')" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition">
+            🖥️ มุมมองเจาะลึก 3D รายเครื่อง
+          </button>
+          <button id="btnViewModeGrid" onclick="switchFleetViewMode('grid')" class="px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
+            ⊞ มุมมองการ์ดรวม 22 เครื่อง
+          </button>
+        </div>
+      </div>
+
+      <!-- MODE 1: STAGE FOCUS VIEW -->
+      <div id="fleetStageModeView" class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        
+        <!-- Left Machine Selector Sidebar (4 Cols) -->
+        <div class="lg:col-span-4 scada-card p-3 space-y-3 flex flex-col h-[720px]">
+          <!-- Header & Filters -->
+          <div>
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span id="fleetSidebarTitle" class="font-bold text-white text-sm">เลือกหมายเลขเครื่อง</span>
+              <span id="fleetBadgeCount" class="text-xs text-slate-400 font-medium">22 เครื่อง</span>
+            </div>
+            <!-- Filter Pills -->
+            <div class="flex gap-1.5 mt-2 overflow-x-auto pb-1 text-xs">
+              <button class="px-2.5 py-1 rounded bg-slate-800 text-white font-medium border border-slate-700" onclick="filterFleet('ALL', this)">ทั้งหมด</button>
+              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('BOOSTER', this)">⚡ Booster (19)</button>
+              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('HIGH', this)">⚡ High (27)</button>
+              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('SLT', this)">SLT เชือด</button>
+              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('SPF', this)">SPF ฟรีซ</button>
+              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('FUT', this)">FUT แปรรูป</button>
+              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('DOM', this)">DOM คลังเย็น</button>
+            </div>
+          </div>
+
+          <!-- Machine List Scrollable -->
+          <div id="fleetMachinesList" class="flex-1 overflow-y-auto space-y-2 pr-1">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Right Master Telemetry Showcase (8 Cols) -->
+        <div class="lg:col-span-8 scada-card p-5 space-y-4 flex flex-col justify-between">
+          
+          <!-- Unit Header Bar -->
+          <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h2 id="dispUnitTag" class="text-2xl font-bold text-white font-mono-num">NO.1 FUT.NO.1</h2>
+                <span id="dispUnitModel" class="px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 text-xs font-mono font-medium border border-slate-700">MIII</span>
+                <span id="dispUnitStageBadge" class="px-2.5 py-0.5 rounded text-xs font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 font-mono">High Stage</span>
+                <span id="dispUnitLocationBadge" class="px-2.5 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">📍 Office (ปรับอากาศสำนักงาน)</span>
+              </div>
+              <div id="dispUnitZone" class="text-xs text-slate-400 mt-1">แผนกปรุงสุกแปรรูป · กลุ่ม: HVAC · IP: 172.16.22.1</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="dispUnitStatusBadge" class="px-3 py-1 rounded text-xs font-semibold bg-slate-800 text-emerald-400 border border-slate-700 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                RUN
+              </span>
+              <button onclick="switchMainTab('summary')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-medium transition">
+                📊 สรุปโรงงาน
+              </button>
+            </div>
+          </div>
+
+          <!-- 3D Compressor Stage with Dynamic Changing Visual -->
+          <div class="relative w-full h-[360px] bg-slate-950 rounded-lg border border-slate-800 overflow-hidden flex items-center justify-center">
+            
+            <!-- Dynamic Compressor 3D Image (Changes per unit status & selection) -->
+            <img id="stageCompImg" src="assets/CompGreen.png" alt="Compressor 3D Model" class="max-h-[300px] max-w-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] transition-all duration-300">
+
+            <!-- Dynamic Machine Nameplate Overlaid on 3D Stage -->
+            <div class="absolute top-3 left-4 scada-inner px-3 py-1.5 border border-slate-700 bg-slate-900/90 z-20 shadow-md">
+              <div class="flex items-center gap-2">
+                <span id="stageBadgeNo" class="px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-400 font-mono font-bold text-xs border border-blue-500/40">NO.1</span>
+                <span id="stageMachineTitle" class="font-bold text-white text-sm font-mono-num">FUT.NO.1</span>
+              </div>
+              <div class="text-[11px] text-slate-400 font-mono mt-0.5 flex items-center gap-2">
+                <span id="stageMachineModel">MIII</span>
+                <span>•</span>
+                <span id="stageMachineIp">172.16.22.1</span>
+              </div>
+              <div class="text-[10px] text-cyan-400 font-sans mt-1 flex items-center gap-1.5 border-t border-slate-800 pt-1">
+                <span id="stageMachineLocation">📍 Office (ปรับอากาศสำนักงาน)</span>
+                <span class="text-slate-600">•</span>
+                <span id="stageMachineStage" class="text-indigo-300 font-mono">High Stage</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Status Badge Overlaid on Top Right -->
+            <div class="absolute top-3 right-4 z-20">
+              <div id="stageStatusPill" class="px-3 py-1 rounded text-xs font-semibold bg-slate-900/90 text-emerald-400 border border-slate-700 flex items-center gap-1.5 shadow-sm">
+                <span id="stageStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span id="stageStatusText">RUNNING</span>
+              </div>
+            </div>
+
+            <!-- Lost Warning Banner (appears when unit is LINK LOST) -->
+            <div id="stageAlertLost" class="hidden absolute top-16 left-4 right-4 scada-inner p-2 border border-amber-800/80 bg-amber-950/85 text-amber-300 text-xs flex items-center gap-2 z-20 shadow-lg">
+              <span>⚠️</span>
+              <span><strong>คำเตือน:</strong> ลิงก์สื่อสาร Modbus ขัดข้อง (LINK LOST) — คอนโทรลเลอร์ไม่ตอบสนองต่อ Gateway ค่าพารามิเตอร์อาจไม่อัปเดต</span>
+            </div>
+
+            <!-- Telemetry Hotspots positioned over the 3D machine parts -->
+            <!-- Hotspot 1: Suction -->
+            <div id="hsWrapSuction" class="telemetry-hotspot" style="top: 36%; left: 68%;">
+              <span class="text-slate-400 font-medium">[S] Suction:</span>
+              <span id="hsSuction" class="text-white font-semibold ml-1">3.68 bar | 2.1 °C</span>
+            </div>
+
+            <!-- Hotspot 2: Discharge -->
+            <div id="hsWrapDisch" class="telemetry-hotspot" style="top: 50%; left: 74%;">
+              <span class="text-slate-400 font-medium">[D] Disch:</span>
+              <span id="hsDisch" class="text-white font-semibold ml-1">14.55 bar | 35.0 °C</span>
+            </div>
+
+            <!-- Hotspot 3: Oil -->
+            <div id="hsWrapOil" class="telemetry-hotspot" style="top: 66%; left: 70%;">
+              <span class="text-slate-400 font-medium">[O] Oil:</span>
+              <span id="hsOil" class="text-white font-semibold ml-1">17.22 bar | 40.2 °C</span>
+            </div>
+
+            <!-- Hotspot 4: Motor -->
+            <div id="hsWrapMotor" class="telemetry-hotspot" style="top: 32%; left: 32%;">
+              <span class="text-slate-400 font-medium">[M] Motor:</span>
+              <span id="hsMotor" class="text-white font-semibold ml-1">28.2 kW | 248.9 A</span>
+            </div>
+
+            <!-- Hotspot 5: Slide Valve Load -->
+            <div id="hsWrapLoad" class="telemetry-hotspot" style="top: 68%; left: 38%;">
+              <span class="text-slate-400 font-medium">[C] Load:</span>
+              <span id="hsLoad" class="text-white font-semibold ml-1">95 % (Slide Valve)</span>
+            </div>
+
+            <!-- Energy & Cost Overlay (Bottom Left of image) -->
+            <div class="absolute bottom-3 left-4 scada-inner px-3 py-1.5 border border-slate-700 bg-slate-900/90 z-20">
+              <div class="text-[10px] text-slate-400">พลังงานไฟฟ้ารวมสะสม: <strong id="dispCumulativeKwh" class="text-white font-mono-num font-bold">4,440,142.85</strong> <span class="text-slate-400">kWh</span></div>
+              <div class="text-[10px] text-slate-400 mt-0.5">
+                ค่าไฟเครื่องนี้ (~3.50บ.): <strong id="dispUnitCostHr" class="text-slate-200 font-mono-num font-bold">98.70</strong> <span class="text-slate-400">฿ / ชม.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Telemetry Meters Grid (4 Cards) -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="scada-inner p-3">
+              <div class="text-[11px] text-slate-400 flex justify-between">
+                <span>ความดันดูด (Suction)</span>
+                <span class="text-slate-400 font-bold">[S]</span>
+              </div>
+              <div class="my-1 flex items-baseline justify-between">
+                <span id="cardSuctionP" class="text-xl font-bold font-mono-num text-white">3.68</span>
+                <span class="text-xs text-slate-400 font-mono-num">bar</span>
+              </div>
+              <div class="text-[11px] text-slate-400">
+                อุณหภูมิ: <strong id="cardSuctionT" class="text-white font-mono-num">2.1</strong> °C
+              </div>
+            </div>
+
+            <div class="scada-inner p-3">
+              <div class="text-[11px] text-slate-400 flex justify-between">
+                <span>ความดันอัด (Discharge)</span>
+                <span class="text-slate-400 font-bold">[D]</span>
+              </div>
+              <div class="my-1 flex items-baseline justify-between">
+                <span id="cardDischP" class="text-xl font-bold font-mono-num text-white">14.55</span>
+                <span class="text-xs text-slate-400 font-mono-num">bar</span>
+              </div>
+              <div class="text-[11px] text-slate-400">
+                อุณหภูมิ: <strong id="cardDischT" class="text-white font-mono-num">35.0</strong> °C
+              </div>
+            </div>
+
+            <div class="scada-inner p-3">
+              <div class="text-[11px] text-slate-400 flex justify-between">
+                <span>กำลังมอเตอร์ (Power)</span>
+                <span class="text-slate-400 font-bold">[M]</span>
+              </div>
+              <div class="my-1 flex items-baseline justify-between">
+                <span id="cardPower" class="text-xl font-bold font-mono-num text-white">28.2</span>
+                <span class="text-xs text-slate-400 font-mono-num">kW</span>
+              </div>
+              <div class="text-[11px] text-slate-400">
+                กระแส: <strong id="cardAmps" class="text-white font-mono-num">248.9</strong> A
+              </div>
+            </div>
+
+            <div class="scada-inner p-3">
+              <div class="text-[11px] text-slate-400 flex justify-between">
+                <span>ภาระโหลด (Slide Valve)</span>
+                <span class="text-slate-400 font-bold">[C]</span>
+              </div>
+              <div class="my-1 flex items-baseline justify-between">
+                <span id="cardLoad" class="text-xl font-bold font-mono-num text-white">95 %</span>
+                <span id="cardLoadStatus" class="text-xs text-slate-400">Optimal</span>
+              </div>
+              <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-1">
+                <div id="cardLoadBar" class="bg-blue-600 h-full" style="width: 95%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Unit Navigation Controls -->
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+            <button onclick="navigateFleetUnit(-1)" class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition flex items-center gap-2">
+              <span>◀</span> เครื่องก่อนหน้า
+            </button>
+
+            <span id="dispCurrentNavIndex" class="text-xs text-slate-400 font-mono-num">Unit 1 of 46</span>
+
+            <button onclick="navigateFleetUnit(1)" class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition flex items-center gap-2">
+              เครื่องถัดไป <span>▶</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- MODE 2: 22 CARDS GRID (Original TNNN-Link Style) -->
+      <div id="fleetGridModeView" class="hidden space-y-4">
+        <div id="fleetCardsGridContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <!-- Dynamically populated with 22 machine cards -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 4: ANALYTICS & TRENDS -->
+    <!-- ============================================== -->
+    <div id="tab-analytics" class="hidden space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- 24h Demand Trend (2 Cols) -->
+        <div class="md:col-span-2 scada-card p-4 space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white text-base">แนวโน้มการใช้ไฟฟ้ารายชั่วโมง (24h Power Timeline)</h3>
+              <div class="text-xs text-slate-400">เปรียบเทียบช่วง On-Peak (09:00 - 22:00) และ Off-Peak</div>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono text-xs font-medium border border-slate-700">kW/h Live</span>
+          </div>
+
+          <!-- Dynamic SVG Chart Canvas -->
+          <div class="w-full h-64 bg-slate-950 rounded p-3 flex items-end justify-between gap-1 border border-slate-800" id="trendChartContainer">
+            <!-- Dynamically populated chart bars -->
+          </div>
+
+          <div class="flex justify-between text-xs text-slate-400 font-mono-num pt-1">
+            <span>00:00 (กลางคืน)</span>
+            <span>06:00</span>
+            <span>12:00 (พีคกลางวัน)</span>
+            <span>18:00</span>
+            <span>23:00</span>
+          </div>
+        </div>
+
+        <!-- Energy Share by Dept -->
+        <div class="scada-card p-4 space-y-3">
+          <h3 class="font-bold text-white text-base pb-2 border-b border-slate-800">สัดส่วนค่าไฟตามแผนก (Cost Share)</h3>
+          
+          <div class="space-y-3 pt-2">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-semibold text-white">โรงเชือดไก่ (SLT)</span>
+                <span class="font-mono-num text-slate-200 font-bold">50.0% (~8,451 ฿)</span>
+              </div>
+              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
+                <div class="bg-blue-600 h-full" style="width: 50%;"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-semibold text-white">ตู้ฟรีซแช่แข็ง (SPF)</span>
+                <span class="font-mono-num text-slate-200 font-bold">30.7% (~5,192 ฿)</span>
+              </div>
+              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
+                <div class="bg-slate-500 h-full" style="width: 30.7%;"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-semibold text-white">ปรุงสุกแปรรูป (FUT)</span>
+                <span class="font-mono-num text-slate-200 font-bold">16.7% (~2,820 ฿)</span>
+              </div>
+              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
+                <div class="bg-slate-600 h-full" style="width: 16.7%;"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-semibold text-white">คลังสินค้าห้องเย็น (DOM)</span>
+                <span class="font-mono-num text-slate-200 font-bold">2.6% (~427 ฿)</span>
+              </div>
+              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
+                <div class="bg-slate-700 h-full" style="width: 2.6%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scada-inner p-3 text-xs text-slate-300 mt-4">
+            💡 แผนกโรงเชือดและตู้ฟรีซมีสัดส่วนพลังงานรวมกัน 80.7% เป็นจุดหลักในการบริหาร Peak Demand เพื่อลดต้นทุนค่าไฟฟ้า
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 5: DATA BRIDGE SETTINGS (1:1 LIVE SYNC) -->
+    <!-- ============================================== -->
+    <div id="tab-settings" class="hidden space-y-4">
+      <div class="max-w-3xl mx-auto scada-card p-6 space-y-5">
+        
+        <!-- Header -->
+        <div class="flex flex-wrap justify-between items-center pb-3 border-b border-slate-800 gap-2">
+          <div class="flex items-center gap-3">
+            <button onclick="toggleSettingsTab()" class="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition flex items-center gap-1.5">
+              <span>◀</span> ย้อนกลับหน้าแดชบอร์ด
+            </button>
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <span>⚙️</span> ตั้งค่าระบบ Data Bridge (เชื่อมต่อข้อมูลสด 1:1)
+              </h2>
+              <div class="text-xs text-slate-400">ควบคุมแหล่งข้อมูล: เชื่อมต่อสดตรงกับ Gateway โรงงาน หรือ โหมดจำลองพฤติกรรมเสมือน</div>
+            </div>
+          </div>
+          <span id="bridgeSettingsStatusBadge" class="px-2.5 py-1 rounded bg-slate-800 text-emerald-400 font-semibold text-xs border border-slate-700 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="bridgeSettingsStatusText">BRIDGE READY</span>
+          </span>
+        </div>
+
+        <!-- Section 1: Operation Mode Selection -->
+        <div class="space-y-2">
+          <label class="block text-slate-300 font-semibold text-xs">1. เลือกโหมดการทำงานของระบบ (Data Source Mode):</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            
+            <!-- Mode A: Live 1:1 -->
+            <label id="modeCardLive" class="cursor-pointer scada-inner p-3.5 border-2 border-slate-800 rounded-lg flex items-start gap-3 transition hover:border-slate-700">
+              <input type="radio" name="bridgeModeChoice" value="live" class="mt-1" onchange="onBridgeModeChange('live')">
+              <div>
+                <div class="font-bold text-white flex items-center gap-1.5">
+                  <span class="text-emerald-400 font-bold">🟢 โหมดดึงข้อมูลสด 1:1 (Live Gateway Bridge)</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                  เชื่อมต่อเกตเวย์ <code class="text-slate-200">B019217D9612KR</code> ดึงตัวเลขจริง ณ วินาทีนั้นจากหน้างาน 1:1 (ต้องระบุบัญชีผู้ใช้ หรือ Cookie)
+                </div>
+              </div>
+            </label>
+
+            <!-- Mode B: Simulation -->
+            <label id="modeCardSim" class="cursor-pointer scada-inner p-3.5 border-2 border-blue-600 bg-blue-950/20 rounded-lg flex items-start gap-3 transition">
+              <input type="radio" name="bridgeModeChoice" value="simulation" checked class="mt-1" onchange="onBridgeModeChange('simulation')">
+              <div>
+                <div class="font-bold text-white flex items-center gap-1.5">
+                  <span class="text-blue-400 font-bold">🔵 โหมดจำลองเสมือนจริง (Simulation Demo)</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                  จำลองสัญญาณด้วยโมเดลความผันผวนทางวิศวกรรม (Jitter) ตามโปรไฟล์เดิม 46 เครื่อง เหมาะสำหรับใช้งานออฟไลน์หรือนำเสนอ
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Section 2: Live Authentication Credentials -->
+        <div id="liveAuthBox" class="space-y-3 scada-inner p-4 border border-slate-700/80 rounded-lg text-xs bg-slate-900/60 opacity-60 transition-opacity">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="font-bold text-white flex items-center gap-2">
+              <span>🔐</span> บัญชีเข้าใช้งาน TNNN-Link สำหรับดึงข้อมูลสด 1:1
+            </span>
+            <span class="text-[10px] text-slate-400">บันทึกบนเครื่องของคุณเท่านั้น (Local Config) ปลอดภัย 100%</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Username (ชื่อผู้ใช้ TNNN-Link):</label>
+              <input type="text" id="cfgUsername" placeholder="เช่น user_cpf หรือ admin" class="w-full px-3 py-2 rounded bg-slate-950 border border-slate-800 text-white font-mono text-xs focus:border-blue-500 outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Password (รหัสผ่าน TNNN-Link):</label>
+              <div class="relative">
+                <input type="password" id="cfgPassword" placeholder="••••••••" class="w-full px-3 py-2 rounded bg-slate-950 border border-slate-800 text-white font-mono text-xs focus:border-blue-500 outline-none pr-10">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-2.5 top-2 text-slate-500 hover:text-slate-300 text-xs">👁️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alternative Session Cookie -->
+          <div class="pt-2">
+            <label class="block text-slate-400 text-[11px] mb-1">
+              หรือระบุ <strong>PHPSESSID Cookie</strong> โดยตรง (ทางเลือกสำรอง หากไม่ต้องการใส่รหัสผ่าน):
+            </label>
+            <input type="text" id="cfgSessionCookie" placeholder="เช่น 7a8b9c0d1e2f3... จาก Application > Cookies" class="w-full px-3 py-1.5 rounded bg-slate-950 border border-slate-800 text-slate-300 font-mono text-xs focus:border-blue-500 outline-none">
+          </div>
+        </div>
+
+        <!-- Section 3: General Parameters -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Gateway ID (รหัสโรงงาน)</label>
+            <input type="text" id="cfgGatewayId" value="B019217D9612KR" class="w-full px-3 py-2 rounded bg-slate-950 border border-slate-800 text-white font-mono text-xs" readonly>
+          </div>
+
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">อัตราค่าไฟฟ้า (บาท / kWh)</label>
+            <input type="number" step="0.1" id="cfgRate" value="3.50" onchange="updateRateSetting(this.value)" class="w-full px-3 py-2 rounded bg-slate-950 border border-slate-700 text-white font-bold font-mono text-xs">
+          </div>
+
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">ความถี่ในการซิงค์ข้อมูล</label>
+            <select id="cfgInterval" class="w-full px-3 py-2 rounded bg-slate-950 border border-slate-800 text-white font-mono text-xs">
+              <option value="5">5 วินาที (High-Frequency)</option>
+              <option value="10" selected>10 วินาที (แนะนำมาตรฐาน)</option>
+              <option value="30">30 วินาที</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Live Status Monitor Display -->
+        <div class="scada-inner p-3 rounded border border-slate-800 text-xs flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400 font-medium">สถานะการเชื่อมต่อล่าสุด:</span>
+            <span id="liveStatusBannerText" class="font-mono text-slate-200 font-semibold">กำลังตรวจสอบสถานะ...</span>
+          </div>
+          <button onclick="syncLiveData()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] transition">
+            🔄 รีเฟรชเดี๋ยวนี้
+          </button>
+        </div>
+
+        <!-- Save Button -->
+        <button onclick="saveBridgeSettings()" class="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition shadow-md flex items-center justify-center gap-2">
+          <span>💾</span> บันทึกการตั้งค่าและเริ่มดึงข้อมูล (Save & Connect)
+        </button>
+
+        <!-- Section 4: 1-Click Bookmarklet Ingest Option -->
+        <div class="mt-4 pt-4 border-t border-slate-800 text-xs space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white flex items-center gap-1.5">
+              <span>⚡</span> ทางเลือกที่ 3: ปุ่มซิงค์สด 1 คลิก (จากหน้าเว็บ TNNN-Link ที่เปิดล็อกอินอยู่แล้ว)
+            </span>
+            <span class="text-[10px] text-emerald-400 font-medium bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded">ไม่ต้องกรอกรหัสผ่าน</span>
+          </div>
+          <p class="text-slate-400 text-[11px] leading-relaxed">
+            หากเปิดหน้า <code class="text-slate-300">https://tnnn-link.com/B019217D9612KR/</code> ไว้อยู่แล้วในเบราว์เซอร์ สามารถคลิกคัดลอกโค้ด Bookmarklet ด้านล่างไปคลิกทำงานในหน้าเดิม เพื่อส่งค่าตัวเลขสดหน้างาน 1:1 เข้ามายังระบบนี้ได้ทันที:
+          </p>
+          <div class="flex items-center gap-2">
+            <button onclick="copyIngestBookmarklet()" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium transition flex items-center gap-1.5">
+              📋 คัดลอกโค้ด Bookmarklet ซิงค์สด 1:1
+            </button>
+            <span id="copyBookmarkletDone" class="text-[11px] text-emerald-400 hidden">✓ คัดลอกแล้ว! นำไปวางในแถบบุ๊กมาร์กได้เลย</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: DETAILED 6-PARAMETER POPUP -->
+  <!-- ============================================== -->
+  <div id="unitDetailModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/80 backdrop-blur-sm hidden" onclick="handleModalBackdrop(event)">
+    <div class="w-full max-w-xl scada-card border border-slate-700 shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+      
+      <!-- Modal Header -->
+      <div class="p-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h3 id="mUnitName" class="font-bold text-base text-white font-mono-num">NO.1 FUT.NO.1</h3>
+            <span id="mModelTag" class="text-xs font-mono text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">MIII</span>
+            <span id="mStageBadge" class="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-800/80">High Stage</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 mt-1">
+            <span id="mSubDetail">แผนกปรุงสุกแปรรูป · 172.16.22.1</span>
+            <span>•</span>
+            <span id="mLocationText" class="text-cyan-400 font-medium">📍 Office (ปรับอากาศสำนักงาน)</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="mStatusBadge" class="px-2.5 py-0.5 rounded text-xs font-semibold bg-slate-800 text-emerald-400 border border-slate-700">RUN</span>
+          <button onclick="closeModal()" class="w-7 h-7 rounded bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs font-bold transition ml-1">✕</button>
+        </div>
+      </div>
+
+      <!-- Modal Body (6 Data Cards) -->
+      <div class="p-4 space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          
+          <!-- Suction -->
+          <div class="scada-inner p-3">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-bold text-white">1. ด้านดูด (Suction [S])</span>
+              <span>ขาเข้าสารความเย็น</span>
+            </div>
+            <div class="my-1.5 flex justify-between items-baseline">
+              <div>
+                <span id="mSuctionP" class="text-2xl font-bold font-mono-num text-white">3.68</span>
+                <span class="text-xs text-slate-400 ml-1">bar</span>
+              </div>
+              <div class="text-right">
+                <span id="mSuctionT" class="text-lg font-bold font-mono-num text-white">2.1</span>
+                <span class="text-xs text-slate-400 ml-0.5">°C</span>
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-500 flex justify-between border-t border-slate-800 pt-1">
+              <span>ความดัน (Pressure)</span>
+              <span>อุณหภูมิ (Temp)</span>
+            </div>
+          </div>
+
+          <!-- Discharge -->
+          <div class="scada-inner p-3">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-bold text-white">2. ด้านอัด (Discharge [D])</span>
+              <span>ขาออกสารความเย็น</span>
+            </div>
+            <div class="my-1.5 flex justify-between items-baseline">
+              <div>
+                <span id="mDischP" class="text-2xl font-bold font-mono-num text-white">14.55</span>
+                <span class="text-xs text-slate-400 ml-1">bar</span>
+              </div>
+              <div class="text-right">
+                <span id="mDischT" class="text-lg font-bold font-mono-num text-white">35.0</span>
+                <span class="text-xs text-slate-400 ml-0.5">°C</span>
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-500 flex justify-between border-t border-slate-800 pt-1">
+              <span>ความดัน (Pressure)</span>
+              <span>อุณหภูมิ (Temp)</span>
+            </div>
+          </div>
+
+          <!-- Oil -->
+          <div class="scada-inner p-3">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-bold text-white">3. น้ำมันหล่อลื่น (Oil [O])</span>
+              <span>ระบบหล่อลื่นสกรู</span>
+            </div>
+            <div class="my-1.5 flex justify-between items-baseline">
+              <div>
+                <span id="mOilP" class="text-2xl font-bold font-mono-num text-white">17.22</span>
+                <span class="text-xs text-slate-400 ml-1">bar</span>
+              </div>
+              <div class="text-right">
+                <span id="mOilT" class="text-lg font-bold font-mono-num text-white">40.2</span>
+                <span class="text-xs text-slate-400 ml-0.5">°C</span>
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-500 flex justify-between border-t border-slate-800 pt-1">
+              <span>ความดันน้ำมัน</span>
+              <span>อุณหภูมิน้ำมัน</span>
+            </div>
+          </div>
+
+          <!-- Motor -->
+          <div class="scada-inner p-3">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-bold text-white">4. มอเตอร์ขับ (Motor [M])</span>
+              <span>กำลังไฟ & กระแส</span>
+            </div>
+            <div class="my-1.5 flex justify-between items-baseline">
+              <div>
+                <span id="mPower" class="text-2xl font-bold font-mono-num text-white">28.2</span>
+                <span class="text-xs text-slate-400 ml-1">kW</span>
+              </div>
+              <div class="text-right">
+                <span id="mAmps" class="text-lg font-bold font-mono-num text-white">248.9</span>
+                <span class="text-xs text-slate-400 ml-0.5">A</span>
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-500 flex justify-between border-t border-slate-800 pt-1">
+              <span>กำลังไฟฟ้า (Power)</span>
+              <span>กระแส (Current)</span>
+            </div>
+          </div>
+
+          <!-- Load -->
+          <div class="scada-inner p-3">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-bold text-white">5. ภาระการทำงาน (Load [C])</span>
+              <span class="text-slate-300 font-semibold">สไลด์วาล์ว</span>
+            </div>
+            <div class="my-1.5 flex justify-between items-baseline">
+              <span id="mLoad" class="text-2xl font-bold font-mono-num text-white">95 %</span>
+              <span class="text-xs text-slate-400">Capacity</span>
+            </div>
+            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+              <div id="mLoadBar" class="bg-blue-600 h-full" style="width: 95%;"></div>
+            </div>
+          </div>
+
+          <!-- Energy & Cost -->
+          <div class="scada-inner p-3">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span class="font-bold text-white">6. พลังงานและค่าไฟ (Energy)</span>
+              <span class="text-slate-300 font-mono-num">3.50 ฿/หน่วย</span>
+            </div>
+            <div class="my-1.5">
+              <span id="mKwh" class="text-xl font-bold font-mono-num text-white">4,440,142.85</span>
+              <span class="text-xs text-slate-400 ml-1">kWh</span>
+            </div>
+            <div class="text-[10px] text-slate-400 flex justify-between border-t border-slate-800 pt-1">
+              <span>ค่าไฟเครื่องนี้เฉลี่ย:</span>
+              <span id="mUnitCostHr" class="font-bold font-mono-num text-slate-200">~98.70 บาท/ชม.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button onclick="navigateModalUnit(-1)" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
+            ◀ ก่อนหน้า
+          </button>
+          <button onclick="navigateModalUnit(1)" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
+            ถัดไป ▶
+          </button>
+        </div>
+        <button onclick="closeModal()" class="px-4 py-1.5 rounded bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition">
+          ปิดหน้าต่าง (Close)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- FRONTEND LOGIC & DATA BRIDGE SYNC -->
+  <!-- ============================================== -->
+  <script>
+    // Live State
+    let currentElectricityRate = 3.50;
+    let currentActiveTab = 'summary';
+    let currentFleetViewMode = 'stage'; // 'stage' or 'grid'
+    let currentFleetUnitId = 1;
+    let currentModalUnitId = 1;
+    let fleetFilterDept = 'ALL';
+    let unitsData = {};
+
+    const lostUnitsList = [2, 6, 9, 11, 16, 21, 23, 35, 44];
+    const stopUnitsList = [14, 24, 31, 33];
+
+    // Initialize Official CPF Korat Units Baseline
+    const TABLE_DATA = [
+      [1, 'MIII', 'FUT.NO.1', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.1', 'High', 'Office (ปรับอากาศสำนักงาน)', 'HVAC'],
+      [2, 'MYPRO TOUCH', 'FUT.NO.4', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.2', 'High', 'Cold (ห้องเย็นพักสินค้า)', 'Cold Storage'],
+      [3, 'GEA Omni', 'FUT.NO.7', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.3', 'Booster', 'Cold (ห้องเย็นอุณหภูมิต่ำ)', 'Cold Storage'],
+      [4, 'GEA Omni', 'FUT.NO.8', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.4', 'Booster', 'Cold (ห้องเย็นอุณหภูมิต่ำ)', 'Cold Storage'],
+      [5, 'MIII', 'SPF.NO.3', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.5', 'High', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [6, 'MIII', 'SPF.NO.7', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.6', 'Booster', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [7, 'MIII', 'SPF.NO.8', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.7', 'Booster', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [8, 'MIII', 'SPF.NO.9', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.8', 'Booster', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [9, 'MIII', 'DOM.NO.2', 'DOM', 'แผนกคลังสินค้าห้องเย็น', '172.16.22.9', 'High', 'Domestic (คลังสินค้าห้องเย็น)', 'Cold Storage'],
+      [10, 'MIII', 'SLT.NO.1', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.10', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [11, 'MIII', 'SLT.NO.2', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.11', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [12, 'MYPRO TOUCH', 'SLT.NO.3', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.12', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [13, 'MYPRO TOUCH', 'SLT.NO.4', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.13', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [14, 'MIII', 'SLT.NO.5', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.14', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [15, 'MYPRO TOUCH', 'SLT.NO.12', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.15', 'High', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [16, 'MIII', 'SLT.NO.13', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.16', 'High', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [17, 'GEA Omni', 'SLT.NO.14', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.17', 'High', 'Chill (ทำความเย็นซากไก่)', 'Chilling'],
+      [18, 'GEA Omni', 'SLT.NO.15', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.18', 'High', 'Chill (ทำความเย็นซากไก่)', 'Chilling'],
+      [19, 'MYPRO TOUCH', 'SLT.NO.16', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.19', 'High', 'Air Chill เก่า (ลดอุณหภูมิไก่)', 'Chilling'],
+      [20, 'GEA Omni', 'SLT.NO.17', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.20', 'High', 'Cold (ห้องเย็นพักสินค้า)', 'Cold Storage'],
+      [21, 'MYPRO TOUCH', 'SLT.NO.18', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.21', 'High', 'Glycol (สารหล่อเย็นไกลคอล)', 'Process Cooling'],
+      [22, 'MYPRO TOUCH', 'SLT.NO.19', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.22', 'High', 'Plate Water Chill (ทำน้ำเย็น)', 'Process Cooling'],
+      [23, 'MIII', 'FUT.NO.2', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.23', 'High', 'Glycol (สารหล่อเย็นไกลคอล)', 'Process Cooling'],
+      [24, 'MYPRO TOUCH', 'FUT.NO.3', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.24', 'High', 'Glycol (สารหล่อเย็นไกลคอล)', 'Process Cooling'],
+      [25, 'GEA Omni', 'FUT.NO.5', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.25', 'High', 'Spare (เครื่องสำรองระบบ)', 'Spare'],
+      [26, 'GEA Omni', 'FUT.NO.6', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.26', 'High', 'Chill (ทำความเย็นไก่)', 'Chilling'],
+      [27, 'GEA Omni', 'SPF.NO.1', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.27', 'High', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [28, 'GEA Omni', 'SPF.NO.2', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.28', 'High', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [29, 'MIII', 'SPF.NO.4', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.29', 'Booster', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [30, 'MYPRO TOUCH', 'SPF.NO.5', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.30', 'Booster', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [31, 'GEA Omni', 'SPF.NO.6', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.31', 'Booster', 'IQF 1-6 (อุโมงค์ฟรีซแช่แข็ง)', 'Freezer'],
+      [32, 'MIII', 'SLT.NO.6', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.32', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [33, 'GEA Omni', 'SLT.NO.7', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.33', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [34, 'GEA Omni', 'SLT.NO.8', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.34', 'Booster', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [35, 'MIII', 'SLT.NO.9', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.35', 'Booster', 'Cold (ห้องเย็นอุณหภูมิต่ำ)', 'Cold Storage'],
+      [36, 'GEA Omni', 'SLT.NO.10', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.36', 'Booster', 'Cold (ห้องเย็นอุณหภูมิต่ำ)', 'Cold Storage'],
+      [37, 'MIII', 'SLT.NO.11', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.37', 'Booster', 'Cold (ห้องเย็นอุณหภูมิต่ำ)', 'Cold Storage'],
+      [38, 'GEA Omni', 'SLT.NO.20', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.38', 'High', 'Air Blast Freezer (ตู้แช่แข็ง)', 'Freezer'],
+      [39, 'MYPRO TOUCH', 'SLT.NO.21', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.39', 'High', 'Cold (ห้องเย็นพักสินค้า)', 'Cold Storage'],
+      [40, 'GEA Omni', 'SLT.NO.22', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.40', 'High', 'Air Chill เก่า (ลดอุณหภูมิไก่)', 'Chilling'],
+      [41, 'MIII', 'SLT.NO.23', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.41', 'High', 'Spare (เครื่องสำรองระบบ)', 'Spare'],
+      [42, 'MIII', 'SLT.NO.24', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.42', 'High', 'Glycol (สารหล่อเย็นไกลคอล)', 'Process Cooling'],
+      [43, 'MIII', 'SLT.NO.25', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.43', 'High', 'Office (ปรับอากาศสำนักงาน)', 'HVAC'],
+      [44, 'MYPRO TOUCH', 'SLT.NO.26', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.44', 'High', 'Plate Water Chill (ทำน้ำเย็น)', 'Process Cooling'],
+      [45, 'MYPRO TOUCH', 'SPF.NO.28', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.45', 'High', 'Air Chill ใหม่ (ลดอุณหภูมิไก่)', 'Chilling'],
+      [46, 'GEA Omni', 'DOM.NO.1', 'DOM', 'แผนกคลังสินค้าห้องเย็น', '172.16.22.46', 'High', 'Domestic (คลังสินค้าห้องเย็น)', 'Cold Storage']
+    ];
+
+    TABLE_DATA.forEach(([i, model, name, zone, zoneName, ip, stage, location, category]) => {
+      let state = 'RUN';
+      if (lostUnitsList.includes(i)) state = 'LOST';
+      else if (stopUnitsList.includes(i)) state = 'STOP';
+
+      let power = (state !== 'RUN') ? 0.0 : (i === 1 ? 28.2 : Math.round(95 + (i * 2.3) % 110));
+      let amps = (state !== 'RUN') ? 0.0 : (i === 1 ? 248.9 : Math.round(power * 1.6));
+      
+      // Realistic physical pressures and temps based on refrigeration stage
+      let isBooster = (stage === 'Booster');
+      let suctionP = (state !== 'RUN') ? 0.0 : (isBooster ? -0.42 : 2.25);
+      let suctionT = (state !== 'RUN') ? 0.0 : (isBooster ? -38.5 : 2.1);
+      let dischP = (state !== 'RUN') ? 0.0 : 14.25;
+      let dischT = (state !== 'RUN') ? 0.0 : 35.0;
+      let load = (state !== 'RUN') ? 0 : (i === 1 ? 95 : 75 + (i % 20));
+
+      unitsData[i] = {
+        id: i,
+        tag: `NO.${i} ${name}`,
+        name: name,
+        zone: zone,
+        zoneName: zoneName,
+        model: model,
+        ip: ip,
+        stage: stage,
+        location: location,
+        category: category,
+        status: state,
+        power: power,
+        amps: amps,
+        suctionP: suctionP.toFixed(2),
+        suctionT: suctionT.toFixed(1),
+        dischP: dischP.toFixed(2),
+        dischT: dischT.toFixed(1),
+        oilP: (state === 'RUN' ? 17.22 : 0).toFixed(2),
+        oilT: (state === 'RUN' ? 40.2 : 0).toFixed(1),
+        load: load,
+        kwh: (4440000 + i * 142.85).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      };
+    });
+
+    // Render Summary Dots Grid (Disciplined Industrial Colors)
+    function renderSummaryDots() {
+      const grid = document.getElementById('summaryDotsGrid');
+      grid.innerHTML = '';
+      for (let i = 1; i <= 46; i++) {
+        const u = unitsData[i];
+        const btn = document.createElement('button');
+        let colorCls = 'border-slate-700 bg-slate-900 text-emerald-400 hover:border-emerald-600 hover:bg-slate-800';
+        if (u.status === 'STOP') colorCls = 'border-slate-800 bg-slate-950 text-slate-500 hover:border-slate-700 hover:text-slate-300';
+        else if (u.status === 'LOST') colorCls = 'border-amber-900/60 bg-amber-950/20 text-amber-400 hover:border-amber-700 hover:bg-amber-950/40';
+
+        btn.className = `h-9 rounded font-mono-num font-semibold text-xs border transition flex items-center justify-center ${colorCls}`;
+        btn.textContent = i;
+        btn.onclick = () => openModal(i);
+        grid.appendChild(btn);
+      }
+    }
+
+    // Switch between Focus Stage and 22 Cards Grid
+    function switchFleetViewMode(mode) {
+      currentFleetViewMode = mode;
+      const btnStage = document.getElementById('btnViewModeStage');
+      const btnGrid = document.getElementById('btnViewModeGrid');
+      const viewStage = document.getElementById('fleetStageModeView');
+      const viewGrid = document.getElementById('fleetGridModeView');
+
+      if (mode === 'stage') {
+        btnStage.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition';
+        btnGrid.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition';
+        viewStage.classList.remove('hidden');
+        viewGrid.classList.add('hidden');
+        selectFleetUnit(currentFleetUnitId);
+      } else {
+        btnGrid.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition';
+        btnStage.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition';
+        viewGrid.classList.remove('hidden');
+        viewStage.classList.add('hidden');
+        renderFleetCardsGrid();
+      }
+    }
+
+    // Render Fleet Machine Sidebar List
+    function renderFleetList() {
+      const list = document.getElementById('fleetMachinesList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const isFleetA = (currentActiveTab === 'fleet-a');
+      const startId = isFleetA ? 1 : 23;
+      const endId = isFleetA ? 22 : 46;
+
+      document.getElementById('fleetSidebarTitle').textContent = isFleetA ? 'เลือกหมายเลข (1 - 22)' : 'เลือกหมายเลข (23 - 46)';
+      document.getElementById('fleetHeaderGroupTitle').textContent = isFleetA ? 'กลุ่มคอมเพรสเซอร์ 1 (NO.1 - 22)' : 'กลุ่มคอมเพรสเซอร์ 2 (NO.23 - 46)';
+      document.getElementById('fleetHeaderDeptCount').textContent = isFleetA ? 'แผนก SLT โรงเชือดไก่ (22 เครื่อง)' : 'แผนก SLT, SPF, FUT, DOM (24 เครื่อง)';
+      document.getElementById('fleetBadgeCount').textContent = `${endId - startId + 1} เครื่อง`;
+
+      for (let i = startId; i <= endId; i++) {
+        const u = unitsData[i];
+        
+        let match = true;
+        if (fleetFilterDept === 'ALL') {
+          match = true;
+        } else if (fleetFilterDept === 'BOOSTER') {
+          match = (u.stage === 'Booster');
+        } else if (fleetFilterDept === 'HIGH') {
+          match = (u.stage === 'High');
+        } else {
+          match = (u.zone === fleetFilterDept);
+        }
+        if (!match) continue;
+
+        const card = document.createElement('div');
+        const isSelected = (i === currentFleetUnitId);
+        let borderCls = isSelected ? 'border-blue-600 bg-slate-800/90' : 'border-slate-800 bg-slate-900/50 hover:border-slate-700';
+
+        card.className = `scada-inner p-2.5 rounded border transition cursor-pointer flex items-center justify-between ${borderCls}`;
+        card.onclick = () => selectFleetUnit(i);
+
+        let statusDot = u.status === 'RUN' ? 'bg-emerald-500' : (u.status === 'STOP' ? 'bg-slate-500' : 'bg-amber-500');
+        let stageBadge = u.stage === 'Booster' 
+          ? '<span class="text-[9px] px-1.5 py-0.2 rounded font-mono font-semibold bg-cyan-950 text-cyan-300 border border-cyan-800/60">Booster</span>' 
+          : '<span class="text-[9px] px-1.5 py-0.2 rounded font-mono font-semibold bg-slate-800 text-slate-300 border border-slate-700">High</span>';
+
+        card.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full ${statusDot}"></span>
+            <div>
+              <div class="font-semibold text-white text-xs font-mono-num flex items-center gap-1.5">
+                <span>${u.tag}</span>
+                ${stageBadge}
+              </div>
+              <div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[130px]" title="${u.location}">📍 ${u.location.split(' ')[0]}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="font-mono-num font-semibold text-xs ${u.status === 'RUN' ? 'text-slate-200' : 'text-slate-500'}">${u.power} kW</div>
+            <div class="text-[10px] text-slate-500">โหลด ${u.load}%</div>
+          </div>
+        `;
+        list.appendChild(card);
+      }
+    }
+
+    // Render 22 Cards Grid (All Machines in One View)
+    function renderFleetCardsGrid() {
+      const container = document.getElementById('fleetCardsGridContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      const isFleetA = (currentActiveTab === 'fleet-a');
+      const startId = isFleetA ? 1 : 23;
+      const endId = isFleetA ? 22 : 46;
+
+      for (let i = startId; i <= endId; i++) {
+        const u = unitsData[i];
+        
+        let match = true;
+        if (fleetFilterDept === 'ALL') {
+          match = true;
+        } else if (fleetFilterDept === 'BOOSTER') {
+          match = (u.stage === 'Booster');
+        } else if (fleetFilterDept === 'HIGH') {
+          match = (u.stage === 'High');
+        } else {
+          match = (u.zone === fleetFilterDept);
+        }
+        if (!match) continue;
+
+        let imgSrc = 'assets/CompGreen.png';
+        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-emerald-400 border border-slate-700 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>RUN</span>';
+        if (u.status === 'STOP') {
+          imgSrc = 'assets/CompGray.png';
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>STOP</span>';
+        } else if (u.status === 'LOST') {
+          imgSrc = 'assets/CompAmber.png';
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-amber-400 border border-slate-700 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>LINK LOST</span>';
+        }
+
+        let stageBadge = u.stage === 'Booster'
+          ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-cyan-950 text-cyan-300 border border-cyan-800/60">Booster</span>'
+          : '<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-slate-800 text-slate-300 border border-slate-700">High</span>';
+
+        const card = document.createElement('div');
+        card.className = 'scada-card p-3 flex flex-col justify-between hover:border-slate-600 transition cursor-pointer relative group';
+        card.onclick = () => openModal(i);
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div>
+                <div class="font-bold text-white text-xs font-mono-num flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-400 text-[10px]">NO.${i}</span>
+                  <span>${u.tag.replace(`NO.${i} `, '')}</span>
+                  ${stageBadge}
+                </div>
+                <div class="text-[10px] text-cyan-400 font-sans mt-0.5 truncate max-w-[170px]" title="${u.location}">📍 ${u.location.split(' ')[0]} · <span class="text-slate-400 font-mono">${u.model}</span></div>
+              </div>
+              <div>${statusBadge}</div>
+            </div>
+
+            <div class="h-28 my-2 relative flex items-center justify-center bg-slate-950/60 rounded border border-slate-800/80 p-2">
+              <img src="${imgSrc}" alt="${u.tag}" class="max-h-full max-w-full object-contain filter drop-shadow">
+              <div class="absolute bottom-1 right-2 font-mono-num text-[10px] text-slate-400">
+                ${u.kwh} kWh
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-1.5 text-[11px] pt-1 border-t border-slate-800/80">
+            <div class="scada-inner p-1.5 flex justify-between">
+              <span class="text-slate-500">Power:</span>
+              <span class="font-mono-num font-bold ${u.status === 'RUN' ? 'text-white' : 'text-slate-500'}">${u.power} kW</span>
+            </div>
+            <div class="scada-inner p-1.5 flex justify-between">
+              <span class="text-slate-500">Suction:</span>
+              <span class="font-mono-num font-bold ${u.status === 'RUN' ? 'text-white' : 'text-slate-500'}">${u.suctionP} bar</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    // Select and display a machine on Fleet tab (Dynamically changes 3D image & telemetry)
+    function selectFleetUnit(unitId) {
+      currentFleetUnitId = unitId;
+      const u = unitsData[unitId];
+      if (!u) return;
+
+      document.getElementById('dispUnitTag').textContent = u.tag;
+      document.getElementById('dispUnitModel').textContent = u.model;
+      
+      const stageBadgeEl = document.getElementById('dispUnitStageBadge');
+      if (stageBadgeEl) {
+        stageBadgeEl.textContent = `${u.stage} Stage`;
+        stageBadgeEl.className = u.stage === 'Booster'
+          ? 'px-2.5 py-0.5 rounded text-xs font-semibold bg-cyan-950/80 text-cyan-300 border border-cyan-700/60 font-mono'
+          : 'px-2.5 py-0.5 rounded text-xs font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 font-mono';
+      }
+      const locBadgeEl = document.getElementById('dispUnitLocationBadge');
+      if (locBadgeEl) {
+        locBadgeEl.textContent = `📍 ${u.location}`;
+      }
+
+      document.getElementById('dispUnitZone').textContent = `${u.zoneName} · กลุ่ม: ${u.category} · IP: ${u.ip}`;
+      document.getElementById('dispCumulativeKwh').textContent = u.kwh;
+      document.getElementById('dispCurrentNavIndex').textContent = `Unit ${unitId} of 46`;
+
+      // 1. DYNAMICALLY CHANGE 3D COMPRESSOR IMAGE BY MACHINE STATUS
+      const compImg = document.getElementById('stageCompImg');
+      if (u.status === 'RUN') {
+        compImg.src = 'assets/CompGreen.png';
+      } else if (u.status === 'STOP') {
+        compImg.src = 'assets/CompGray.png';
+      } else {
+        compImg.src = 'assets/CompAmber.png';
+      }
+
+      // 2. DYNAMICALLY CHANGE STAGE NAMEPLATE & BADGES
+      document.getElementById('stageBadgeNo').textContent = `NO.${unitId}`;
+      document.getElementById('stageMachineTitle').textContent = u.tag.replace(`NO.${unitId} `, '');
+      document.getElementById('stageMachineModel').textContent = u.model;
+      document.getElementById('stageMachineIp').textContent = u.ip;
+      
+      const smLoc = document.getElementById('stageMachineLocation');
+      if (smLoc) smLoc.textContent = `📍 ${u.location}`;
+      const smStage = document.getElementById('stageMachineStage');
+      if (smStage) {
+        smStage.textContent = `${u.stage} Stage`;
+        smStage.className = u.stage === 'Booster' ? 'text-cyan-300 font-mono' : 'text-indigo-300 font-mono';
+      }
+
+      document.getElementById('stageStatusText').textContent = u.status === 'RUN' ? 'RUNNING' : (u.status === 'STOP' ? 'STOPPED' : 'LINK LOST');
+
+      const statusDot = document.getElementById('stageStatusDot');
+      const statusPill = document.getElementById('stageStatusPill');
+      if (u.status === 'RUN') {
+        statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        statusPill.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-900/90 text-emerald-400 border border-slate-700 flex items-center gap-1.5 shadow-sm';
+      } else if (u.status === 'STOP') {
+        statusDot.className = 'w-2 h-2 rounded-full bg-slate-500';
+        statusPill.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-900/90 text-slate-400 border border-slate-700 flex items-center gap-1.5 shadow-sm';
+      } else {
+        statusDot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        statusPill.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-900/90 text-amber-400 border border-slate-700 flex items-center gap-1.5 shadow-sm';
+      }
+
+      // 3. LOST WARNING BANNER
+      const lostBanner = document.getElementById('stageAlertLost');
+      if (lostBanner) {
+        if (u.status === 'LOST') lostBanner.classList.remove('hidden');
+        else lostBanner.classList.add('hidden');
+      }
+
+      // 4. STATUS BADGE ON HEADER
+      const sb = document.getElementById('dispUnitStatusBadge');
+      sb.textContent = u.status;
+      if (u.status === 'RUN') {
+        sb.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-800 text-emerald-400 border border-slate-700 flex items-center gap-1.5';
+      } else if (u.status === 'STOP') {
+        sb.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1.5';
+      } else {
+        sb.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-800 text-amber-400 border border-slate-700 flex items-center gap-1.5';
+      }
+
+      // 5. HOTSPOTS TELEMETRY
+      const isOnline = (u.status === 'RUN');
+      document.getElementById('hsSuction').textContent = isOnline ? `${u.suctionP} bar | ${u.suctionT} °C` : (u.status === 'STOP' ? 'Standby' : '--- bar | --- °C');
+      document.getElementById('hsDisch').textContent = isOnline ? `${u.dischP} bar | ${u.dischT} °C` : (u.status === 'STOP' ? 'Standby' : '--- bar | --- °C');
+      document.getElementById('hsOil').textContent = isOnline ? `${u.oilP} bar | ${u.oilT} °C` : (u.status === 'STOP' ? 'Standby' : '--- bar | --- °C');
+      document.getElementById('hsMotor').textContent = isOnline ? `${u.power} kW | ${u.amps} A` : (u.status === 'STOP' ? '0.0 kW | 0.0 A' : 'Offline');
+      document.getElementById('hsLoad').textContent = isOnline ? `${u.load} % (Slide Valve)` : '0 %';
+
+      // 6. COST FOR THIS UNIT
+      const unitCost = (u.power * currentElectricityRate).toFixed(2);
+      document.getElementById('dispUnitCostHr').textContent = unitCost;
+
+      // 7. BOTTOM GAUGES
+      document.getElementById('cardSuctionP').textContent = isOnline ? u.suctionP : '---';
+      document.getElementById('cardSuctionT').textContent = isOnline ? u.suctionT : '---';
+      document.getElementById('cardDischP').textContent = isOnline ? u.dischP : '---';
+      document.getElementById('cardDischT').textContent = isOnline ? u.dischT : '---';
+      document.getElementById('cardPower').textContent = isOnline ? u.power : '0';
+      document.getElementById('cardAmps').textContent = isOnline ? u.amps : '0';
+      document.getElementById('cardLoad').textContent = `${u.load} %`;
+      document.getElementById('cardLoadBar').style.width = `${u.load}%`;
+      document.getElementById('cardLoadStatus').textContent = isOnline ? 'Optimal' : (u.status === 'STOP' ? 'Standby' : 'Offline');
+
+      renderFleetList();
+    }
+
+    function navigateFleetUnit(dir) {
+      let next = currentFleetUnitId + dir;
+      if (next < 1) next = 46;
+      if (next > 46) next = 1;
+      
+      if (next > 22 && currentActiveTab === 'fleet-a') {
+        switchMainTab('fleet-b');
+      } else if (next <= 22 && currentActiveTab === 'fleet-b') {
+        switchMainTab('fleet-a');
+      }
+      selectFleetUnit(next);
+    }
+
+    function filterFleet(filterType, btn) {
+      fleetFilterDept = filterType;
+      document.querySelectorAll('#tab-fleet button, #fleetStageModeView button').forEach(b => {
+        if (b.onclick && b.onclick.toString().includes('filterFleet')) {
+          b.className = 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800';
+        }
+      });
+      if (btn) btn.className = 'px-2.5 py-1 rounded bg-slate-800 text-white font-medium border border-slate-700';
+      
+      if (currentFleetViewMode === 'stage') {
+        renderFleetList();
+      } else {
+        renderFleetCardsGrid();
+      }
+    }
+
+    // Quick filter by Location from Summary Process Cards
+    function filterByLocation(locKey) {
+      for (let i = 1; i <= 46; i++) {
+        if (unitsData[i].location.toLowerCase().includes(locKey.toLowerCase())) {
+          if (i <= 22) {
+            switchMainTab('fleet-a');
+          } else {
+            switchMainTab('fleet-b');
+          }
+          selectFleetUnit(i);
+          break;
+        }
+      }
+    }
+
+    // Modal Popup
+    function openModal(unitId) {
+      currentModalUnitId = unitId;
+      const u = unitsData[unitId];
+      if (!u) return;
+
+      document.getElementById('mUnitName').textContent = u.tag;
+      document.getElementById('mModelTag').textContent = u.model;
+      
+      const mStage = document.getElementById('mStageBadge');
+      if (mStage) {
+        mStage.textContent = `${u.stage} Stage`;
+        mStage.className = u.stage === 'Booster'
+          ? 'px-2 py-0.5 rounded text-xs font-mono font-semibold bg-cyan-950/80 text-cyan-300 border border-cyan-800/80'
+          : 'px-2 py-0.5 rounded text-xs font-mono font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-800/80';
+      }
+      const mLoc = document.getElementById('mLocationText');
+      if (mLoc) mLoc.textContent = `📍 ${u.location}`;
+
+      document.getElementById('mSubDetail').textContent = `${u.zoneName} · ${u.ip}`;
+      document.getElementById('mKwh').textContent = u.kwh;
+
+      const badge = document.getElementById('mStatusBadge');
+      badge.textContent = u.status;
+      if (u.status === 'RUN') badge.className = 'px-2.5 py-0.5 rounded text-xs font-semibold bg-slate-800 text-emerald-400 border border-slate-700';
+      else if (u.status === 'STOP') badge.className = 'px-2.5 py-0.5 rounded text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700';
+      else badge.className = 'px-2.5 py-0.5 rounded text-xs font-semibold bg-slate-800 text-amber-400 border border-slate-700';
+
+      const isOnline = (u.status === 'RUN');
+      document.getElementById('mSuctionP').textContent = isOnline ? u.suctionP : '---';
+      document.getElementById('mSuctionT').textContent = isOnline ? u.suctionT : '---';
+      document.getElementById('mDischP').textContent = isOnline ? u.dischP : '---';
+      document.getElementById('mDischT').textContent = isOnline ? u.dischT : '---';
+      document.getElementById('mOilP').textContent = isOnline ? u.oilP : '---';
+      document.getElementById('mOilT').textContent = isOnline ? u.oilT : '---';
+      document.getElementById('mPower').textContent = isOnline ? u.power : '0';
+      document.getElementById('mAmps').textContent = isOnline ? u.amps : '0';
+      document.getElementById('mLoad').textContent = `${u.load} %`;
+      document.getElementById('mLoadBar').style.width = `${u.load}%`;
+      document.getElementById('mUnitCostHr').textContent = `~${(u.power * currentElectricityRate).toFixed(2)} บาท/ชม.`;
+
+      document.getElementById('unitDetailModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('unitDetailModal').classList.add('hidden');
+    }
+
+    function handleModalBackdrop(e) {
+      if (e.target.id === 'unitDetailModal') closeModal();
+    }
+
+    function navigateModalUnit(dir) {
+      let next = currentModalUnitId + dir;
+      if (next < 1) next = 46;
+      if (next > 46) next = 1;
+      openModal(next);
+    }
+
+    // Tab Switching
+    let previousActiveTab = 'summary';
+
+    function toggleSettingsTab() {
+      if (currentActiveTab === 'settings') {
+        switchMainTab(previousActiveTab || 'summary');
+      } else {
+        previousActiveTab = currentActiveTab;
+        switchMainTab('settings');
+      }
+    }
+
+    function switchMainTab(tabKey) {
+      if (tabKey !== 'settings') {
+        previousActiveTab = tabKey;
+      }
+      currentActiveTab = tabKey;
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabKey);
+      });
+
+      // Highlight small gear button when on settings tab
+      const btnSettings = document.getElementById('btnHeaderSettings');
+      if (btnSettings) {
+        if (tabKey === 'settings') {
+          btnSettings.className = 'scada-inner px-2.5 py-1.5 text-blue-400 bg-blue-950/40 border border-blue-500 rounded transition flex items-center justify-center';
+        } else {
+          btnSettings.className = 'scada-inner px-2.5 py-1.5 text-slate-400 hover:text-white hover:border-slate-500 border border-slate-800 rounded transition flex items-center justify-center group';
+        }
+      }
+
+      document.getElementById('tab-summary').classList.add('hidden');
+      document.getElementById('tab-fleet').classList.add('hidden');
+      document.getElementById('tab-analytics').classList.add('hidden');
+      document.getElementById('tab-settings').classList.add('hidden');
+
+      if (tabKey === 'summary') {
+        document.getElementById('tab-summary').classList.remove('hidden');
+      } else if (tabKey === 'fleet-a' || tabKey === 'fleet-b') {
+        document.getElementById('tab-fleet').classList.remove('hidden');
+        if (tabKey === 'fleet-a' && (currentFleetUnitId < 1 || currentFleetUnitId > 22)) currentFleetUnitId = 1;
+        if (tabKey === 'fleet-b' && (currentFleetUnitId < 23 || currentFleetUnitId > 46)) currentFleetUnitId = 23;
+        
+        if (currentFleetViewMode === 'stage') {
+          renderFleetList();
+          selectFleetUnit(currentFleetUnitId);
+        } else {
+          renderFleetCardsGrid();
+        }
+      } else if (tabKey === 'analytics') {
+        document.getElementById('tab-analytics').classList.remove('hidden');
+        renderTrendChart();
+      } else if (tabKey === 'settings') {
+        document.getElementById('tab-settings').classList.remove('hidden');
+      }
+    }
+
+    function viewDepartment(zoneKey) {
+      const firstUnit = Object.values(unitsData).find(u => u.zone === zoneKey);
+      if (firstUnit && firstUnit.id > 22) {
+        switchMainTab('fleet-b');
+      } else {
+        switchMainTab('fleet-a');
+      }
+      filterFleet(zoneKey);
+    }
+
+    // Trend Canvas Chart Generator (Muted Corporate Blue & Slate)
+    function renderTrendChart() {
+      const container = document.getElementById('trendChartContainer');
+      container.innerHTML = '';
+      const hours = ['00','02','04','06','08','10','12','14','16','18','20','22'];
+      const baseValues = [3200, 3100, 3050, 3600, 4400, 4820, 4950, 4850, 4700, 4500, 3900, 3400];
+
+      baseValues.forEach((val, idx) => {
+        const barWrap = document.createElement('div');
+        barWrap.className = 'flex-1 flex flex-col items-center justify-end h-full gap-1 group relative';
+        
+        const heightPct = Math.round((val / 5500) * 100);
+        const isOnPeak = (idx >= 4 && idx <= 10);
+        const barColor = isOnPeak ? 'bg-blue-600 hover:bg-blue-500' : 'bg-slate-700 hover:bg-slate-600';
+
+        barWrap.innerHTML = `
+          <div class="absolute -top-7 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] font-mono-num text-white hidden group-hover:block whitespace-nowrap z-20">
+            ${val.toLocaleString()} kW
+          </div>
+          <div class="w-full ${barColor} rounded-t transition-all duration-200" style="height: ${heightPct}%;"></div>
+          <span class="text-[9px] font-mono-num text-slate-500">${hours[idx]}h</span>
+        `;
+        container.appendChild(barWrap);
+      });
+    }
+
+    // Rate Setting Update
+    function updateRateSetting(newRate) {
+      currentElectricityRate = parseFloat(newRate) || 3.50;
+      updateCalculatedTotals();
+    }
+
+    function updateCalculatedTotals() {
+      const runningUnits = Object.values(unitsData).filter(u => u.status === 'RUN');
+      const runningCount = runningUnits.length;
+      const totalPower = runningUnits.reduce((acc, u) => acc + (u.power || 0), 0);
+      const costHr = Math.round(totalPower * currentElectricityRate);
+      const costDay = Math.round(costHr * 24);
+
+      document.getElementById('topTotalPower').textContent = totalPower.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      document.getElementById('sumTotalPower').textContent = totalPower.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      
+      document.getElementById('topCostHr').textContent = costHr.toLocaleString();
+      document.getElementById('sumCostHr').textContent = costHr.toLocaleString();
+      document.getElementById('sumCostDay').textContent = `~${costDay.toLocaleString()}`;
+
+      const elTopRun = document.getElementById('topFleetRun');
+      if (elTopRun) elTopRun.textContent = `${runningCount} / 46`;
+      const elSumRun = document.getElementById('sumRunCount');
+      if (elSumRun) elSumRun.textContent = `${runningCount} เครื่อง`;
+      const elSumBar = document.getElementById('sumPowerBar');
+      if (elSumBar) elSumBar.style.width = Math.min(100, Math.round((totalPower / 8000) * 100)) + '%';
+    }
+
+    // Configuration and Data Bridge Management
+    function onBridgeModeChange(mode) {
+      const cardLive = document.getElementById('modeCardLive');
+      const cardSim = document.getElementById('modeCardSim');
+      const authBox = document.getElementById('liveAuthBox');
+      if (!cardLive || !cardSim) return;
+      if (mode === 'live') {
+        cardLive.className = 'cursor-pointer scada-inner p-3.5 border-2 border-blue-500 bg-blue-950/20 rounded-lg flex items-start gap-3 transition';
+        cardSim.className = 'cursor-pointer scada-inner p-3.5 border-2 border-slate-800 rounded-lg flex items-start gap-3 transition hover:border-slate-700';
+        authBox.classList.remove('opacity-60');
+      } else {
+        cardLive.className = 'cursor-pointer scada-inner p-3.5 border-2 border-slate-800 rounded-lg flex items-start gap-3 transition hover:border-slate-700';
+        cardSim.className = 'cursor-pointer scada-inner p-3.5 border-2 border-blue-500 bg-blue-950/20 rounded-lg flex items-start gap-3 transition';
+        authBox.classList.add('opacity-60');
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const p = document.getElementById('cfgPassword');
+      if (p.type === 'password') p.type = 'text';
+      else p.type = 'password';
+    }
+
+    async function loadBridgeConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const cfg = await res.json();
+          if (cfg.bridge_mode) {
+            const radios = document.getElementsByName('bridgeModeChoice');
+            for (let r of radios) {
+              if (r.value === cfg.bridge_mode) r.checked = true;
+            }
+            onBridgeModeChange(cfg.bridge_mode);
+          }
+          if (cfg.auth) {
+            if (cfg.auth.username) document.getElementById('cfgUsername').value = cfg.auth.username;
+            if (cfg.auth.has_password) document.getElementById('cfgPassword').placeholder = '•••••••• (บันทึกไว้แล้ว)';
+            if (cfg.auth.session_cookie) document.getElementById('cfgSessionCookie').value = cfg.auth.session_cookie;
+          }
+          if (cfg.electricity_rate_thb) {
+            document.getElementById('cfgRate').value = cfg.electricity_rate_thb;
+            currentElectricityRate = parseFloat(cfg.electricity_rate_thb);
+          }
+          if (cfg.sync_interval_seconds) {
+            document.getElementById('cfgInterval').value = cfg.sync_interval_seconds;
+          }
+          if (cfg.last_sync_status) {
+            const sEl = document.getElementById('liveStatusBannerText');
+            if (sEl) sEl.textContent = cfg.last_sync_status;
+          }
+        }
+      } catch (e) {
+        console.log('Local config load info:', e);
+      }
+    }
+
+    async function saveBridgeSettings() {
+      const modeChoice = document.querySelector('input[name="bridgeModeChoice"]:checked')?.value || 'simulation';
+      const username = document.getElementById('cfgUsername').value.trim();
+      const password = document.getElementById('cfgPassword').value;
+      const sessionCookie = document.getElementById('cfgSessionCookie').value.trim();
+      const rate = parseFloat(document.getElementById('cfgRate').value) || 3.50;
+      const interval = parseInt(document.getElementById('cfgInterval').value) || 10;
+
+      const payload = {
+        bridge_mode: modeChoice,
+        electricity_rate_thb: rate,
+        sync_interval_seconds: interval,
+        auth: {
+          username: username,
+          session_cookie: sessionCookie
+        }
+      };
+      if (password) {
+        payload.auth.password = password;
+      }
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          currentElectricityRate = rate;
+          updateCalculatedTotals();
+          alert('✅ บันทึกการตั้งค่าเรียบร้อยแล้ว!\nระบบเริ่มทำงานในโหมด: ' + (modeChoice === 'live' ? '🟢 ดึงข้อมูลสด 1:1 จากเกตเวย์โรงงาน' : '🔵 จำลองพฤติกรรมเสมือน (Simulation)'));
+          syncLiveData();
+          return;
+        }
+      } catch (e) {
+        alert('บันทึกการตั้งค่าภายในเบราว์เซอร์เรียบร้อย (Server ออฟไลน์)');
+      }
+    }
+
+    function copyIngestBookmarklet() {
+      const code = `javascript:(function(){const arts=document.querySelectorAll('article'),u={};arts.forEach(a=>{const t=a.querySelector('.no-tag');if(!t)return;const m=t.textContent.match(/NO\.(\d+)/);if(!m)return;const id=parseInt(m[1]),st=a.querySelector('[data-k="status-label"]'),kw=a.querySelector('[data-k="kW-btm"]'),su=a.querySelector('[data-k="suction-btm"]'),di=a.querySelector('[data-k="discharge-btm"]'),ld=a.querySelector('[data-k="load-btm"]'),am=a.querySelector('[data-k="v2-m-a"]');let s='RUN';if(st){const x=st.textContent.toUpperCase();if(x.includes('LOST'))s='LOST';else if(x.includes('STOP'))s='STOP';}u[id]={status:s,power_kw:kw?parseFloat(kw.textContent)||0:0,current_a:am?parseFloat(am.textContent)||0:0,suction_press_bar:su?parseFloat(su.textContent)||0:0,disch_press_bar:di?parseFloat(di.textContent)||0:0,load_pct:ld?parseInt(ld.textContent)||0:0};});fetch('http://localhost:8080/api/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({units:u})}).then(r=>r.json()).then(d=>alert('✅ ซิงค์สด 1:1 สำเร็จ ('+d.count+' เครื่อง)')).catch(e=>alert('❌ โปรดเปิด run_scada.bat ไว้ก่อน'));})();`;
+      navigator.clipboard.writeText(code).then(() => {
+        const hint = document.getElementById('copyBookmarkletDone');
+        hint.classList.remove('hidden');
+        setTimeout(() => hint.classList.add('hidden'), 4000);
+      });
+    }
+
+
+    // =========================================================================
+    // METHOD 2: SERVERLESS DIRECT WEBSOCKET ENGINE (24/7 REAL-TIME STREAM)
+    // Direct client-side connection from browser to wss://wsmqtt.tnnn-link.com/ws/
+    // Works 24/7/365 without needing local Python server or PC to remain turned on!
+    // =========================================================================
+    const DIRECT_WS_URL = "wss://wsmqtt.tnnn-link.com/ws/";
+    const DIRECT_WS_TOPICS = [
+      "B019217D9612KR/4070/machine/cbm/data",
+      "B019217D9612KR/4071/machine/cbm/data",
+      "B525AC7D933CDM/4070/machine/cbm/data"
+    ];
+
+    const DMG800_MAP = {
+      506: 3, 507: 4, 517: 5, 518: 6, 520: 10, 521: 11, 524: 16, 502: 17, 501: 18, 504: 20,
+      519: 23, 510: 25, 511: 26, 512: 27, 513: 28, 514: 31, 515: 33, 516: 34, 505: 36, 508: 38,
+      503: 40, 522: 41, 523: 42, 546: 46
+    };
+
+    let directWs = null;
+    let directWsConnected = false;
+    let directWsReconnectTimer = null;
+    let directWsPacketCount = 0;
+    let directWsLastRxTs = null;
+
+    function processDirectWsPacket(rawMsg) {
+      let data;
+      try {
+        data = JSON.parse(rawMsg);
+      } catch (err) {
+        return;
+      }
+      const items = Array.isArray(data) ? data : [data];
+      let updatedAny = false;
+
+      for (const item of items) {
+        if (!item) continue;
+        const topic = String(item.topic || '');
+        const dtype = String(item.dtype || '');
+        const dmach = String(item.dmach || '');
+        const values = Array.isArray(item.value) ? item.value : [];
+        
+        const valDict = {};
+        for (const v of values) {
+          if (v && v.id != null) valDict[v.id] = v.v;
+        }
+
+        // 1. DMG800 Power Meter Feed
+        if (dtype === 'DMG800' || topic.includes('/5') || /\/5\d\d/.test(topic)) {
+          const mM = topic.match(/\/(\d+)/) || dmach.match(/(\d+)/);
+          if (mM) {
+            const meterId = parseInt(mM[1], 10);
+            const uId = DMG800_MAP[meterId];
+            if (uId && unitsData[uId]) {
+              const kw = valDict[1];
+              const kwh = valDict[2];
+              if (kw !== undefined && kw !== null && kw !== "") {
+                const kwVal = Math.round(parseFloat(kw) * 10) / 10;
+                unitsData[uId].power = kwVal;
+                unitsData[uId].status = kwVal > 1.0 ? 'RUN' : 'STOP';
+              }
+              if (kwh !== undefined && kwh !== null && kwh !== "") {
+                unitsData[uId].cumulativeKwh = Math.round(parseFloat(kwh) * 10) / 10;
+              }
+              unitsData[uId].lastRx = new Date().toISOString();
+              updatedAny = true;
+            }
+          }
+        }
+
+        // 2. Machine Controller Metrics (GEA001, CM312, MPRO8)
+        let uNo = null;
+        const mUnit = topic.match(/B019217D9612KR\/(\d{3})/);
+        if (mUnit) {
+          uNo = parseInt(mUnit[1], 10);
+        } else if (dmach && !isNaN(parseInt(dmach, 10))) {
+          const dNum = parseInt(dmach, 10);
+          if (dNum >= 1 && dNum <= 46) uNo = dNum;
+        }
+
+        if (uNo && unitsData[uNo]) {
+          const u = unitsData[uNo];
+          const sucP = valDict[1];
+          const dischP = valDict[2];
+          const oilP = valDict[3];
+          const oilT = valDict[8];
+
+          if (sucP !== undefined && sucP !== null && sucP !== "") u.suctionP = parseFloat(sucP).toFixed(2);
+          if (dischP !== undefined && dischP !== null && dischP !== "") u.dischP = parseFloat(dischP).toFixed(2);
+          if (oilP !== undefined && oilP !== null && oilP !== "") u.oilP = parseFloat(oilP).toFixed(2);
+          if (oilT !== undefined && oilT !== null && oilT !== "") u.oilT = Math.round(parseFloat(oilT) * 10) / 10;
+
+          let loadVal = null, curVal = null, sucTVal = null, dischTVal = null;
+          if (dtype === 'GEA001') {
+            loadVal = valDict[25];
+            curVal = valDict[19];
+            sucTVal = valDict[10];
+            dischTVal = valDict[12];
+          } else if (dtype === 'CM312') {
+            loadVal = valDict[11];
+            dischTVal = valDict[9];
+            sucTVal = valDict[10];
+          } else { // MPRO8
+            loadVal = valDict[15];
+            dischTVal = valDict[11];
+          }
+
+          if (loadVal !== undefined && loadVal !== null && loadVal !== "") {
+            const ld = Math.max(0, Math.min(100, Math.round(parseFloat(loadVal))));
+            u.load = ld;
+            if (ld > 5 && u.status !== 'RUN') u.status = 'RUN';
+          }
+          if (curVal !== undefined && curVal !== null && curVal !== "") {
+            u.amps = Math.round(parseFloat(curVal) * 10) / 10;
+          } else if (u.power > 0) {
+            u.amps = Math.round(u.power * 1.6);
+          }
+          if (sucTVal !== undefined && sucTVal !== null && sucTVal !== "") u.suctionT = Math.round(parseFloat(sucTVal) * 10) / 10;
+          if (dischTVal !== undefined && dischTVal !== null && dischTVal !== "") u.dischT = Math.round(parseFloat(dischTVal) * 10) / 10;
+
+          u.lastRx = new Date().toISOString();
+          updatedAny = true;
+        }
+      }
+
+      if (updatedAny) {
+        directWsPacketCount++;
+        directWsLastRxTs = Date.now();
+        updateCalculatedTotals();
+        renderSummaryDots();
+        if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') {
+          if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
+          else renderFleetCardsGrid();
+        }
+      }
+    }
+
+    function connectDirectWs() {
+      if (directWs && (directWs.readyState === WebSocket.OPEN || directWs.readyState === WebSocket.CONNECTING)) {
+        return;
+      }
+      try {
+        directWs = new WebSocket(DIRECT_WS_URL);
+      } catch (err) {
+        console.warn('[SERVERLESS WS] Direct WebSocket connection failed:', err);
+        scheduleDirectWsReconnect();
+        return;
+      }
+
+      directWs.onopen = () => {
+        directWsConnected = true;
+        console.log('[SERVERLESS WS] Connected to factory WebSocket: ' + DIRECT_WS_URL);
+        directWs.send(JSON.stringify({
+          type: 'sub',
+          topics: DIRECT_WS_TOPICS
+        }));
+        updateServerlessStatusUI();
+      };
+
+      directWs.onmessage = (ev) => {
+        processDirectWsPacket(ev.data);
+        updateServerlessStatusUI();
+      };
+
+      directWs.onerror = (err) => {
+        console.warn('[SERVERLESS WS] Socket error:', err);
+      };
+
+      directWs.onclose = () => {
+        directWsConnected = false;
+        updateServerlessStatusUI();
+        scheduleDirectWsReconnect();
+      };
+    }
+
+    function scheduleDirectWsReconnect() {
+      if (directWsReconnectTimer) return;
+      directWsReconnectTimer = setTimeout(() => {
+        directWsReconnectTimer = null;
+        connectDirectWs();
+      }, 3000);
+    }
+
+    function updateServerlessStatusUI() {
+      const badge = document.getElementById('topBridgeStatusBadge');
+      const dot = document.getElementById('topBridgeStatusDot');
+      const txt = document.getElementById('topBridgeStatusText');
+      const banner = document.getElementById('liveStatusBannerText');
+      
+      if (directWsConnected && directWsLastRxTs && (Date.now() - directWsLastRxTs < 30000)) {
+        if (badge) badge.className = 'flex items-center gap-1.5 text-emerald-400 font-medium';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        if (txt) txt.textContent = 'LIVE 1:1 SERVERLESS (24/7 ONLINE)';
+        if (banner) banner.textContent = 'รับข้อมูลสด 1:1 เรียลไทม์ตรงจาก TNNN Cloud (Serverless WebSocket Active) • แพ็กเก็ต #' + directWsPacketCount;
+      } else if (directWsConnected) {
+        if (badge) badge.className = 'flex items-center gap-1.5 text-emerald-400 font-medium';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        if (txt) txt.textContent = 'LIVE 1:1 WS CONNECTED';
+      } else {
+        if (badge && (!badge.className.includes('text-emerald-400'))) {
+          badge.className = 'flex items-center gap-1.5 text-amber-400 font-medium';
+          if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+          if (txt) txt.textContent = 'CONNECTING SERVERLESS WS...';
+        }
+      }
+    }
+
+    // Real-Time Polling from Local Backend Server (if running) or Local Simulation Jitter
+    async function syncLiveData() {
+      try {
+        const res = await fetch('/api/telemetry');
+        if (res.ok) {
+          const data = await res.json();
+          
+          // Update top bar live indicator
+          const badge = document.getElementById('topBridgeStatusBadge');
+          const dot = document.getElementById('topBridgeStatusDot');
+          const txt = document.getElementById('topBridgeStatusText');
+          const banner = document.getElementById('liveStatusBannerText');
+          if (banner && data.sync_status) {
+            banner.textContent = data.sync_status;
+          }
+
+          if (badge && txt) {
+            if (data.bridge_mode === 'live') {
+              if (data.sync_status && (data.sync_status.includes('Live') || data.sync_status.includes('Ingested'))) {
+                badge.className = 'flex items-center gap-1.5 text-emerald-400 font-medium';
+                if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+                txt.textContent = 'LIVE 1:1 SYNCED (' + (data.sync_status.includes('Ingested') ? 'Active Tab' : 'Gateway') + ')';
+              } else {
+                badge.className = 'flex items-center gap-1.5 text-amber-400 font-medium';
+                if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+                txt.textContent = 'LIVE WAITING AUTH';
+              }
+            } else {
+              badge.className = 'flex items-center gap-1.5 text-blue-400 font-medium';
+              if (dot) dot.className = 'w-2 h-2 rounded-full bg-blue-500';
+              txt.textContent = 'SIMULATION DEMO (10s)';
+            }
+          }
+
+          for (let id in data.units) {
+            const apiU = data.units[id];
+            if (unitsData[id]) {
+              unitsData[id].power = apiU.power_kw;
+              unitsData[id].amps = apiU.current_a;
+              unitsData[id].suctionP = Number(apiU.suction_press_bar).toFixed(2);
+              unitsData[id].dischP = Number(apiU.disch_press_bar).toFixed(2);
+              unitsData[id].load = apiU.load_pct;
+              unitsData[id].status = apiU.status;
+              if (apiU.tag) unitsData[id].tag = apiU.tag;
+              if (apiU.model) unitsData[id].model = apiU.model;
+              if (apiU.zone) unitsData[id].zone = apiU.zone;
+              if (apiU.zone_name) unitsData[id].zoneName = apiU.zone_name;
+              if (apiU.ip) unitsData[id].ip = apiU.ip;
+              if (apiU.suction_temp_c !== undefined) unitsData[id].suctionT = apiU.suction_temp_c;
+              if (apiU.disch_temp_c !== undefined) unitsData[id].dischT = apiU.disch_temp_c;
+              if (apiU.oil_press_bar !== undefined) unitsData[id].oilP = Number(apiU.oil_press_bar).toFixed(2);
+              if (apiU.oil_temp_c !== undefined) unitsData[id].oilT = apiU.oil_temp_c;
+              if (apiU.cumulative_kwh !== undefined) unitsData[id].cumulativeKwh = apiU.cumulative_kwh;
+            }
+          }
+          updateCalculatedTotals();
+          renderSummaryDots();
+          if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') {
+            if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
+            else renderFleetCardsGrid();
+          }
+          return;
+        }
+      } catch (e) {
+        // Fallback simulation jitter if backend server is not running
+        for (let i in unitsData) {
+          const u = unitsData[i];
+          if (u.status === 'RUN' && u.id !== 1) {
+            u.power = Math.max(10, Math.round((u.power + (Math.random() * 2 - 1)) * 10) / 10);
+            u.amps = Math.round(u.power * 1.6);
+            u.suctionP = (parseFloat(u.suctionP) + (Math.random() * 0.04 - 0.02)).toFixed(2);
+          }
+        }
+        updateCalculatedTotals();
+        renderSummaryDots();
+        if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') {
+          if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
+          else renderFleetCardsGrid();
+        }
+      }
+    }
+
+    // Real-time Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('liveMasterClock').textContent = 
+        now.toLocaleTimeString('th-TH') + ' · ' + now.toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' });
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+      if (e.key === 'ArrowLeft') {
+        if (!document.getElementById('unitDetailModal').classList.contains('hidden')) navigateModalUnit(-1);
+        else if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') navigateFleetUnit(-1);
+      }
+      if (e.key === 'ArrowRight') {
+        if (!document.getElementById('unitDetailModal').classList.contains('hidden')) navigateModalUnit(1);
+        else if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') navigateFleetUnit(1);
+      }
+    });
+
+    // Boot
+    renderSummaryDots();
+    updateClock();
+    loadBridgeConfig();
+    syncLiveData();
+    setInterval(updateClock, 1000);
+    setInterval(syncLiveData, 5000);
+
+    // Hash routing & deep link
+    function handleHashRoute() {
+      const rawHash = window.location.hash.replace('#', '');
+      if (!rawHash) return;
+      const hashParts = rawHash.split('?');
+      const targetTab = hashParts[0];
+      if (targetTab && ['summary', 'fleet-a', 'fleet-b', 'analytics', 'settings'].includes(targetTab)) {
+        switchMainTab(targetTab);
+      }
+      if (hashParts[1]) {
+        const p = new URLSearchParams(hashParts[1]);
+        if (p.has('unit')) {
+          const uId = parseInt(p.get('unit'));
+          if (uId >= 1 && uId <= 46) selectFleetUnit(uId);
+        }
+        if (p.get('mode') === 'grid') {
+          switchFleetViewMode('grid');
+        }
+      }
+    }
+    window.addEventListener('hashchange', handleHashRoute);
+    window.addEventListener('load', handleHashRoute);
+    handleHashRoute();
+  </script>
+</body>
+</html>
