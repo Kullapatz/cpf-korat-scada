@@ -1,0 +1,15 @@
+{
+  "plant_name": "CPF Korat (B0-19-21-7D-96-12)",
+  "gateway_mac": "B0:19:21:7D:96:12",
+  "gateway_id": "B019217D9612KR",
+  "tnnn_url": "https://tnnn-link.com",
+  "electricity_rate_thb": 3.5,
+  "sync_interval_seconds": 5,
+  "bridge_mode": "live",
+  "auth": {
+    "username": "cpfguest",
+    "password": "#cpf2026",
+    "session_cookie": ""
+  },
+  "api_port": 8080
+}
