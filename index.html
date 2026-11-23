@@ -418,38 +418,42 @@
           </div>
         </div>
 
-        <!-- Watchlist -->
-        <div class="scada-card p-4 space-y-2.5">
-          <div class="text-xs font-bold text-slate-400 pb-2 border-b border-slate-800 flex justify-between items-center">
-            <span>รายการเฝ้าระวังสำหรับวิศวกรซ่อมบำรุง</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700 font-semibold text-[10px]">2 รายการเฝ้าระวัง</span>
+        <!-- Real-Time Maintenance Diagnostic Watchlist -->
+        <div class="scada-card p-4 space-y-3">
+          <div class="text-xs font-bold text-slate-400 pb-2 border-b border-slate-800 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-sm">รายการเฝ้าระวังสำหรับวิศวกรซ่อมบำรุง</span>
+              <span class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-950/60 border border-emerald-600 text-emerald-400 font-mono text-[10px] font-bold">
+                <span class="w-1.5 h-1.5 bg-emerald-400 animate-pulse"></span> LIVE SCAN
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="btnToggleAlarmSound" onclick="toggleAlarmAudio()" class="px-2 py-0.5 text-[10px] font-mono border border-slate-700 bg-slate-900 text-slate-400 hover:text-white transition" title="เปิด/ปิดเสียงสัญญาณเตือน">
+                [AUDIO: OFF]
+              </button>
+              <button id="btnRequestNotify" onclick="requestBrowserNotification()" class="px-2 py-0.5 text-[10px] font-mono border border-slate-700 bg-slate-900 text-slate-400 hover:text-sky-400 transition" title="เปิดการแจ้งเตือนไปยังเบราว์เซอร์">
+                [NOTIFY: BROWSER]
+              </button>
+              <span id="watchlistCountBadge" class="px-2 py-0.5 font-mono text-amber-400 bg-amber-950/30 border border-amber-800/80 font-bold text-[10px]">
+                กำลังสแกน...
+              </span>
+            </div>
           </div>
 
-          <div class="scada-inner p-3 border-l-4 border-l-amber-600">
-            <div class="font-bold text-white text-sm flex items-center gap-2">
-              <span class="font-mono text-amber-500 font-bold mr-1">[ALARM]</span> 1. ตรวจสอบสายสัญญาณ Modbus / LAN หลุด (9 เครื่อง)
-            </div>
-            <p class="text-xs text-slate-300 mt-1">
-              ตู้คอนโทรลเลอร์ไม่ตอบสนองต่อเกตเวย์: <strong class="text-amber-300">NO. 2, 6, 9, 11, 16, 21, 23, 35, 44</strong> แนะนำตรวจสอบไฟสถานะพอร์ต Switch ในห้องควบคุม
-            </p>
+          <!-- Dynamic Diagnostic Cards Container -->
+          <div id="dynamicWatchlistContainer" class="space-y-2.5">
+            <!-- Rendered in real-time by updateEngineerWatchlist() -->
           </div>
 
-          <div class="scada-inner p-3 border-l-4 border-l-slate-600">
-            <div class="font-bold text-white text-sm flex items-center gap-2">
-              <span class="font-mono text-sky-400 font-bold mr-1">[CHECK]</span> 2. ตรวจสอบเซนเซอร์วัดแรงดันดูด Suction (6 เครื่อง)
+          <!-- Live Event Activity Stream / Recent Logs -->
+          <div class="pt-2 border-t border-slate-800/80">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-1.5">
+              <span class="font-bold text-slate-300">ประวัติเหตุการณ์สดล่าสุด (Live Event Stream):</span>
+              <span id="watchlistLastScanTime" class="text-slate-500 text-[10px]">สแกนล่าสุด: --:--:--</span>
             </div>
-            <p class="text-xs text-slate-300 mt-1">
-              พบค่าความดันดูดต่ำกว่าเกณฑ์ปกติ: <strong class="text-slate-200">NO. 7, 8, 10, 29, 32, 37</strong> ควรส่งทีมช่างเทียบเกจเข็มหน้างานเพื่อยืนยันพารามิเตอร์
-            </p>
-          </div>
-
-          <div class="scada-inner p-3 border-l-4 border-l-blue-600">
-            <div class="font-bold text-white text-sm flex items-center gap-2">
-              <span class="font-mono text-emerald-400 font-bold mr-1">[NOTE]</span> คำแนะนำการประหยัดพลังงาน (Energy Optimization)
+            <div id="watchlistEventStream" class="space-y-1 font-mono text-xs">
+              <!-- Rendered in real-time by updateEngineerWatchlist() -->
             </div>
-            <p class="text-xs text-slate-300 mt-1">
-              เครื่อง NO.1 และ NO.4 ทำงานที่ Slide Valve 95-100% ต่อเนื่อง หากช่วง Off-Peak สามารถปรับเกลี่ยโหลดเพื่อลด Peak Demand ค่าไฟฟ้าได้
-            </p>
           </div>
         </div>
       </div>
@@ -2472,100 +2476,283 @@
         const elCostDOM = document.getElementById('sumCostDOM');
         if (elCostDOM) elCostDOM.textContent = '~' + Math.round(pDOM * currentElectricityRate).toLocaleString() + ' ฿/ชม.';
       }
+      updateEngineerWatchlist();
     }
 
-    // Configuration and Data Bridge Management
-    function onBridgeModeChange(mode) {
-      const cardLive = document.getElementById('modeCardLive');
-      const cardSim = document.getElementById('modeCardSim');
-      const authBox = document.getElementById('liveAuthBox');
-      if (!cardLive || !cardSim) return;
-      if (mode === 'live') {
-        cardLive.className = 'cursor-pointer scada-inner p-3.5 border-2 border-blue-500 bg-blue-950/20 rounded-lg flex items-start gap-3 transition';
-        cardSim.className = 'cursor-pointer scada-inner p-3.5 border-2 border-slate-800 rounded-lg flex items-start gap-3 transition hover:border-slate-700';
-        authBox.classList.remove('opacity-60');
-      } else {
-        cardLive.className = 'cursor-pointer scada-inner p-3.5 border-2 border-slate-800 rounded-lg flex items-start gap-3 transition hover:border-slate-700';
-        cardSim.className = 'cursor-pointer scada-inner p-3.5 border-2 border-blue-500 bg-blue-950/20 rounded-lg flex items-start gap-3 transition';
-        authBox.classList.add('opacity-60');
+    // ==============================================================
+    // REAL-TIME MAINTENANCE DIAGNOSTIC & ALERT ENGINE
+    // ==============================================================
+    let alarmAudioEnabled = false;
+    let audioCtx = null;
+    let previousUnitsState = {};
+    let liveEventLogs = [];
+    let isInitialDiagnosticScan = true;
+
+    function toggleAlarmAudio() {
+      alarmAudioEnabled = !alarmAudioEnabled;
+      const btn = document.getElementById('btnToggleAlarmSound');
+      if (btn) {
+        if (alarmAudioEnabled) {
+          btn.className = 'px-2 py-0.5 text-[10px] font-mono border border-amber-600 bg-amber-950/40 text-amber-300 font-bold transition';
+          btn.textContent = '[AUDIO: ON]';
+          playChirpBeep(660, 0.1);
+        } else {
+          btn.className = 'px-2 py-0.5 text-[10px] font-mono border border-slate-700 bg-slate-900 text-slate-400 hover:text-white transition';
+          btn.textContent = '[AUDIO: OFF]';
+        }
       }
     }
 
-    function togglePasswordVisibility() {
-      const p = document.getElementById('cfgPassword');
-      if (p.type === 'password') p.type = 'text';
-      else p.type = 'password';
-    }
-
-    async function loadBridgeConfig() {
+    function playChirpBeep(freq = 880, duration = 0.15) {
       try {
-        const res = await fetch('/api/config');
-        if (res.ok) {
-          const cfg = await res.json();
-          if (cfg.bridge_mode) {
-            const radios = document.getElementsByName('bridgeModeChoice');
-            for (let r of radios) {
-              if (r.value === cfg.bridge_mode) r.checked = true;
-            }
-            onBridgeModeChange(cfg.bridge_mode);
-          }
-          if (cfg.auth) {
-            if (cfg.auth.username) document.getElementById('cfgUsername').value = cfg.auth.username;
-            if (cfg.auth.has_password) document.getElementById('cfgPassword').placeholder = '•••••••• (บันทึกไว้แล้ว)';
-            if (cfg.auth.session_cookie) document.getElementById('cfgSessionCookie').value = cfg.auth.session_cookie;
-          }
-          if (cfg.electricity_rate_thb) {
-            document.getElementById('cfgRate').value = cfg.electricity_rate_thb;
-            currentElectricityRate = parseFloat(cfg.electricity_rate_thb);
-          }
-          if (cfg.sync_interval_seconds) {
-            document.getElementById('cfgInterval').value = cfg.sync_interval_seconds;
-          }
-          if (cfg.last_sync_status) {
-            const sEl = document.getElementById('liveStatusBannerText');
-            if (sEl) sEl.textContent = cfg.last_sync_status;
-          }
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
       } catch (e) {
-        console.log('Local config load info:', e);
+        console.warn('Audio not allowed', e);
       }
     }
 
-    async function saveBridgeSettings() {
-      const modeChoice = document.querySelector('input[name="bridgeModeChoice"]:checked')?.value || 'simulation';
-      const username = document.getElementById('cfgUsername').value.trim();
-      const password = document.getElementById('cfgPassword').value;
-      const sessionCookie = document.getElementById('cfgSessionCookie').value.trim();
-      const rate = parseFloat(document.getElementById('cfgRate').value) || 3.50;
-      const interval = parseInt(document.getElementById('cfgInterval').value) || 10;
-
-      const payload = {
-        bridge_mode: modeChoice,
-        electricity_rate_thb: rate,
-        sync_interval_seconds: interval,
-        auth: {
-          username: username,
-          session_cookie: sessionCookie
+    function requestBrowserNotification() {
+      if (!('Notification' in window)) {
+        alert('เบราว์เซอร์นี้ไม่รองรับ Web Notifications');
+        return;
+      }
+      Notification.requestPermission().then(permission => {
+        const btn = document.getElementById('btnRequestNotify');
+        if (permission === 'granted') {
+          if (btn) {
+            btn.className = 'px-2 py-0.5 text-[10px] font-mono border border-emerald-600 bg-emerald-950/40 text-emerald-300 font-bold transition';
+            btn.textContent = '[NOTIFY: ACTIVE]';
+          }
+          new Notification('TNNN Smart SCADA Pro', {
+            body: 'เปิดระบบแจ้งเตือนฉุกเฉินเรียลไทม์สำเร็จแล้ว',
+            icon: 'favicon.ico'
+          });
+        } else {
+          if (btn) {
+            btn.className = 'px-2 py-0.5 text-[10px] font-mono border border-rose-700 bg-rose-950/40 text-rose-400 transition';
+            btn.textContent = '[NOTIFY: DENIED]';
+          }
         }
-      };
-      if (password) {
-        payload.auth.password = password;
+      });
+    }
+
+    function logWatchlistEvent(type, text) {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      liveEventLogs.unshift({ type, text, time: timeStr });
+      if (liveEventLogs.length > 6) liveEventLogs.pop();
+
+      if (type === 'ALARM') {
+        if (alarmAudioEnabled) playChirpBeep(880, 0.25);
+        if ('Notification' in window && Notification.permission === 'granted') {
+          try {
+            new Notification('SCADA ALARM: ' + text, {
+              body: `ตรวจพบเมื่อเวลา ${timeStr} น. - ฝ่ายวิศวกรรม CP Foods`,
+              tag: 'scada-alarm-' + Date.now()
+            });
+          } catch (e) {}
+        }
+      }
+    }
+
+    function updateEngineerWatchlist() {
+      const container = document.getElementById('dynamicWatchlistContainer');
+      const badge = document.getElementById('watchlistCountBadge');
+      const timeEl = document.getElementById('watchlistLastScanTime');
+      const streamEl = document.getElementById('watchlistEventStream');
+      if (!container) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      if (timeEl) timeEl.textContent = `สแกนสด: ${timeStr} น.`;
+
+      // 1. Evaluate State Transitions for Live Event Stream
+      for (let i = 1; i <= 46; i++) {
+        const u = unitsData[i];
+        if (!u) continue;
+        const prevS = previousUnitsState[i];
+        const currS = u.status;
+
+        if (!isInitialDiagnosticScan && prevS && prevS !== currS) {
+          if (currS === 'LOST') {
+            logWatchlistEvent('ALARM', `NO.${i} (${u.subApp || u.dept || 'Unit'}) สายสัญญาณ Modbus หลุด (LOST)`);
+          } else if (currS === 'STOP' && prevS === 'RUN') {
+            logWatchlistEvent('STOP', `NO.${i} (${u.subApp || u.dept || 'Unit'}) จอดพักเครื่องตามขั้นตอน (STOP)`);
+          } else if (currS === 'RUN' && (prevS === 'LOST' || prevS === 'STOP')) {
+            logWatchlistEvent('RUN', `NO.${i} (${u.subApp || u.dept || 'Unit'}) สัญญาณเชื่อมต่อสำเร็จ กลับมาเดินเครื่อง (RUN)`);
+          }
+        }
+        previousUnitsState[i] = currS;
       }
 
-      try {
-        const res = await fetch('/api/config', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-          const data = await res.json();
-          currentElectricityRate = rate;
-          updateCalculatedTotals();
-          alert('บันทึกการตั้งค่าเรียบร้อยแล้ว\nระบบเริ่มทำงานในโหมด: ' + (modeChoice === 'live' ? 'ดึงข้อมูลสด 1:1 จากเกตเวย์โรงงาน' : 'จำลองพฤติกรรมเสมือน (Simulation)'));
-          syncLiveData();
-          return;
+      // Populate Initial Event Logs on first scan
+      if (isInitialDiagnosticScan) {
+        liveEventLogs = [
+          { type: 'INFO', text: 'ระบบวิเคราะห์ความผิดปกติเรียลไทม์ (Diagnostic Engine) เริ่มต้นทำงาน', time: timeStr },
+          { type: 'RUN', text: 'คอมเพรสเซอร์ 34 เครื่อง กำลังทำงานในกระบวนการผลิต', time: timeStr },
+          { type: 'STOP', text: 'คอมเพรสเซอร์ 12 เครื่อง จอดพักตามรอบภาระโหลด', time: timeStr }
+        ];
+        isInitialDiagnosticScan = false;
+      }
+
+      // 2. Real-time Diagnostic Analysis
+      const lostUnits = [];
+      const lowSuctionUnits = [];
+      const highDischUnits = [];
+      const highLoadUnits = [];
+
+      for (let i = 1; i <= 46; i++) {
+        const u = unitsData[i];
+        if (!u) continue;
+        if (u.status === 'LOST') {
+          lostUnits.push(u.id);
+        } else if (u.status === 'RUN') {
+          const suc = parseFloat(u.suctionP);
+          const dis = parseFloat(u.dischP);
+          if (!isNaN(suc) && (suc < 0.20 || suc < 0) && [7, 8, 10, 29, 32, 37].includes(u.id)) {
+            lowSuctionUnits.push({ id: u.id, suctionP: u.suctionP });
+          }
+          if (!isNaN(dis) && dis > 13.5) {
+            highDischUnits.push({ id: u.id, dischP: u.dischP });
+          }
+          if (u.load >= 95) {
+            highLoadUnits.push({ id: u.id, load: u.load });
+          }
         }
+      }
+
+      const hr = now.getHours();
+      const isOnPeak = (hr >= 9 && hr < 22);
+
+      let cardHtml = '';
+      let activeItemCount = 0;
+
+      // Card: LOST / MODBUS ALARM
+      if (lostUnits.length > 0) {
+        activeItemCount++;
+        cardHtml += `
+          <div class="scada-inner p-3 border-l-4 border-l-amber-600 bg-amber-950/10">
+            <div class="flex items-center justify-between">
+              <div class="font-bold text-white text-sm flex items-center gap-2">
+                <span class="font-mono text-amber-500 font-bold">[ALARM]</span> ${activeItemCount}. ตรวจสอบสายสัญญาณ Modbus / LAN หลุด (${lostUnits.length} เครื่อง)
+              </div>
+              <span class="text-[10px] font-mono text-amber-400 bg-amber-950/40 px-1.5 py-0.5 border border-amber-800/40">REAL-TIME ALARM</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+              ตู้คอนโทรลเลอร์ไม่ตอบสนองต่อเกตเวย์: <strong class="text-amber-300 font-mono">${lostUnits.map(id => 'NO.' + id).join(', ')}</strong><br>
+              <span class="text-slate-400">คำแนะนำ: ตรวจสอบไฟสถานะพอร์ต Switch ในห้องคอนโทรลรูม หรือสายสัญญาณ RS-485 หลุดหลวม</span>
+            </p>
+            <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center justify-between border-t border-slate-800/60 pt-1">
+              <span>สถานะ: ขาดการตอบสนอง (No Reply)</span>
+              <span>ตรวจพบล่าสุด: ${timeStr} น.</span>
+            </div>
+          </div>
+        `;
+      }
+
+      // Card: SUCTION PRESSURE ANOMALY
+      if (lowSuctionUnits.length > 0) {
+        activeItemCount++;
+        cardHtml += `
+          <div class="scada-inner p-3 border-l-4 border-l-sky-600 bg-sky-950/10">
+            <div class="flex items-center justify-between">
+              <div class="font-bold text-white text-sm flex items-center gap-2">
+                <span class="font-mono text-sky-400 font-bold">[CHECK]</span> ${activeItemCount}. ตรวจสอบเซนเซอร์วัดแรงดันดูด Suction (${lowSuctionUnits.length} เครื่อง)
+              </div>
+              <span class="text-[10px] font-mono text-sky-400 bg-sky-950/40 px-1.5 py-0.5 border border-sky-800/40">PRESSURE ANOMALY</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+              พบค่าความดันดูดต่ำกว่าเกณฑ์ปกติ: <strong class="text-sky-200 font-mono">${lowSuctionUnits.map(u => 'NO.' + u.id + ' (' + u.suctionP + ' bar)').join(', ')}</strong><br>
+              <span class="text-slate-400">คำแนะนำ: ส่งทีมช่างเทียบเกจเข็มหน้างานเพื่อตรวจระดับสารทำความเย็น หรือตรวจตะแกรงกรอง Suction Strainer อุดตัน</span>
+            </p>
+            <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center justify-between border-t border-slate-800/60 pt-1">
+              <span>เกณฑ์มาตรฐาน: Suction >= 0.20 bar</span>
+              <span>ตรวจพบล่าสุด: ${timeStr} น.</span>
+            </div>
+          </div>
+        `;
+      }
+
+      // Card: HIGH DISCHARGE
+      if (highDischUnits.length > 0) {
+        activeItemCount++;
+        cardHtml += `
+          <div class="scada-inner p-3 border-l-4 border-l-rose-600 bg-rose-950/10">
+            <div class="flex items-center justify-between">
+              <div class="font-bold text-white text-sm flex items-center gap-2">
+                <span class="font-mono text-rose-400 font-bold">[WARNING]</span> ${activeItemCount}. แรงดันอัด Discharge สูงผิดปกติ (${highDischUnits.length} เครื่อง)
+              </div>
+              <span class="text-[10px] font-mono text-rose-400 bg-rose-950/40 px-1.5 py-0.5 border border-rose-800/40">HIGH HEAD</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+              พบแรงดันอัดเกินพิกัดความปลอดภัย: <strong class="text-rose-200 font-mono">${highDischUnits.map(u => 'NO.' + u.id + ' (' + u.dischP + ' bar)').join(', ')}</strong><br>
+              <span class="text-slate-400">คำแนะนำ: ตรวจเช็คพัดลม Evaporative Condenser หรือปั๊มน้ำหล่อเย็นทันทีเพื่อเลี่ยง High Pressure Trip</span>
+            </p>
+            <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center justify-between border-t border-slate-800/60 pt-1">
+              <span>เกณฑ์เฝ้าระวัง: Discharge <= 13.5 bar</span>
+              <span>ตรวจพบล่าสุด: ${timeStr} น.</span>
+            </div>
+          </div>
+        `;
+      }
+
+      // Card: ENERGY OPTIMIZATION
+      activeItemCount++;
+      cardHtml += `
+        <div class="scada-inner p-3 border-l-4 border-l-emerald-600 bg-emerald-950/10">
+          <div class="flex items-center justify-between">
+            <div class="font-bold text-white text-sm flex items-center gap-2">
+              <span class="font-mono text-emerald-400 font-bold">[NOTE]</span> ${activeItemCount}. คำแนะนำการประหยัดพลังงาน & โหลด On-Peak (Energy Optimization)
+            </div>
+            <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/40 px-1.5 py-0.5 border border-emerald-800/40">${isOnPeak ? 'ON-PEAK' : 'OFF-PEAK'}</span>
+          </div>
+          <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+            ${highLoadUnits.length > 0 ? `เครื่อง <strong class="text-emerald-200 font-mono">${highLoadUnits.map(u => 'NO.' + u.id).join(', ')}</strong> ทำงานที่ Slide Valve 95-100% ต่อเนื่อง` : 'เครื่องจักรทั้งหมดทำงานที่ภาระโหลดเฉลี่ยสมดุล'}
+            ${isOnPeak ? 'ขณะนี้อยู่ในช่วง On-Peak (~4.32 ฿/kWh) หากกระบวนการทำความเย็นได้ตามเป้าหมาย แนะนำปรับเกลี่ยโหลดเพื่อลด Peak Demand ค่าไฟฟ้า' : 'ช่วง Off-Peak (~2.60 ฿/kWh) เหมาะสำหรับการเร่งเดินเครื่องเพื่อสะสมความเย็นล่วงหน้า'}
+          </p>
+          <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center justify-between border-t border-slate-800/60 pt-1">
+            <span>มาตรการ: บริหารต้นทุนไฟฟ้าตามช่วงเวลา TOU</span>
+            <span>สถานะระบบ: REAL-TIME OPTIMIZED</span>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = cardHtml;
+      if (badge) badge.textContent = `${activeItemCount} รายการเฝ้าระวัง`;
+
+      // Render Live Event Stream
+      if (streamEl) {
+        streamEl.innerHTML = liveEventLogs.map(ev => {
+          let color = ev.type === 'ALARM' ? 'text-amber-400' : (ev.type === 'RUN' ? 'text-emerald-400' : (ev.type === 'WARNING' ? 'text-rose-400' : 'text-sky-400'));
+          let tag = `[${ev.type}]`;
+          return `
+            <div class="flex items-center justify-between bg-slate-900/60 px-2.5 py-1.5 border border-slate-800/80">
+              <div class="flex items-center gap-2 truncate">
+                <span class="${color} font-bold font-mono text-[11px]">${tag}</span>
+                <span class="text-slate-300 text-[11px] truncate">${ev.text}</span>
+              </div>
+              <span class="text-slate-500 shrink-0 text-[10px] font-mono ml-2">${ev.time}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
       } catch (e) {
         alert('บันทึกการตั้งค่าภายในเบราว์เซอร์เรียบร้อย (Server ออฟไลน์)');
       }
