@@ -159,7 +159,7 @@
 
         <!-- Small Settings Gear Button (Hidden/Subtle beside Clock) -->
         <button id="btnHeaderSettings" onclick="toggleSettingsTab()" title="ตั้งค่าระบบ Data Bridge (Data Source & Credentials)" class="scada-inner px-2.5 py-1.5 text-slate-400 hover:text-white hover:border-slate-500 border border-slate-800 rounded transition flex items-center justify-center group" aria-label="Settings">
-          <span class="text-sm transition-transform group-hover:rotate-45">⚙️</span>
+          <span class="text-xs font-mono font-bold tracking-wider text-slate-300">CONFIG</span>
         </button>
       </div>
     </header>
@@ -169,19 +169,19 @@
     <!-- ============================================== -->
     <nav class="scada-card p-2 flex flex-wrap items-center gap-2">
       <button class="nav-tab-btn active" data-tab="summary" onclick="switchMainTab('summary')">
-        <span>📊</span> สรุปภาพรวม (Executive Summary)
+        สรุปภาพรวม (Executive Summary)
       </button>
       <button class="nav-tab-btn" data-tab="dept-slh" onclick="switchMainTab('dept-slh')">
-        <span>🏭</span> SLH - โรงเชือดไก่ (27 เครื่อง)
+        SLH - โรงเชือดไก่ (27 เครื่อง)
       </button>
       <button class="nav-tab-btn" data-tab="dept-fut" onclick="switchMainTab('dept-fut')">
-        <span>🍗</span> FUT - ปรุงสุกแปรรูป (17 เครื่อง)
+        FUT - ปรุงสุกแปรรูป (17 เครื่อง)
       </button>
       <button class="nav-tab-btn" data-tab="dept-dom" onclick="switchMainTab('dept-dom')">
-        <span>📦</span> Domestic - คลังสินค้า (2 เครื่อง)
+        Domestic - คลังสินค้า (2 เครื่อง)
       </button>
       <button class="nav-tab-btn" data-tab="analytics" onclick="switchMainTab('analytics')">
-        <span>📈</span> วิเคราะห์การใช้พลังงาน & ค่าไฟ
+        วิเคราะห์การใช้พลังงาน & ค่าไฟ
       </button>
     </nav>
 
@@ -266,7 +266,7 @@
         <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
           <div>
             <span class="text-sm font-bold text-white flex items-center gap-2">
-              <span>🏭</span> การจัดสรรคอมเพรสเซอร์ตามกระบวนการผลิต (Process & Stage Allocation)
+              การจัดสรรคอมเพรสเซอร์ตามกระบวนการผลิต (Process & Stage Allocation)
             </span>
             <div class="text-xs text-slate-400 mt-0.5">อ้างอิงผังจัดสรรเครื่องจักรแท้ 46 เครื่อง โรงงานแปรรูปเนื้อไก่ นครราชสีมา (CPF Korat)</div>
           </div>
@@ -427,7 +427,7 @@
 
           <div class="scada-inner p-3 border-l-4 border-l-amber-600">
             <div class="font-bold text-white text-sm flex items-center gap-2">
-              <span>⚠️</span> 1. ตรวจสอบสายสัญญาณ Modbus / LAN หลุด (9 เครื่อง)
+              <span class="font-mono text-amber-500 font-bold mr-1">[ALARM]</span> 1. ตรวจสอบสายสัญญาณ Modbus / LAN หลุด (9 เครื่อง)
             </div>
             <p class="text-xs text-slate-300 mt-1">
               ตู้คอนโทรลเลอร์ไม่ตอบสนองต่อเกตเวย์: <strong class="text-amber-300">NO. 2, 6, 9, 11, 16, 21, 23, 35, 44</strong> แนะนำตรวจสอบไฟสถานะพอร์ต Switch ในห้องควบคุม
@@ -436,7 +436,7 @@
 
           <div class="scada-inner p-3 border-l-4 border-l-slate-600">
             <div class="font-bold text-white text-sm flex items-center gap-2">
-              <span>🔍</span> 2. ตรวจสอบเซนเซอร์วัดแรงดันดูด Suction (6 เครื่อง)
+              <span class="font-mono text-sky-400 font-bold mr-1">[CHECK]</span> 2. ตรวจสอบเซนเซอร์วัดแรงดันดูด Suction (6 เครื่อง)
             </div>
             <p class="text-xs text-slate-300 mt-1">
               พบค่าความดันดูดต่ำกว่าเกณฑ์ปกติ: <strong class="text-slate-200">NO. 7, 8, 10, 29, 32, 37</strong> ควรส่งทีมช่างเทียบเกจเข็มหน้างานเพื่อยืนยันพารามิเตอร์
@@ -445,7 +445,7 @@
 
           <div class="scada-inner p-3 border-l-4 border-l-blue-600">
             <div class="font-bold text-white text-sm flex items-center gap-2">
-              <span>💡</span> แนะนำการประหยัดพลังงาน (Energy Optimization)
+              <span class="font-mono text-emerald-400 font-bold mr-1">[NOTE]</span> คำแนะนำการประหยัดพลังงาน (Energy Optimization)
             </div>
             <p class="text-xs text-slate-300 mt-1">
               เครื่อง NO.1 และ NO.4 ทำงานที่ Slide Valve 95-100% ต่อเนื่อง หากช่วง Off-Peak สามารถปรับเกลี่ยโหลดเพื่อลด Peak Demand ค่าไฟฟ้าได้
@@ -470,10 +470,10 @@
 
         <div class="flex items-center gap-2">
           <button id="btnViewModeGrid" onclick="switchFleetViewMode('grid')" class="px-3 py-1.5 rounded text-xs font-semibold bg-slate-700 text-white border border-slate-500 transition">
-            ⊞ มุมมองการ์ดรวม
+            มุมมองการ์ดรวม
           </button>
           <button id="btnViewModeStage" onclick="switchFleetViewMode('stage')" class="px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
-            🖥️ มุมมองเจาะลึก 3D รายเครื่อง
+            มุมมองเจาะลึก 3D รายเครื่อง
           </button>
         </div>
       </div>
@@ -482,7 +482,7 @@
       <div class="scada-card p-3 flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
-            <span>🔍</span> กรองตามการใช้งาน:
+            กรองตามการใช้งาน:
           </span>
           <div id="fleetSubAppFilterPills" class="flex flex-wrap gap-1.5 text-xs">
             <!-- Dynamically populated based on active department -->
@@ -526,7 +526,7 @@
                 <h2 id="dispUnitTag" class="text-2xl font-bold text-white font-mono-num">NO.1 FUT.NO.1</h2>
                 <span id="dispUnitModel" class="px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 text-xs font-mono font-medium border border-slate-700">MIII</span>
                 <span id="dispUnitStageBadge" class="px-2.5 py-0.5 rounded text-xs font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 font-mono">High Stage</span>
-                <span id="dispUnitLocationBadge" class="px-2.5 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">📍 Office (ปรับอากาศสำนักงาน)</span>
+                <span id="dispUnitLocationBadge" class="px-2.5 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">Office (ปรับอากาศสำนักงาน)</span>
               </div>
               <div id="dispUnitZone" class="text-xs text-slate-400 mt-1">แผนกปรุงสุกแปรรูป · กลุ่ม: HVAC · IP: 172.16.22.1</div>
             </div>
@@ -536,7 +536,7 @@
                 RUN
               </span>
               <button onclick="switchMainTab('summary')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-medium transition">
-                📊 สรุปโรงงาน
+                สรุปโรงงาน
               </button>
             </div>
           </div>
@@ -559,7 +559,7 @@
                 <span id="stageMachineIp">172.16.22.1</span>
               </div>
               <div class="text-[10px] text-cyan-400 font-sans mt-1 flex items-center gap-1.5 border-t border-slate-800 pt-1">
-                <span id="stageMachineLocation">📍 Office (ปรับอากาศสำนักงาน)</span>
+                <span id="stageMachineLocation">Office (ปรับอากาศสำนักงาน)</span>
                 <span class="text-slate-600">•</span>
                 <span id="stageMachineStage" class="text-indigo-300 font-mono">High Stage</span>
               </div>
@@ -575,7 +575,7 @@
 
             <!-- Lost Warning Banner (appears when unit is LINK LOST) -->
             <div id="stageAlertLost" class="hidden absolute top-16 left-4 right-4 scada-inner p-2 border border-amber-800/80 bg-amber-950/85 text-amber-300 text-xs flex items-center gap-2 z-20 shadow-lg">
-              <span>⚠️</span>
+              <span class="font-mono font-bold text-amber-400">[OFFLINE]</span>
               <span><strong>คำเตือน:</strong> ลิงก์สื่อสาร Modbus ขัดข้อง (LINK LOST) — คอนโทรลเลอร์ไม่ตอบสนองต่อ Gateway ค่าพารามิเตอร์อาจไม่อัปเดต</span>
             </div>
 
@@ -716,7 +716,7 @@
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-amber-400 flex items-center gap-1.5">
-                <span>⚡</span> ช่วงอัตราสูงสุด On-Peak (09:00 - 22:00)
+                ช่วงอัตราสูงสุด On-Peak (09:00 - 22:00)
               </div>
               <div class="text-xl font-bold font-mono-num text-white mt-1" id="kpiOnPeakAvg">4,450.4 kW</div>
               <div class="text-[11px] text-slate-400 mt-0.5">เฉลี่ย 13 ชั่วโมงทำการหลัก</div>
@@ -740,7 +740,7 @@
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1.5">
-                <span>🌙</span> ช่วงอัตราต่ำ Off-Peak (22:00 - 09:00)
+                ช่วงอัตราต่ำ Off-Peak (22:00 - 09:00)
               </div>
               <div class="text-xl font-bold font-mono-num text-white mt-1" id="kpiOffPeakAvg">2,919.9 kW</div>
               <div class="text-[11px] text-slate-400 mt-0.5">เฉลี่ย 11 ชั่วโมงรอบกลางคืน</div>
@@ -764,7 +764,7 @@
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-blue-400 flex items-center gap-1.5">
-                <span>💰</span> ผลต่างต้นทุน & ศักยภาพการประหยัด
+                ผลต่างต้นทุน & ศักยภาพการประหยัด
               </div>
               <div class="text-xl font-bold font-mono-num text-white mt-1">ประหยัด 1.72 ฿/kWh</div>
               <div class="text-[11px] text-slate-400 mt-0.5">อัตรา Off-Peak ถูกกว่า On-Peak ถึง -39.8%</div>
@@ -791,7 +791,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-800">
           <div>
             <div class="flex items-center gap-2">
-              <span class="text-base">📈</span>
+              
               <h3 class="font-bold text-white text-base">แนวโน้มการใช้ไฟฟ้ารายชั่วโมง 24h (24h Power Timeline)</h3>
               <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-400 font-mono text-[10px] font-bold border border-blue-800/60">ภายในกราฟเดียว</span>
             </div>
@@ -809,13 +809,13 @@
         <!-- ON-PEAK / OFF-PEAK ZONE BANNER HEADER OVER CHART -->
         <div class="flex w-full text-[11px] font-semibold text-center select-none pt-1">
           <div style="width: 37.5%;" class="bg-slate-900/80 text-emerald-400 py-1.5 rounded-l border border-slate-800 flex items-center justify-center gap-1.5">
-            <span>🌙</span> <span>ช่วง Off-Peak (00:00 - 09:00)</span> <span class="font-mono text-slate-400 text-[10px]">(~2.60 ฿/หน่วย)</span>
+            <span>ช่วง Off-Peak (00:00 - 09:00)</span> <span class="font-mono text-slate-400 text-[10px]">(~2.60 ฿/หน่วย)</span>
           </div>
           <div style="width: 54.17%;" class="bg-amber-950/40 text-amber-300 py-1.5 border-t border-b border-amber-600/50 flex items-center justify-center gap-1.5 shadow-sm">
-            <span>⚡</span> <span>ช่วง On-Peak (09:00 - 22:00) · โหลดไฟฟ้าสูงสุด</span> <span class="font-mono text-amber-400 font-bold text-[10px]">(~4.32 ฿/หน่วย)</span>
+            <span>ช่วง On-Peak (09:00 - 22:00) · โหลดไฟฟ้าสูงสุด</span> <span class="font-mono text-amber-400 font-bold text-[10px]">(~4.32 ฿/หน่วย)</span>
           </div>
           <div style="width: 8.33%;" class="bg-slate-900/80 text-emerald-400 py-1.5 rounded-r border border-slate-800 flex items-center justify-center gap-1">
-            <span>🌙</span> <span class="truncate">Off-Peak</span>
+            <span class="truncate">ช่วง Off-Peak (22:00 - 24:00)</span>
           </div>
         </div>
 
@@ -854,7 +854,7 @@
           <div class="flex justify-between items-center pb-2 border-b border-slate-800">
             <div>
               <h4 class="font-bold text-white text-sm flex items-center gap-2">
-                <span>📋</span> ตารางเปรียบเทียบภาระไฟฟ้า On-Peak vs Off-Peak ทุกระบบ (9 Sub-Applications)
+                ตารางเปรียบเทียบภาระไฟฟ้า On-Peak vs Off-Peak ทุกระบบ (9 Sub-Applications)
               </h4>
               <div class="text-xs text-slate-400">วิเคราะห์ความต่างของกำลังไฟฟ้าและต้นทุนค่าไฟเพื่อการบริหารจัดการ Peak Demand</div>
             </div>
@@ -886,7 +886,7 @@
         <div class="lg:col-span-4 scada-card p-4 space-y-3 flex flex-col justify-between">
           <div>
             <h4 class="font-bold text-white text-sm pb-2 border-b border-slate-800 flex items-center gap-2">
-              <span>🏢</span> สัดส่วนค่าไฟตามแผนก (Department Cost Share)
+              สัดส่วนค่าไฟตามแผนก (Department Cost Share)
             </h4>
             
             <div class="space-y-3 pt-3">
@@ -924,7 +924,7 @@
 
           <div class="scada-inner p-3 rounded text-xs text-slate-300 space-y-1.5 border border-slate-800/80 mt-4">
             <div class="font-bold text-amber-400 flex items-center gap-1.5">
-              <span>💡</span> กลยุทธ์การลดค่าไฟ Peak Shifting:
+              <span class="font-mono font-bold text-amber-400">[STRATEGY]</span> กลยุทธ์การลดค่าไฟ Peak Shifting:
             </div>
             <div class="text-[11px] text-slate-400 leading-relaxed">
               • <strong>Water Chill & Glycol:</strong> เดินเครื่องทำน้ำเย็นกักเก็บสะสมความเย็นล่วงหน้าช่วง Off-Peak (ก่อน 09:00) เพื่อลดภาระช่วง On-Peak<br>
@@ -948,11 +948,11 @@
         <div class="flex flex-wrap justify-between items-center pb-3 border-b border-slate-800 gap-2">
           <div class="flex items-center gap-3">
             <button onclick="toggleSettingsTab()" class="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition flex items-center gap-1.5">
-              <span>◀</span> ย้อนกลับหน้าแดชบอร์ด
+              ย้อนกลับหน้าแดชบอร์ด
             </button>
             <div>
               <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <span>⚙️</span> ตั้งค่าระบบ Data Bridge (เชื่อมต่อข้อมูลสด 1:1)
+                ตั้งค่าระบบ Data Bridge (เชื่อมต่อข้อมูลสด 1:1)
               </h2>
               <div class="text-xs text-slate-400">ควบคุมแหล่งข้อมูล: เชื่อมต่อสดตรงกับ Gateway โรงงาน หรือ โหมดจำลองพฤติกรรมเสมือน</div>
             </div>
@@ -973,7 +973,7 @@
               <input type="radio" name="bridgeModeChoice" value="live" class="mt-1" onchange="onBridgeModeChange('live')">
               <div>
                 <div class="font-bold text-white flex items-center gap-1.5">
-                  <span class="text-emerald-400 font-bold">🟢 โหมดดึงข้อมูลสด 1:1 (Live Gateway Bridge)</span>
+                  <span class="text-emerald-400 font-bold">[โหมด 1] ดึงข้อมูลสด 1:1 (Live Gateway Bridge)</span>
                 </div>
                 <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
                   เชื่อมต่อเกตเวย์ <code class="text-slate-200">B019217D9612KR</code> ดึงตัวเลขจริง ณ วินาทีนั้นจากหน้างาน 1:1 (ต้องระบุบัญชีผู้ใช้ หรือ Cookie)
@@ -986,7 +986,7 @@
               <input type="radio" name="bridgeModeChoice" value="simulation" checked class="mt-1" onchange="onBridgeModeChange('simulation')">
               <div>
                 <div class="font-bold text-white flex items-center gap-1.5">
-                  <span class="text-blue-400 font-bold">🔵 โหมดจำลองเสมือนจริง (Simulation Demo)</span>
+                  <span class="text-blue-400 font-bold">[โหมด 2] จำลองเสมือนจริง (Simulation Demo)</span>
                 </div>
                 <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
                   จำลองสัญญาณด้วยโมเดลความผันผวนทางวิศวกรรม (Jitter) ตามโปรไฟล์เดิม 46 เครื่อง เหมาะสำหรับใช้งานออฟไลน์หรือนำเสนอ
@@ -1000,7 +1000,7 @@
         <div id="liveAuthBox" class="space-y-3 scada-inner p-4 border border-slate-700/80 rounded-lg text-xs bg-slate-900/60 opacity-60 transition-opacity">
           <div class="flex items-center justify-between pb-2 border-b border-slate-800">
             <span class="font-bold text-white flex items-center gap-2">
-              <span>🔐</span> บัญชีเข้าใช้งาน TNNN-Link สำหรับดึงข้อมูลสด 1:1
+              ข้อมูลบัญชีเข้าใช้งาน TNNN-Link สำหรับดึงข้อมูลสด 1:1
             </span>
             <span class="text-[10px] text-slate-400">บันทึกบนเครื่องของคุณเท่านั้น (Local Config) ปลอดภัย 100%</span>
           </div>
@@ -1015,7 +1015,7 @@
               <label class="block text-slate-300 font-medium mb-1">Password (รหัสผ่าน TNNN-Link):</label>
               <div class="relative">
                 <input type="password" id="cfgPassword" placeholder="••••••••" class="w-full px-3 py-2 rounded bg-slate-950 border border-slate-800 text-white font-mono text-xs focus:border-blue-500 outline-none pr-10">
-                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-2.5 top-2 text-slate-500 hover:text-slate-300 text-xs">👁️</button>
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-200 text-[10px] font-mono font-bold">SHOW</button>
               </div>
             </div>
           </div>
@@ -1058,20 +1058,20 @@
             <span id="liveStatusBannerText" class="font-mono text-slate-200 font-semibold">กำลังตรวจสอบสถานะ...</span>
           </div>
           <button onclick="syncLiveData()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] transition">
-            🔄 รีเฟรชเดี๋ยวนี้
+            รีเฟรชข้อมูลเดี๋ยวนี้
           </button>
         </div>
 
         <!-- Save Button -->
         <button onclick="saveBridgeSettings()" class="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition shadow-md flex items-center justify-center gap-2">
-          <span>💾</span> บันทึกการตั้งค่าและเริ่มดึงข้อมูล (Save & Connect)
+          บันทึกการตั้งค่าและเริ่มดึงข้อมูล (Save & Connect)
         </button>
 
         <!-- Section 4: 1-Click Bookmarklet Ingest Option -->
         <div class="mt-4 pt-4 border-t border-slate-800 text-xs space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-bold text-white flex items-center gap-1.5">
-              <span>⚡</span> ทางเลือกที่ 3: ปุ่มซิงค์สด 1 คลิก (จากหน้าเว็บ TNNN-Link ที่เปิดล็อกอินอยู่แล้ว)
+              ทางเลือกที่ 3: ปุ่มซิงค์สด 1 คลิก (Bookmarklet Sync) (จากหน้าเว็บ TNNN-Link ที่เปิดล็อกอินอยู่แล้ว)
             </span>
             <span class="text-[10px] text-emerald-400 font-medium bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded">ไม่ต้องกรอกรหัสผ่าน</span>
           </div>
@@ -1080,9 +1080,9 @@
           </p>
           <div class="flex items-center gap-2">
             <button onclick="copyIngestBookmarklet()" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium transition flex items-center gap-1.5">
-              📋 คัดลอกโค้ด Bookmarklet ซิงค์สด 1:1
+              คัดลอกโค้ด Bookmarklet ซิงค์สด 1:1
             </button>
-            <span id="copyBookmarkletDone" class="text-[11px] text-emerald-400 hidden">✓ คัดลอกแล้ว! นำไปวางในแถบบุ๊กมาร์กได้เลย</span>
+            <span id="copyBookmarkletDone" class="text-[11px] text-emerald-400 hidden">คัดลอกเรียบร้อยแล้ว! นำไปวางในแถบบุ๊กมาร์กได้เลย</span>
           </div>
         </div>
 
@@ -1108,12 +1108,12 @@
           <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 mt-1">
             <span id="mSubDetail">แผนกปรุงสุกแปรรูป · 172.16.22.1</span>
             <span>•</span>
-            <span id="mLocationText" class="text-cyan-400 font-medium">📍 Office (ปรับอากาศสำนักงาน)</span>
+            <span id="mLocationText" class="text-cyan-400 font-medium">Office (ปรับอากาศสำนักงาน)</span>
           </div>
         </div>
         <div class="flex items-center gap-2">
           <span id="mStatusBadge" class="px-2.5 py-0.5 rounded text-xs font-semibold bg-slate-800 text-emerald-400 border border-slate-700">RUN</span>
-          <button onclick="closeModal()" class="w-7 h-7 rounded bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs font-bold transition ml-1">✕</button>
+          <button onclick="closeModal()" class="px-2 py-1 bg-slate-800 text-slate-400 hover:text-white font-mono text-xs font-bold transition ml-1">CLOSE</button>
         </div>
       </div>
 
@@ -1632,7 +1632,7 @@
                 <span>${u.tag}</span>
                 ${stageBadge}
               </div>
-              <div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[140px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
+              <div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[140px]" title="${u.subApp} · ${u.location}">${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
             </div>
           </div>
           <div class="text-right">
@@ -1699,7 +1699,7 @@
                   <span>${u.tag.replace('NO.' + i + ' ', '')}</span>
                   ${stageBadge}
                 </div>
-                <div class="text-[10px] text-slate-400 font-sans mt-0.5 truncate max-w-[170px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
+                <div class="text-[10px] text-slate-400 font-sans mt-0.5 truncate max-w-[170px]" title="${u.subApp} · ${u.location}">${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
               </div>
               <div>${statusBadge}</div>
             </div>
@@ -1748,7 +1748,7 @@
       }
       const locBadgeEl = document.getElementById('dispUnitLocationBadge');
       if (locBadgeEl) {
-        locBadgeEl.textContent = `📍 ${u.location}`;
+        locBadgeEl.textContent = `${u.location}`;
       }
 
       document.getElementById('dispUnitZone').textContent = `${u.zoneName} · กลุ่ม: ${u.category} · IP: ${u.ip}`;
@@ -1778,7 +1778,7 @@
       document.getElementById('stageMachineIp').textContent = u.ip;
       
       const smLoc = document.getElementById('stageMachineLocation');
-      if (smLoc) smLoc.textContent = `📍 ${u.location}`;
+      if (smLoc) smLoc.textContent = `${u.location}`;
       const smStage = document.getElementById('stageMachineStage');
       if (smStage) {
         smStage.textContent = `${u.stage} Stage`;
@@ -1914,7 +1914,7 @@
           : 'px-2 py-0.5 rounded text-xs font-mono font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-800/80';
       }
       const mLoc = document.getElementById('mLocationText');
-      if (mLoc) mLoc.textContent = `📍 ${u.location}`;
+      if (mLoc) mLoc.textContent = `${u.location}`;
 
       document.getElementById('mSubDetail').textContent = `${u.zoneName} · ${u.ip}`;
       document.getElementById('mKwh').textContent = u.kwh;
@@ -2248,7 +2248,7 @@
         allBtn.className = (currentTrendFilterApp === 'ALL')
           ? 'px-2.5 py-1 rounded bg-slate-700 text-white font-semibold border border-slate-500 text-xs shadow-sm cursor-pointer'
           : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
-        allBtn.textContent = '⊞ ทั้งหมด (Stacked)';
+        allBtn.textContent = 'ทั้งหมด (Stacked 9 ระบบ)';
         allBtn.onclick = () => setTrendSubAppFilter('ALL');
         pillsContainer.appendChild(allBtn);
 
@@ -2384,10 +2384,10 @@
       tooltip.innerHTML = `
         <div class="flex justify-between items-center pb-1.5 mb-1.5 border-b border-slate-700">
           <div class="font-bold text-white text-xs flex items-center gap-1.5">
-            <span>⏱️</span> <span>เวลา ${hData.hourStr}</span>
+            <span>เวลา ${hData.hourStr}</span>
           </div>
           <span class="px-1.5 py-0.2 rounded text-[9px] font-bold ${hData.isPeak ? 'bg-amber-950 text-amber-300 border border-amber-700' : 'bg-emerald-950 text-emerald-300 border border-emerald-700'}">
-            ${hData.isPeak ? '⚡ On-Peak' : '🌙 Off-Peak'}
+            ${hData.isPeak ? 'ON-PEAK' : 'OFF-PEAK'}
           </span>
         </div>
         <div class="flex justify-between items-center font-mono-num mb-1 text-xs">
@@ -2562,7 +2562,7 @@
           const data = await res.json();
           currentElectricityRate = rate;
           updateCalculatedTotals();
-          alert('✅ บันทึกการตั้งค่าเรียบร้อยแล้ว!\nระบบเริ่มทำงานในโหมด: ' + (modeChoice === 'live' ? '🟢 ดึงข้อมูลสด 1:1 จากเกตเวย์โรงงาน' : '🔵 จำลองพฤติกรรมเสมือน (Simulation)'));
+          alert('บันทึกการตั้งค่าเรียบร้อยแล้ว\nระบบเริ่มทำงานในโหมด: ' + (modeChoice === 'live' ? 'ดึงข้อมูลสด 1:1 จากเกตเวย์โรงงาน' : 'จำลองพฤติกรรมเสมือน (Simulation)'));
           syncLiveData();
           return;
         }
@@ -2572,7 +2572,7 @@
     }
 
     function copyIngestBookmarklet() {
-      const code = `javascript:(function(){const arts=document.querySelectorAll('article'),u={};arts.forEach(a=>{const t=a.querySelector('.no-tag');if(!t)return;const m=t.textContent.match(/NO\.(\d+)/);if(!m)return;const id=parseInt(m[1]),st=a.querySelector('[data-k="status-label"]'),kw=a.querySelector('[data-k="kW-btm"]'),su=a.querySelector('[data-k="suction-btm"]'),di=a.querySelector('[data-k="discharge-btm"]'),ld=a.querySelector('[data-k="load-btm"]'),am=a.querySelector('[data-k="v2-m-a"]');let s='RUN';if(st){const x=st.textContent.toUpperCase();if(x.includes('LOST'))s='LOST';else if(x.includes('STOP'))s='STOP';}u[id]={status:s,power_kw:kw?parseFloat(kw.textContent)||0:0,current_a:am?parseFloat(am.textContent)||0:0,suction_press_bar:su?parseFloat(su.textContent)||0:0,disch_press_bar:di?parseFloat(di.textContent)||0:0,load_pct:ld?parseInt(ld.textContent)||0:0};});fetch('http://localhost:8080/api/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({units:u})}).then(r=>r.json()).then(d=>alert('✅ ซิงค์สด 1:1 สำเร็จ ('+d.count+' เครื่อง)')).catch(e=>alert('❌ โปรดเปิด run_scada.bat ไว้ก่อน'));})();`;
+      const code = `javascript:(function(){const arts=document.querySelectorAll('article'),u={};arts.forEach(a=>{const t=a.querySelector('.no-tag');if(!t)return;const m=t.textContent.match(/NO\.(\d+)/);if(!m)return;const id=parseInt(m[1]),st=a.querySelector('[data-k="status-label"]'),kw=a.querySelector('[data-k="kW-btm"]'),su=a.querySelector('[data-k="suction-btm"]'),di=a.querySelector('[data-k="discharge-btm"]'),ld=a.querySelector('[data-k="load-btm"]'),am=a.querySelector('[data-k="v2-m-a"]');let s='RUN';if(st){const x=st.textContent.toUpperCase();if(x.includes('LOST'))s='LOST';else if(x.includes('STOP'))s='STOP';}u[id]={status:s,power_kw:kw?parseFloat(kw.textContent)||0:0,current_a:am?parseFloat(am.textContent)||0:0,suction_press_bar:su?parseFloat(su.textContent)||0:0,disch_press_bar:di?parseFloat(di.textContent)||0:0,load_pct:ld?parseInt(ld.textContent)||0:0};});fetch('http://localhost:8080/api/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({units:u})}).then(r=>r.json()).then(d=>alert('ซิงค์สด 1:1 สำเร็จ ('+d.count+' เครื่อง)')).catch(e=>alert('โปรดเปิด run_scada.bat ไว้ก่อน'));})();`;
       navigator.clipboard.writeText(code).then(() => {
         const hint = document.getElementById('copyBookmarkletDone');
         hint.classList.remove('hidden');
