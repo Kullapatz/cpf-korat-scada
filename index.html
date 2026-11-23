@@ -160,11 +160,14 @@
       <button class="nav-tab-btn active" data-tab="summary" onclick="switchMainTab('summary')">
         <span>📊</span> สรุปภาพรวม (Executive Summary)
       </button>
-      <button class="nav-tab-btn" data-tab="fleet-a" onclick="switchMainTab('fleet-a')">
-        <span>❄️</span> NO.1 - 22 (กลุ่มคอมเพรสเซอร์ 1)
+      <button class="nav-tab-btn" data-tab="dept-slh" onclick="switchMainTab('dept-slh')">
+        <span>🏭</span> SLH - โรงเชือดไก่ (27 เครื่อง)
       </button>
-      <button class="nav-tab-btn" data-tab="fleet-b" onclick="switchMainTab('fleet-b')">
-        <span>❄️</span> NO.23 - 46 (กลุ่มคอมเพรสเซอร์ 2)
+      <button class="nav-tab-btn" data-tab="dept-fut" onclick="switchMainTab('dept-fut')">
+        <span>🍗</span> FUT - ปรุงสุกแปรรูป (17 เครื่อง)
+      </button>
+      <button class="nav-tab-btn" data-tab="dept-dom" onclick="switchMainTab('dept-dom')">
+        <span>📦</span> Domestic - คลังสินค้า (2 เครื่อง)
       </button>
       <button class="nav-tab-btn" data-tab="analytics" onclick="switchMainTab('analytics')">
         <span>📈</span> วิเคราะห์การใช้พลังงาน & ค่าไฟ
@@ -370,47 +373,36 @@
             <span>สัดส่วนค่าไฟ / ชม.</span>
           </div>
           
-          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('SLT')">
+          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="switchMainTab('dept-slh')">
             <div>
-              <div class="font-bold text-white text-sm">1. แผนกโรงเชือดไก่ (SLT)</div>
-              <div class="text-xs text-slate-400">27 เครื่อง (รัน 20, พัก 2, หลุด 5)</div>
+              <div class="font-bold text-white text-sm">1. แผนกโรงเชือดไก่ (SLH)</div>
+              <div class="text-xs text-slate-400">27 เครื่อง · Air Blast 11, Cold 5, Air Chill 3, Chill 2, Glycol 2, Water Chill 2, Office 1, Spare 1</div>
             </div>
             <div class="text-right">
-              <div class="font-mono-num font-bold text-white text-sm">2,414.6 kW/h</div>
-              <div class="text-xs text-slate-400 font-mono-num">~8,451 ฿/ชม.</div>
+              <div class="font-mono-num font-bold text-white text-sm" id="sumPowerSLH">2,414.6 kW/h</div>
+              <div class="text-xs text-slate-400 font-mono-num" id="sumCostSLH">~8,451 ฿/ชม.</div>
             </div>
           </div>
 
-          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('SPF')">
+          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="switchMainTab('dept-fut')">
             <div>
-              <div class="font-bold text-white text-sm">2. แผนกตู้ฟรีซแช่แข็งไก่ (SPF)</div>
-              <div class="text-xs text-slate-400">9 เครื่อง (รัน 7, พัก 1, หลุด 1)</div>
+              <div class="font-bold text-white text-sm">2. แผนกแปรรูปปรุงสุก & ตู้ฟรีซ (FUT)</div>
+              <div class="text-xs text-slate-400">17 เครื่อง · IQF 9, Cold Room 3, Glycol 2, Chill Room 1, Office 1, Spare 1</div>
             </div>
             <div class="text-right">
-              <div class="font-mono-num font-bold text-white text-sm">1,483.5 kW/h</div>
-              <div class="text-xs text-slate-400 font-mono-num">~5,192 ฿/ชม.</div>
+              <div class="font-mono-num font-bold text-white text-sm" id="sumPowerFUT">2,289.1 kW/h</div>
+              <div class="text-xs text-slate-400 font-mono-num" id="sumCostFUT">~8,012 ฿/ชม.</div>
             </div>
           </div>
 
-          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('FUT')">
+          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="switchMainTab('dept-dom')">
             <div>
-              <div class="font-bold text-white text-sm">3. แผนกปรุงสุกแปรรูป (FUT)</div>
-              <div class="text-xs text-slate-400">8 เครื่อง (รัน 5, พัก 1, หลุด 2)</div>
+              <div class="font-bold text-white text-sm">3. แผนกคลังสินค้าห้องเย็น (Domestic)</div>
+              <div class="text-xs text-slate-400">2 เครื่อง · NO.9 และ NO.46 คลังสินค้าห้องเย็นสำเร็จรูป</div>
             </div>
             <div class="text-right">
-              <div class="font-mono-num font-bold text-white text-sm">805.6 kW/h</div>
-              <div class="text-xs text-slate-400 font-mono-num">~2,820 ฿/ชม.</div>
-            </div>
-          </div>
-
-          <div class="scada-inner p-3 flex justify-between items-center hover:border-slate-600 transition cursor-pointer" onclick="viewDepartment('DOM')">
-            <div>
-              <div class="font-bold text-white text-sm">4. แผนกคลังสินค้าห้องเย็น (DOM)</div>
-              <div class="text-xs text-slate-400">2 เครื่อง (รัน 1, หลุด 1)</div>
-            </div>
-            <div class="text-right">
-              <div class="font-mono-num font-bold text-white text-sm">122.1 kW/h</div>
-              <div class="text-xs text-slate-400 font-mono-num">~427 ฿/ชม.</div>
+              <div class="font-mono-num font-bold text-white text-sm" id="sumPowerDOM">122.1 kW/h</div>
+              <div class="text-xs text-slate-400 font-mono-num" id="sumCostDOM">~427 ฿/ชม.</div>
             </div>
           </div>
         </div>
@@ -458,20 +450,35 @@
     <!-- ============================================== -->
     <div id="tab-fleet" class="hidden space-y-4">
       
-      <!-- Sub-view Mode Switcher: Stage Focus vs 22 Cards Grid -->
+      <!-- Sub-view Mode Switcher: Stage Focus vs Cards Grid -->
       <div class="scada-card p-3 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <span id="fleetHeaderGroupTitle" class="font-bold text-white text-base">กลุ่มคอมเพรสเซอร์ 1 (NO.1 - 22)</span>
-          <span id="fleetHeaderDeptCount" class="text-xs text-slate-400">แผนก SLT โรงเชือดไก่</span>
+          <span id="fleetHeaderGroupTitle" class="font-bold text-white text-base">แผนกโรงเชือดไก่ SLH (27 เครื่อง)</span>
+          <span id="fleetHeaderDeptCount" class="text-xs text-slate-400">Slaughterhouse Division · 27 Compressors</span>
         </div>
 
         <div class="flex items-center gap-2">
-          <button id="btnViewModeStage" onclick="switchFleetViewMode('stage')" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition">
+          <button id="btnViewModeGrid" onclick="switchFleetViewMode('grid')" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition">
+            ⊞ มุมมองการ์ดรวม
+          </button>
+          <button id="btnViewModeStage" onclick="switchFleetViewMode('stage')" class="px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
             🖥️ มุมมองเจาะลึก 3D รายเครื่อง
           </button>
-          <button id="btnViewModeGrid" onclick="switchFleetViewMode('grid')" class="px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
-            ⊞ มุมมองการ์ดรวม 22 เครื่อง
-          </button>
+        </div>
+      </div>
+
+      <!-- Department Sub-Application Filter Bar -->
+      <div class="scada-card p-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
+            <span>🔍</span> กรองตามการใช้งาน:
+          </span>
+          <div id="fleetSubAppFilterPills" class="flex flex-wrap gap-1.5 text-xs">
+            <!-- Dynamically populated based on active department -->
+          </div>
+        </div>
+        <div class="text-xs text-slate-400 font-mono-num" id="fleetFilterStats">
+          แสดง 27 เครื่อง
         </div>
       </div>
 
@@ -487,14 +494,8 @@
               <span id="fleetBadgeCount" class="text-xs text-slate-400 font-medium">22 เครื่อง</span>
             </div>
             <!-- Filter Pills -->
-            <div class="flex gap-1.5 mt-2 overflow-x-auto pb-1 text-xs">
-              <button class="px-2.5 py-1 rounded bg-slate-800 text-white font-medium border border-slate-700" onclick="filterFleet('ALL', this)">ทั้งหมด</button>
-              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('BOOSTER', this)">⚡ Booster (19)</button>
-              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('HIGH', this)">⚡ High (27)</button>
-              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('SLT', this)">SLT เชือด</button>
-              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('SPF', this)">SPF ฟรีซ</button>
-              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('FUT', this)">FUT แปรรูป</button>
-              <button class="px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800" onclick="filterFleet('DOM', this)">DOM คลังเย็น</button>
+            <div id="fleetSidebarFilterPills" class="flex gap-1.5 mt-2 overflow-x-auto pb-1 text-xs">
+              <!-- Dynamically populated based on active department -->
             </div>
           </div>
 
@@ -1115,6 +1116,101 @@
     const lostUnitsList = [2, 6, 9, 11, 16, 21, 23, 35, 44];
     const stopUnitsList = [14, 24, 31, 33];
 
+        // Official Department Structure & Compressor Sub-Applications (SLH, FUT, DOM)
+    const UNIT_MAPPING = {
+      1: { dept: 'FUT', subApp: 'Office' },
+      2: { dept: 'FUT', subApp: 'Cold Room' },
+      3: { dept: 'FUT', subApp: 'Cold Room' },
+      4: { dept: 'FUT', subApp: 'Cold Room' },
+      5: { dept: 'FUT', subApp: 'IQF' },
+      6: { dept: 'FUT', subApp: 'IQF' },
+      7: { dept: 'FUT', subApp: 'IQF' },
+      8: { dept: 'FUT', subApp: 'IQF' },
+      9: { dept: 'DOM', subApp: 'Domestic' },
+      10: { dept: 'SLH', subApp: 'Air Blast' },
+      11: { dept: 'SLH', subApp: 'Air Blast' },
+      12: { dept: 'SLH', subApp: 'Air Blast' },
+      13: { dept: 'SLH', subApp: 'Air Blast' },
+      14: { dept: 'SLH', subApp: 'Air Blast' },
+      15: { dept: 'SLH', subApp: 'Air Blast' },
+      16: { dept: 'SLH', subApp: 'Air Blast' },
+      17: { dept: 'SLH', subApp: 'Chill Room' },
+      18: { dept: 'SLH', subApp: 'Chill Room' },
+      19: { dept: 'SLH', subApp: 'Air Chill' },
+      20: { dept: 'SLH', subApp: 'Cold Room' },
+      21: { dept: 'SLH', subApp: 'Glycol' },
+      22: { dept: 'SLH', subApp: 'Water Chill' },
+      23: { dept: 'FUT', subApp: 'Glycol' },
+      24: { dept: 'FUT', subApp: 'Glycol' },
+      25: { dept: 'FUT', subApp: 'Spare' },
+      26: { dept: 'FUT', subApp: 'Chill Room' },
+      27: { dept: 'FUT', subApp: 'IQF' },
+      28: { dept: 'FUT', subApp: 'IQF' },
+      29: { dept: 'FUT', subApp: 'IQF' },
+      30: { dept: 'FUT', subApp: 'IQF' },
+      31: { dept: 'FUT', subApp: 'IQF' },
+      32: { dept: 'SLH', subApp: 'Air Blast' },
+      33: { dept: 'SLH', subApp: 'Air Blast' },
+      34: { dept: 'SLH', subApp: 'Air Blast' },
+      35: { dept: 'SLH', subApp: 'Cold Room' },
+      36: { dept: 'SLH', subApp: 'Cold Room' },
+      37: { dept: 'SLH', subApp: 'Cold Room' },
+      38: { dept: 'SLH', subApp: 'Air Blast' },
+      39: { dept: 'SLH', subApp: 'Cold Room' },
+      40: { dept: 'SLH', subApp: 'Air Chill' },
+      41: { dept: 'SLH', subApp: 'Spare' },
+      42: { dept: 'SLH', subApp: 'Glycol' },
+      43: { dept: 'SLH', subApp: 'Office' },
+      44: { dept: 'SLH', subApp: 'Water Chill' },
+      45: { dept: 'SLH', subApp: 'Air Chill' },
+      46: { dept: 'DOM', subApp: 'Domestic' }
+    };
+
+    const DEPT_CONFIG = {
+      'dept-slh': {
+        code: 'SLH',
+        name: 'SLH - แผนกโรงเชือดไก่',
+        enName: 'Slaughterhouse Division',
+        units: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+        subApps: [
+          { id: 'ALL', label: 'ทั้งหมด (27)' },
+          { id: 'Air Blast', label: 'Air Blast (11)' },
+          { id: 'Cold Room', label: 'Cold Room (5)' },
+          { id: 'Air Chill', label: 'Air Chill (3)' },
+          { id: 'Chill Room', label: 'Chill Room (2)' },
+          { id: 'Glycol', label: 'Glycol (2)' },
+          { id: 'Water Chill', label: 'Water Chill (2)' },
+          { id: 'Office', label: 'Office (1)' },
+          { id: 'Spare', label: 'Spare (1)' }
+        ]
+      },
+      'dept-fut': {
+        code: 'FUT',
+        name: 'FUT - แผนกแปรรูปปรุงสุก & ตู้ฟรีซ',
+        enName: 'Further Processing & IQF Division',
+        units: [1, 2, 3, 4, 5, 6, 7, 8, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+        subApps: [
+          { id: 'ALL', label: 'ทั้งหมด (17)' },
+          { id: 'IQF', label: 'IQF ฟรีซเซอร์ (9)' },
+          { id: 'Cold Room', label: 'Cold Room (3)' },
+          { id: 'Glycol', label: 'Glycol (2)' },
+          { id: 'Chill Room', label: 'Chill Room (1)' },
+          { id: 'Office', label: 'Office (1)' },
+          { id: 'Spare', label: 'Spare (1)' }
+        ]
+      },
+      'dept-dom': {
+        code: 'DOM',
+        name: 'Domestic - คลังสินค้าห้องเย็น',
+        enName: 'Domestic Cold Storage',
+        units: [9, 46],
+        subApps: [
+          { id: 'ALL', label: 'ทั้งหมด (2)' },
+          { id: 'Domestic', label: 'Domestic Cold Storage (2)' }
+        ]
+      }
+    };
+
     // Initialize Official CPF Korat Units Baseline
     const TABLE_DATA = [
       [1, 'MIII', 'FUT.NO.1', 'FUT', 'แผนกปรุงสุกแปรรูป', '172.16.22.1', 'High', 'Office (ปรับอากาศสำนักงาน)', 'HVAC'],
@@ -1161,7 +1257,7 @@
       [42, 'MIII', 'SLT.NO.24', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.42', 'High', 'Glycol (สารหล่อเย็นไกลคอล)', 'Process Cooling'],
       [43, 'MIII', 'SLT.NO.25', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.43', 'High', 'Office (ปรับอากาศสำนักงาน)', 'HVAC'],
       [44, 'MYPRO TOUCH', 'SLT.NO.26', 'SLT', 'แผนกโรงเชือดไก่', '172.16.22.44', 'High', 'Plate Water Chill (ทำน้ำเย็น)', 'Process Cooling'],
-      [45, 'MYPRO TOUCH', 'SPF.NO.28', 'SPF', 'แผนกตู้ฟรีซแช่แข็ง', '172.16.22.45', 'High', 'Air Chill ใหม่ (ลดอุณหภูมิไก่)', 'Chilling'],
+      [45, 'MYPRO TOUCH', 'SLT.NO.27', 'SLH', 'แผนกโรงเชือดไก่', '172.16.22.45', 'High', 'Air Chill ใหม่ (ลดอุณหภูมิไก่)', 'Chilling'],
       [46, 'GEA Omni', 'DOM.NO.1', 'DOM', 'แผนกคลังสินค้าห้องเย็น', '172.16.22.46', 'High', 'Domestic (คลังสินค้าห้องเย็น)', 'Cold Storage']
     ];
 
@@ -1181,12 +1277,15 @@
       let dischT = (state !== 'RUN') ? 0.0 : 35.0;
       let load = (state !== 'RUN') ? 0 : (i === 1 ? 95 : 75 + (i % 20));
 
+      const mapping = UNIT_MAPPING[i] || { dept: zone, subApp: 'General' };
       unitsData[i] = {
         id: i,
         tag: `NO.${i} ${name}`,
         name: name,
         zone: zone,
         zoneName: zoneName,
+        dept: mapping.dept,
+        subApp: mapping.subApp,
         model: model,
         ip: ip,
         stage: stage,
@@ -1247,33 +1346,108 @@
       }
     }
 
+    // Render Department Filter Pills for Sub-Applications
+    function renderFleetFilterPills(deptKey) {
+      const dept = DEPT_CONFIG[deptKey];
+      if (!dept) return;
+
+      const mainPills = document.getElementById('fleetSubAppFilterPills');
+      const sidePills = document.getElementById('fleetSidebarFilterPills');
+      
+      if (mainPills) mainPills.innerHTML = '';
+      if (sidePills) sidePills.innerHTML = '';
+
+      dept.subApps.forEach(item => {
+        const isAct = (item.id === fleetFilterDept);
+        const cls = isAct
+          ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium border border-blue-500 text-xs shadow-sm cursor-pointer'
+          : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
+
+        if (mainPills) {
+          const b = document.createElement('button');
+          b.className = cls;
+          b.setAttribute('data-subapp', item.id);
+          b.textContent = item.label;
+          b.onclick = () => setFleetSubAppFilter(item.id, b);
+          mainPills.appendChild(b);
+        }
+
+        if (sidePills) {
+          const b2 = document.createElement('button');
+          b2.className = cls;
+          b2.setAttribute('data-subapp', item.id);
+          b2.textContent = item.label;
+          b2.onclick = () => setFleetSubAppFilter(item.id, b2);
+          sidePills.appendChild(b2);
+        }
+      });
+
+      const matching = dept.units.filter(id => fleetFilterDept === 'ALL' || (unitsData[id] && unitsData[id].subApp === fleetFilterDept));
+      const statsEl = document.getElementById('fleetFilterStats');
+      if (statsEl) statsEl.textContent = `แสดง ${matching.length} จาก ${dept.units.length} เครื่อง`;
+    }
+
+    // Set Fleet Sub-App Filter
+    function setFleetSubAppFilter(subAppId, btn) {
+      fleetFilterDept = subAppId;
+      
+      // Update UI button active states in both pill bars
+      document.querySelectorAll('#fleetSubAppFilterPills button, #fleetSidebarFilterPills button').forEach(b => {
+        const isAct = b.getAttribute('data-subapp') === subAppId;
+        b.className = isAct 
+          ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium border border-blue-500 text-xs shadow-sm cursor-pointer'
+          : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
+      });
+
+      const dept = DEPT_CONFIG[currentActiveTab] || DEPT_CONFIG['dept-slh'];
+      if (dept) {
+        const matching = dept.units.filter(id => subAppId === 'ALL' || (unitsData[id] && unitsData[id].subApp === subAppId));
+        const statsEl = document.getElementById('fleetFilterStats');
+        if (statsEl) statsEl.textContent = `แสดง ${matching.length} จาก ${dept.units.length} เครื่อง`;
+
+        if (currentFleetViewMode === 'stage') {
+          if (!matching.includes(currentFleetUnitId) && matching.length > 0) {
+            currentFleetUnitId = matching[0];
+          }
+          renderFleetList();
+          selectFleetUnit(currentFleetUnitId);
+        } else {
+          renderFleetCardsGrid();
+        }
+      }
+    }
+
+    function filterFleet(filterType, btn) {
+      setFleetSubAppFilter(filterType, btn);
+    }
+
     // Render Fleet Machine Sidebar List
     function renderFleetList() {
       const list = document.getElementById('fleetMachinesList');
       if (!list) return;
       list.innerHTML = '';
 
-      const isFleetA = (currentActiveTab === 'fleet-a');
-      const startId = isFleetA ? 1 : 23;
-      const endId = isFleetA ? 22 : 46;
+      const dept = DEPT_CONFIG[currentActiveTab] || DEPT_CONFIG['dept-slh'];
+      const units = dept.units;
 
-      document.getElementById('fleetSidebarTitle').textContent = isFleetA ? 'เลือกหมายเลข (1 - 22)' : 'เลือกหมายเลข (23 - 46)';
-      document.getElementById('fleetHeaderGroupTitle').textContent = isFleetA ? 'กลุ่มคอมเพรสเซอร์ 1 (NO.1 - 22)' : 'กลุ่มคอมเพรสเซอร์ 2 (NO.23 - 46)';
-      document.getElementById('fleetHeaderDeptCount').textContent = isFleetA ? 'แผนก SLT โรงเชือดไก่ (22 เครื่อง)' : 'แผนก SLT, SPF, FUT, DOM (24 เครื่อง)';
-      document.getElementById('fleetBadgeCount').textContent = `${endId - startId + 1} เครื่อง`;
+      const sidebarTitle = document.getElementById('fleetSidebarTitle');
+      if (sidebarTitle) sidebarTitle.textContent = dept.name;
+      const headerTitle = document.getElementById('fleetHeaderGroupTitle');
+      if (headerTitle) headerTitle.textContent = `${dept.name} (${units.length} เครื่อง)`;
+      const headerDeptCount = document.getElementById('fleetHeaderDeptCount');
+      if (headerDeptCount) headerDeptCount.textContent = `${dept.enName} · ${units.length} Compressors`;
+      const badgeCount = document.getElementById('fleetBadgeCount');
+      if (badgeCount) badgeCount.textContent = `${units.length} เครื่อง`;
 
-      for (let i = startId; i <= endId; i++) {
+      for (let i of units) {
         const u = unitsData[i];
+        if (!u) continue;
         
         let match = true;
         if (fleetFilterDept === 'ALL') {
           match = true;
-        } else if (fleetFilterDept === 'BOOSTER') {
-          match = (u.stage === 'Booster');
-        } else if (fleetFilterDept === 'HIGH') {
-          match = (u.stage === 'High');
         } else {
-          match = (u.zone === fleetFilterDept);
+          match = (u.subApp === fleetFilterDept);
         }
         if (!match) continue;
 
@@ -1297,7 +1471,7 @@
                 <span>${u.tag}</span>
                 ${stageBadge}
               </div>
-              <div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[130px]" title="${u.location}">📍 ${u.location.split(' ')[0]}</div>
+              <div class="text-[10px] text-cyan-400 mt-0.5 truncate max-w-[140px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
             </div>
           </div>
           <div class="text-right">
@@ -1309,29 +1483,33 @@
       }
     }
 
-    // Render 22 Cards Grid (All Machines in One View)
+    // Render Cards Grid (All Machines in Active Department)
     function renderFleetCardsGrid() {
       const container = document.getElementById('fleetCardsGridContainer');
       if (!container) return;
       container.innerHTML = '';
-      const isFleetA = (currentActiveTab === 'fleet-a');
-      const startId = isFleetA ? 1 : 23;
-      const endId = isFleetA ? 22 : 46;
+      
+      const dept = DEPT_CONFIG[currentActiveTab] || DEPT_CONFIG['dept-slh'];
+      const units = dept.units;
 
-      for (let i = startId; i <= endId; i++) {
+      const headerTitle = document.getElementById('fleetHeaderGroupTitle');
+      if (headerTitle) headerTitle.textContent = `${dept.name} (${units.length} เครื่อง)`;
+      const headerDeptCount = document.getElementById('fleetHeaderDeptCount');
+      if (headerDeptCount) headerDeptCount.textContent = `${dept.enName} · ${units.length} Compressors`;
+
+      let visibleCount = 0;
+      for (let i of units) {
         const u = unitsData[i];
+        if (!u) continue;
         
         let match = true;
         if (fleetFilterDept === 'ALL') {
           match = true;
-        } else if (fleetFilterDept === 'BOOSTER') {
-          match = (u.stage === 'Booster');
-        } else if (fleetFilterDept === 'HIGH') {
-          match = (u.stage === 'High');
         } else {
-          match = (u.zone === fleetFilterDept);
+          match = (u.subApp === fleetFilterDept);
         }
         if (!match) continue;
+        visibleCount++;
 
         let imgSrc = 'assets/CompGreen.png';
         let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-emerald-400 border border-slate-700 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>RUN</span>';
@@ -1357,10 +1535,10 @@
               <div>
                 <div class="font-bold text-white text-xs font-mono-num flex items-center gap-1.5">
                   <span class="px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-400 text-[10px]">NO.${i}</span>
-                  <span>${u.tag.replace(`NO.${i} `, '')}</span>
+                  <span>${u.tag.replace('NO.' + i + ' ', '')}</span>
                   ${stageBadge}
                 </div>
-                <div class="text-[10px] text-cyan-400 font-sans mt-0.5 truncate max-w-[170px]" title="${u.location}">📍 ${u.location.split(' ')[0]} · <span class="text-slate-400 font-mono">${u.model}</span></div>
+                <div class="text-[10px] text-cyan-400 font-sans mt-0.5 truncate max-w-[170px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
               </div>
               <div>${statusBadge}</div>
             </div>
@@ -1386,6 +1564,9 @@
         `;
         container.appendChild(card);
       }
+
+      const statsEl = document.getElementById('fleetFilterStats');
+      if (statsEl) statsEl.textContent = `แสดง ${visibleCount} จาก ${units.length} เครื่อง`;
     }
 
     // Select and display a machine on Fleet tab (Dynamically changes 3D image & telemetry)
@@ -1411,7 +1592,13 @@
 
       document.getElementById('dispUnitZone').textContent = `${u.zoneName} · กลุ่ม: ${u.category} · IP: ${u.ip}`;
       document.getElementById('dispCumulativeKwh').textContent = u.kwh;
-      document.getElementById('dispCurrentNavIndex').textContent = `Unit ${unitId} of 46`;
+      const curDept = DEPT_CONFIG[currentActiveTab];
+      if (curDept) {
+        const uIdx = curDept.units.indexOf(unitId) + 1;
+        document.getElementById('dispCurrentNavIndex').textContent = `${curDept.code} #${uIdx || unitId} (${curDept.units.length} เครื่อง)`;
+      } else {
+        document.getElementById('dispCurrentNavIndex').textContent = `Unit ${unitId} of 46`;
+      }
 
       // 1. DYNAMICALLY CHANGE 3D COMPRESSOR IMAGE BY MACHINE STATUS
       const compImg = document.getElementById('stageCompImg');
@@ -1497,16 +1684,22 @@
     }
 
     function navigateFleetUnit(dir) {
-      let next = currentFleetUnitId + dir;
-      if (next < 1) next = 46;
-      if (next > 46) next = 1;
-      
-      if (next > 22 && currentActiveTab === 'fleet-a') {
-        switchMainTab('fleet-b');
-      } else if (next <= 22 && currentActiveTab === 'fleet-b') {
-        switchMainTab('fleet-a');
+      const dept = DEPT_CONFIG[currentActiveTab] || DEPT_CONFIG['dept-slh'];
+      if (!dept) return;
+      let activeUnits = dept.units;
+      if (fleetFilterDept !== 'ALL') {
+        activeUnits = activeUnits.filter(id => unitsData[id] && unitsData[id].subApp === fleetFilterDept);
       }
-      selectFleetUnit(next);
+      if (!activeUnits.length) activeUnits = dept.units;
+      
+      let currentIndex = activeUnits.indexOf(currentFleetUnitId);
+      if (currentIndex === -1) currentIndex = 0;
+      
+      let nextIndex = currentIndex + dir;
+      if (nextIndex < 0) nextIndex = activeUnits.length - 1;
+      if (nextIndex >= activeUnits.length) nextIndex = 0;
+      
+      selectFleetUnit(activeUnits[nextIndex]);
     }
 
     function filterFleet(filterType, btn) {
@@ -1528,11 +1721,14 @@
     // Quick filter by Location from Summary Process Cards
     function filterByLocation(locKey) {
       for (let i = 1; i <= 46; i++) {
-        if (unitsData[i].location.toLowerCase().includes(locKey.toLowerCase())) {
-          if (i <= 22) {
-            switchMainTab('fleet-a');
+        const u = unitsData[i];
+        if (u && (u.location.toLowerCase().includes(locKey.toLowerCase()) || u.subApp.toLowerCase().includes(locKey.toLowerCase()))) {
+          if (DEPT_CONFIG['dept-slh'].units.includes(i)) {
+            switchMainTab('dept-slh');
+          } else if (DEPT_CONFIG['dept-fut'].units.includes(i)) {
+            switchMainTab('dept-fut');
           } else {
-            switchMainTab('fleet-b');
+            switchMainTab('dept-dom');
           }
           selectFleetUnit(i);
           break;
@@ -1637,10 +1833,14 @@
 
       if (tabKey === 'summary') {
         document.getElementById('tab-summary').classList.remove('hidden');
-      } else if (tabKey === 'fleet-a' || tabKey === 'fleet-b') {
+      } else if (tabKey === 'dept-slh' || tabKey === 'dept-fut' || tabKey === 'dept-dom') {
         document.getElementById('tab-fleet').classList.remove('hidden');
-        if (tabKey === 'fleet-a' && (currentFleetUnitId < 1 || currentFleetUnitId > 22)) currentFleetUnitId = 1;
-        if (tabKey === 'fleet-b' && (currentFleetUnitId < 23 || currentFleetUnitId > 46)) currentFleetUnitId = 23;
+        fleetFilterDept = 'ALL';
+        const dept = DEPT_CONFIG[tabKey];
+        if (dept && !dept.units.includes(currentFleetUnitId)) {
+          currentFleetUnitId = dept.units[0];
+        }
+        renderFleetFilterPills(tabKey);
         
         if (currentFleetViewMode === 'stage') {
           renderFleetList();
@@ -1656,14 +1856,16 @@
       }
     }
 
-    function viewDepartment(zoneKey) {
-      const firstUnit = Object.values(unitsData).find(u => u.zone === zoneKey);
-      if (firstUnit && firstUnit.id > 22) {
-        switchMainTab('fleet-b');
+    function viewDepartment(code) {
+      if (code === 'SLH' || code === 'SLT') {
+        switchMainTab('dept-slh');
+      } else if (code === 'FUT' || code === 'SPF') {
+        switchMainTab('dept-fut');
+      } else if (code === 'DOM') {
+        switchMainTab('dept-dom');
       } else {
-        switchMainTab('fleet-a');
+        switchMainTab('dept-slh');
       }
-      filterFleet(zoneKey);
     }
 
     // Trend Canvas Chart Generator (Muted Corporate Blue & Slate)
@@ -1718,6 +1920,32 @@
       if (elSumRun) elSumRun.textContent = `${runningCount} เครื่อง`;
       const elSumBar = document.getElementById('sumPowerBar');
       if (elSumBar) elSumBar.style.width = Math.min(100, Math.round((totalPower / 8000) * 100)) + '%';
+
+      // Department Power & Cost Calculations for Executive Summary
+      if (typeof DEPT_CONFIG !== 'undefined') {
+        const calcDept = (key) => {
+          const uList = (DEPT_CONFIG[key] ? DEPT_CONFIG[key].units : []).map(id => unitsData[id]).filter(u => u && u.status === 'RUN');
+          return uList.reduce((acc, u) => acc + (u.power || 0), 0);
+        };
+        const pSLH = calcDept('dept-slh');
+        const pFUT = calcDept('dept-fut');
+        const pDOM = calcDept('dept-dom');
+
+        const elPowerSLH = document.getElementById('sumPowerSLH');
+        if (elPowerSLH) elPowerSLH.textContent = pSLH.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' kW/h';
+        const elCostSLH = document.getElementById('sumCostSLH');
+        if (elCostSLH) elCostSLH.textContent = '~' + Math.round(pSLH * currentElectricityRate).toLocaleString() + ' ฿/ชม.';
+
+        const elPowerFUT = document.getElementById('sumPowerFUT');
+        if (elPowerFUT) elPowerFUT.textContent = pFUT.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' kW/h';
+        const elCostFUT = document.getElementById('sumCostFUT');
+        if (elCostFUT) elCostFUT.textContent = '~' + Math.round(pFUT * currentElectricityRate).toLocaleString() + ' ฿/ชม.';
+
+        const elPowerDOM = document.getElementById('sumPowerDOM');
+        if (elPowerDOM) elPowerDOM.textContent = pDOM.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' kW/h';
+        const elCostDOM = document.getElementById('sumCostDOM');
+        if (elCostDOM) elCostDOM.textContent = '~' + Math.round(pDOM * currentElectricityRate).toLocaleString() + ' ฿/ชม.';
+      }
     }
 
     // Configuration and Data Bridge Management
@@ -1956,7 +2184,7 @@
         directWsLastRxTs = Date.now();
         updateCalculatedTotals();
         renderSummaryDots();
-        if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') {
+        if (currentActiveTab.startsWith('dept-')) {
           if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
           else renderFleetCardsGrid();
         }
@@ -2090,7 +2318,7 @@
           }
           updateCalculatedTotals();
           renderSummaryDots();
-          if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') {
+          if (currentActiveTab.startsWith('dept-')) {
             if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
             else renderFleetCardsGrid();
           }
@@ -2108,7 +2336,7 @@
         }
         updateCalculatedTotals();
         renderSummaryDots();
-        if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') {
+        if (currentActiveTab.startsWith('dept-')) {
           if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
           else renderFleetCardsGrid();
         }
@@ -2127,11 +2355,11 @@
       if (e.key === 'Escape') closeModal();
       if (e.key === 'ArrowLeft') {
         if (!document.getElementById('unitDetailModal').classList.contains('hidden')) navigateModalUnit(-1);
-        else if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') navigateFleetUnit(-1);
+        else if (currentActiveTab.startsWith('dept-')) navigateFleetUnit(-1);
       }
       if (e.key === 'ArrowRight') {
         if (!document.getElementById('unitDetailModal').classList.contains('hidden')) navigateModalUnit(1);
-        else if (currentActiveTab === 'fleet-a' || currentActiveTab === 'fleet-b') navigateFleetUnit(1);
+        else if (currentActiveTab.startsWith('dept-')) navigateFleetUnit(1);
       }
     });
 
@@ -2149,7 +2377,7 @@
       if (!rawHash) return;
       const hashParts = rawHash.split('?');
       const targetTab = hashParts[0];
-      if (targetTab && ['summary', 'fleet-a', 'fleet-b', 'analytics', 'settings'].includes(targetTab)) {
+      if (targetTab && ['summary', 'dept-slh', 'dept-fut', 'dept-dom', 'analytics', 'settings'].includes(targetTab)) {
         switchMainTab(targetTab);
       }
       if (hashParts[1]) {
