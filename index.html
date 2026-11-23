@@ -694,87 +694,237 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- TAB 4: ANALYTICS & TRENDS -->
+    <!-- TAB 4: ANALYTICS & TRENDS (ON-PEAK vs OFF-PEAK SINGLE GRAPH) -->
     <!-- ============================================== -->
     <div id="tab-analytics" class="hidden space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
-        <!-- 24h Demand Trend (2 Cols) -->
-        <div class="md:col-span-2 scada-card p-4 space-y-3">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+      
+      <!-- Top Row: On-Peak vs Off-Peak KPI Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <!-- Card 1: On-Peak -->
+        <div class="scada-card p-3.5 border-l-4 border-l-amber-500 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
             <div>
-              <h3 class="font-bold text-white text-base">แนวโน้มการใช้ไฟฟ้ารายชั่วโมง (24h Power Timeline)</h3>
-              <div class="text-xs text-slate-400">เปรียบเทียบช่วง On-Peak (09:00 - 22:00) และ Off-Peak</div>
+              <div class="text-[11px] font-semibold text-amber-400 flex items-center gap-1.5">
+                <span>⚡</span> ช่วงอัตราสูงสุด On-Peak (09:00 - 22:00)
+              </div>
+              <div class="text-xl font-bold font-mono-num text-white mt-1" id="kpiOnPeakAvg">4,450.4 kW</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">เฉลี่ย 13 ชั่วโมงทำการหลัก</div>
             </div>
-            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono text-xs font-medium border border-slate-700">kW/h Live</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950/60 text-amber-300 border border-amber-800/80">~4.32 ฿/kWh</span>
           </div>
-
-          <!-- Dynamic SVG Chart Canvas -->
-          <div class="w-full h-64 bg-slate-950 rounded p-3 flex items-end justify-between gap-1 border border-slate-800" id="trendChartContainer">
-            <!-- Dynamically populated chart bars -->
-          </div>
-
-          <div class="flex justify-between text-xs text-slate-400 font-mono-num pt-1">
-            <span>00:00 (กลางคืน)</span>
-            <span>06:00</span>
-            <span>12:00 (พีคกลางวัน)</span>
-            <span>18:00</span>
-            <span>23:00</span>
+          <div class="grid grid-cols-2 gap-2 pt-2.5 mt-2 border-t border-slate-800/80 text-xs font-mono-num">
+            <div>
+              <span class="text-slate-500 text-[10px] block">พลังงานสะสม 13 ชม.:</span>
+              <span class="font-bold text-slate-200" id="kpiOnPeakKwh">57,855 kWh</span>
+            </div>
+            <div class="text-right">
+              <span class="text-slate-500 text-[10px] block">ค่าไฟ On-Peak รวม:</span>
+              <span class="font-bold text-amber-400" id="kpiOnPeakCost">~249,934 ฿</span>
+            </div>
           </div>
         </div>
 
-        <!-- Energy Share by Dept -->
-        <div class="scada-card p-4 space-y-3">
-          <h3 class="font-bold text-white text-base pb-2 border-b border-slate-800">สัดส่วนค่าไฟตามแผนก (Cost Share)</h3>
-          
-          <div class="space-y-3 pt-2">
+        <!-- Card 2: Off-Peak -->
+        <div class="scada-card p-3.5 border-l-4 border-l-emerald-500 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
             <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="font-semibold text-white">โรงเชือดไก่ (SLT)</span>
-                <span class="font-mono-num text-slate-200 font-bold">50.0% (~8,451 ฿)</span>
+              <div class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1.5">
+                <span>🌙</span> ช่วงอัตราต่ำ Off-Peak (22:00 - 09:00)
               </div>
-              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
-                <div class="bg-blue-600 h-full" style="width: 50%;"></div>
-              </div>
+              <div class="text-xl font-bold font-mono-num text-white mt-1" id="kpiOffPeakAvg">2,919.9 kW</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">เฉลี่ย 11 ชั่วโมงรอบกลางคืน</div>
             </div>
-
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-800/80">~2.60 ฿/kWh</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-2.5 mt-2 border-t border-slate-800/80 text-xs font-mono-num">
             <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="font-semibold text-white">ตู้ฟรีซแช่แข็ง (SPF)</span>
-                <span class="font-mono-num text-slate-200 font-bold">30.7% (~5,192 ฿)</span>
-              </div>
-              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
-                <div class="bg-slate-500 h-full" style="width: 30.7%;"></div>
-              </div>
+              <span class="text-slate-500 text-[10px] block">พลังงานสะสม 11 ชม.:</span>
+              <span class="font-bold text-slate-200" id="kpiOffPeakKwh">32,119 kWh</span>
             </div>
-
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="font-semibold text-white">ปรุงสุกแปรรูป (FUT)</span>
-                <span class="font-mono-num text-slate-200 font-bold">16.7% (~2,820 ฿)</span>
-              </div>
-              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
-                <div class="bg-slate-600 h-full" style="width: 16.7%;"></div>
-              </div>
+            <div class="text-right">
+              <span class="text-slate-500 text-[10px] block">ค่าไฟ Off-Peak รวม:</span>
+              <span class="font-bold text-emerald-400" id="kpiOffPeakCost">~83,509 ฿</span>
             </div>
+          </div>
+        </div>
 
+        <!-- Card 3: Tariff Saving Delta & Daily Summary -->
+        <div class="scada-card p-3.5 border-l-4 border-l-blue-500 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
             <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="font-semibold text-white">คลังสินค้าห้องเย็น (DOM)</span>
-                <span class="font-mono-num text-slate-200 font-bold">2.6% (~427 ฿)</span>
+              <div class="text-[11px] font-semibold text-blue-400 flex items-center gap-1.5">
+                <span>💰</span> ผลต่างต้นทุน & ศักยภาพการประหยัด
               </div>
-              <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
-                <div class="bg-slate-700 h-full" style="width: 2.6%;"></div>
-              </div>
+              <div class="text-xl font-bold font-mono-num text-white mt-1">ประหยัด 1.72 ฿/kWh</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">อัตรา Off-Peak ถูกกว่า On-Peak ถึง -39.8%</div>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-950/60 text-blue-300 border border-blue-800/80">TOU Tariff</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-2.5 mt-2 border-t border-slate-800/80 text-xs font-mono-num">
+            <div>
+              <span class="text-slate-500 text-[10px] block">ยอดพลังงาน 24 ชม.:</span>
+              <span class="font-bold text-white" id="kpiTotal24hKwh">~89,974 kWh</span>
+            </div>
+            <div class="text-right">
+              <span class="text-slate-500 text-[10px] block">ค่าไฟรวมทั้งวัน:</span>
+              <span class="font-bold text-white" id="kpiTotal24hCost">~333,443 ฿</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Single Chart Card -->
+      <div class="scada-card p-4 space-y-3">
+        
+        <!-- Header & Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-800">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-base">📈</span>
+              <h3 class="font-bold text-white text-base">แนวโน้มการใช้ไฟฟ้ารายชั่วโมง 24h (24h Power Timeline)</h3>
+              <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-400 font-mono text-[10px] font-bold border border-blue-800/60">ภายในกราฟเดียว</span>
+            </div>
+            <div class="text-xs text-slate-400 mt-0.5">
+              เปรียบเทียบช่วง <strong class="text-amber-400">On-Peak (09:00 - 22:00)</strong> และ <strong class="text-emerald-400">Off-Peak (22:00 - 09:00)</strong> ซ้อนทับครบ 9 ระบบย่อย: office, glycol, air chill, chill room, cold room, IQF, air blast, water chill, domestic
             </div>
           </div>
 
-          <div class="scada-inner p-3 text-xs text-slate-300 mt-4">
-            💡 แผนกโรงเชือดและตู้ฟรีซมีสัดส่วนพลังงานรวมกัน 80.7% เป็นจุดหลักในการบริหาร Peak Demand เพื่อลดต้นทุนค่าไฟฟ้า
+          <!-- Sub-App Interactive Filter Pills on Graph -->
+          <div class="flex flex-wrap items-center gap-1.5 text-xs" id="trendSubAppFilterPills">
+            <!-- Dynamically populated pills -->
+          </div>
+        </div>
+
+        <!-- ON-PEAK / OFF-PEAK ZONE BANNER HEADER OVER CHART -->
+        <div class="flex w-full text-[11px] font-semibold text-center select-none pt-1">
+          <div style="width: 37.5%;" class="bg-slate-900/80 text-emerald-400 py-1.5 rounded-l border border-slate-800 flex items-center justify-center gap-1.5">
+            <span>🌙</span> <span>ช่วง Off-Peak (00:00 - 09:00)</span> <span class="font-mono text-slate-400 text-[10px]">(~2.60 ฿/หน่วย)</span>
+          </div>
+          <div style="width: 54.17%;" class="bg-amber-950/40 text-amber-300 py-1.5 border-t border-b border-amber-600/50 flex items-center justify-center gap-1.5 shadow-sm">
+            <span>⚡</span> <span>ช่วง On-Peak (09:00 - 22:00) · โหลดไฟฟ้าสูงสุด</span> <span class="font-mono text-amber-400 font-bold text-[10px]">(~4.32 ฿/หน่วย)</span>
+          </div>
+          <div style="width: 8.33%;" class="bg-slate-900/80 text-emerald-400 py-1.5 rounded-r border border-slate-800 flex items-center justify-center gap-1">
+            <span>🌙</span> <span class="truncate">Off-Peak</span>
+          </div>
+        </div>
+
+        <!-- Single Graph SVG Canvas Container (Height 320px) -->
+        <div class="relative w-full h-[320px] bg-slate-950 rounded-lg p-2 border border-slate-800 overflow-hidden" id="trendChartSvgWrapper">
+          
+          <!-- Floating Tooltip Container -->
+          <div id="trendChartTooltip" class="absolute hidden z-30 pointer-events-none bg-slate-900/95 border border-slate-700 text-white rounded-lg p-3 shadow-2xl text-xs w-72 backdrop-blur-md transition-all duration-75">
+            <!-- Dynamically populated on hover -->
+          </div>
+
+          <!-- SVG Chart -->
+          <div id="trendChartSvgContainer" class="w-full h-full">
+            <!-- Dynamically generated SVG -->
+          </div>
+        </div>
+
+        <!-- Single Graph Interactive Color Legend (9 Sub-Apps) -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
+          <div class="flex flex-wrap items-center gap-1.5 text-xs" id="trendLegendItems">
+            <!-- 9 Legend Pills -->
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono-num flex items-center gap-3">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-amber-500"></span> On-Peak: 09:00-22:00 (~4.32 ฿)</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-emerald-500"></span> Off-Peak: 22:00-09:00 (~2.60 ฿)</span>
           </div>
         </div>
 
       </div>
+
+      <!-- Bottom Row: Sub-Application Comparison Table & Department Cost Share -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        
+        <!-- Left 8 Cols: On-Peak vs Off-Peak Detailed Breakdown Table -->
+        <div class="lg:col-span-8 scada-card p-4 space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+            <div>
+              <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                <span>📋</span> ตารางเปรียบเทียบภาระไฟฟ้า On-Peak vs Off-Peak ทุกระบบ (9 Sub-Applications)
+              </h4>
+              <div class="text-xs text-slate-400">วิเคราะห์ความต่างของกำลังไฟฟ้าและต้นทุนค่าไฟเพื่อการบริหารจัดการ Peak Demand</div>
+            </div>
+            <span class="text-xs text-slate-400 font-mono-num">รวม 46 เครื่อง</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/80 text-[11px] text-slate-400 uppercase font-mono border-b border-slate-800">
+                <tr>
+                  <th class="py-2.5 px-3">ระบบการใช้งาน (Sub-App)</th>
+                  <th class="py-2.5 px-2 text-center">เครื่อง</th>
+                  <th class="py-2.5 px-2 text-right text-amber-300">On-Peak (kW)</th>
+                  <th class="py-2.5 px-2 text-right text-emerald-300">Off-Peak (kW)</th>
+                  <th class="py-2.5 px-2 text-right">ส่วนต่าง (Δ)</th>
+                  <th class="py-2.5 px-2 text-right">ค่าไฟ On-Peak</th>
+                  <th class="py-2.5 px-2 text-right">ค่าไฟ Off-Peak</th>
+                  <th class="py-2.5 px-3">แนวทางบริหาร Peak</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono-num" id="trendComparisonTableBody">
+                <!-- Dynamically populated 9 rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right 4 Cols: Department Cost Share & Insights -->
+        <div class="lg:col-span-4 scada-card p-4 space-y-3 flex flex-col justify-between">
+          <div>
+            <h4 class="font-bold text-white text-sm pb-2 border-b border-slate-800 flex items-center gap-2">
+              <span>🏢</span> สัดส่วนค่าไฟตามแผนก (Department Cost Share)
+            </h4>
+            
+            <div class="space-y-3 pt-3">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-semibold text-white">1. โรงเชือดไก่ (SLH) · 27 เครื่อง</span>
+                  <span class="font-mono-num text-slate-200 font-bold" id="sharePctSLH">53.5% (~8,451 ฿/ชม.)</span>
+                </div>
+                <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
+                  <div class="bg-blue-600 h-full transition-all duration-300" id="shareBarSLH" style="width: 53.5%;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-semibold text-white">2. ปรุงสุก & ตู้ฟรีซ (FUT) · 17 เครื่อง</span>
+                  <span class="font-mono-num text-slate-200 font-bold" id="sharePctFUT">43.9% (~6,930 ฿/ชม.)</span>
+                </div>
+                <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
+                  <div class="bg-cyan-500 h-full transition-all duration-300" id="shareBarFUT" style="width: 43.9%;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-semibold text-white">3. คลังสินค้า (Domestic) · 2 เครื่อง</span>
+                  <span class="font-mono-num text-slate-200 font-bold" id="sharePctDOM">2.6% (~410 ฿/ชม.)</span>
+                </div>
+                <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800">
+                  <div class="bg-pink-500 h-full transition-all duration-300" id="shareBarDOM" style="width: 2.6%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scada-inner p-3 rounded text-xs text-slate-300 space-y-1.5 border border-slate-800/80 mt-4">
+            <div class="font-bold text-amber-400 flex items-center gap-1.5">
+              <span>💡</span> กลยุทธ์การลดค่าไฟ Peak Shifting:
+            </div>
+            <div class="text-[11px] text-slate-400 leading-relaxed">
+              • <strong>Water Chill & Glycol:</strong> เดินเครื่องทำน้ำเย็นกักเก็บสะสมความเย็นล่วงหน้าช่วง Off-Peak (ก่อน 09:00) เพื่อลดภาระช่วง On-Peak<br>
+              • <strong>Air Blast & IQF:</strong> บริหารรอบเข้าฟรีซหลีกเลี่ยงช่วงพีกสูงสุด (13:00 - 15:00) สามารถลดค่า Demand Charge ได้สูงสุด ~15%
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
     <!-- ============================================== -->
@@ -1868,31 +2018,396 @@
       }
     }
 
-    // Trend Canvas Chart Generator (Muted Corporate Blue & Slate)
-    function renderTrendChart() {
-      const container = document.getElementById('trendChartContainer');
-      container.innerHTML = '';
-      const hours = ['00','02','04','06','08','10','12','14','16','18','20','22'];
-      const baseValues = [3200, 3100, 3050, 3600, 4400, 4820, 4950, 4850, 4700, 4500, 3900, 3400];
+    // ==============================================
+    // 24H POWER TIMELINE & ON-PEAK / OFF-PEAK SVG ENGINE
+    // ==============================================
+    const SUB_APP_CONFIG = {
+      'Air Blast':   { name: 'Air Blast', label: 'Air Blast (ตู้แช่แข็งเป่าลม)', color: '#0284c7', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00' },
+      'IQF':         { name: 'IQF', label: 'IQF (อุโมงค์ฟรีซเร็ว)', color: '#06b6d4', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน' },
+      'Cold Room':   { name: 'Cold Room', label: 'Cold Room (ห้องเย็นเก็บสินค้า)', color: '#3b82f6', units: [2, 3, 4, 20, 35, 36, 37, 39], count: 8, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak' },
+      'Air Chill':   { name: 'Air Chill', label: 'Air Chill (ลดอุณหภูมิซากไก่)', color: '#10b981', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่' },
+      'Water Chill': { name: 'Water Chill', label: 'Water Chill (ระบบทำน้ำเย็น)', color: '#6366f1', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน' },
+      'Glycol':      { name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#8b5cf6', units: [21, 23, 24, 42], count: 4, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C' },
+      'Chill Room':  { name: 'Chill Room', label: 'Chill Room (ห้องชิลซากไก่)', color: '#14b8a6', units: [17, 18, 26], count: 3, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง' },
+      'Office':      { name: 'Office', label: 'Office (แอร์สำนักงาน HVAC)', color: '#f59e0b', units: [1, 43], count: 2, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00' },
+      'Domestic':    { name: 'Domestic', label: 'Domestic (คลังห้องเย็น)', color: '#ec4899', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak' }
+    };
 
-      baseValues.forEach((val, idx) => {
-        const barWrap = document.createElement('div');
-        barWrap.className = 'flex-1 flex flex-col items-center justify-end h-full gap-1 group relative';
-        
-        const heightPct = Math.round((val / 5500) * 100);
-        const isOnPeak = (idx >= 4 && idx <= 10);
-        const barColor = isOnPeak ? 'bg-blue-600 hover:bg-blue-500' : 'bg-slate-700 hover:bg-slate-600';
+    const SUB_APP_CURVES = {
+      'Air Blast':   [0.55, 0.55, 0.52, 0.55, 0.60, 0.75, 0.88, 0.95, 1.02, 1.12, 1.15, 1.18, 1.12, 1.16, 1.18, 1.15, 1.10, 1.02, 0.95, 0.88, 0.80, 0.75, 0.65, 0.58],
+      'IQF':         [0.42, 0.40, 0.40, 0.45, 0.55, 0.70, 0.85, 0.95, 1.05, 1.15, 1.18, 1.20, 1.10, 1.18, 1.20, 1.16, 1.10, 1.00, 0.90, 0.82, 0.75, 0.68, 0.58, 0.48],
+      'Cold Room':   [0.85, 0.85, 0.84, 0.85, 0.86, 0.88, 0.92, 0.96, 1.00, 1.05, 1.08, 1.08, 1.05, 1.08, 1.09, 1.08, 1.06, 1.02, 0.98, 0.95, 0.92, 0.90, 0.88, 0.86],
+      'Air Chill':   [0.35, 0.35, 0.35, 0.38, 0.50, 0.80, 0.95, 1.02, 1.08, 1.12, 1.15, 1.15, 1.08, 1.14, 1.15, 1.12, 1.05, 0.90, 0.75, 0.65, 0.55, 0.48, 0.40, 0.35],
+      'Water Chill': [0.45, 0.45, 0.45, 0.50, 0.65, 0.85, 0.95, 1.02, 1.08, 1.12, 1.15, 1.15, 1.08, 1.14, 1.15, 1.10, 1.05, 0.90, 0.78, 0.68, 0.58, 0.52, 0.48, 0.45],
+      'Glycol':      [0.52, 0.50, 0.50, 0.55, 0.68, 0.82, 0.92, 0.98, 1.04, 1.10, 1.14, 1.14, 1.08, 1.12, 1.14, 1.10, 1.05, 0.95, 0.85, 0.78, 0.70, 0.64, 0.58, 0.52],
+      'Chill Room':  [0.50, 0.48, 0.48, 0.52, 0.65, 0.80, 0.92, 0.98, 1.05, 1.10, 1.14, 1.14, 1.08, 1.12, 1.14, 1.10, 1.05, 0.92, 0.82, 0.75, 0.68, 0.60, 0.55, 0.50],
+      'Office':      [0.18, 0.18, 0.18, 0.18, 0.20, 0.30, 0.55, 0.80, 0.95, 1.08, 1.15, 1.18, 1.05, 1.15, 1.18, 1.14, 1.05, 0.70, 0.45, 0.32, 0.25, 0.20, 0.18, 0.18],
+      'Domestic':    [0.85, 0.85, 0.84, 0.85, 0.86, 0.88, 0.92, 0.98, 1.02, 1.06, 1.08, 1.08, 1.05, 1.08, 1.09, 1.08, 1.05, 1.00, 0.96, 0.94, 0.90, 0.88, 0.86, 0.85]
+    };
 
-        barWrap.innerHTML = `
-          <div class="absolute -top-7 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] font-mono-num text-white hidden group-hover:block whitespace-nowrap z-20">
-            ${val.toLocaleString()} kW
-          </div>
-          <div class="w-full ${barColor} rounded-t transition-all duration-200" style="height: ${heightPct}%;"></div>
-          <span class="text-[9px] font-mono-num text-slate-500">${hours[idx]}h</span>
-        `;
-        container.appendChild(barWrap);
-      });
+    let currentTrendFilterApp = 'ALL';
+    let onPeakRateTOU = 4.32;
+    let offPeakRateTOU = 2.60;
+    let cachedHourlyData = null;
+
+    function getSubAppLivePowers() {
+      const powers = {};
+      const fallbackDefaults = {
+        'Air Blast': 1050, 'IQF': 980, 'Cold Room': 890, 'Air Chill': 520,
+        'Water Chill': 150, 'Glycol': 200, 'Chill Room': 420, 'Office': 220, 'Domestic': 200
+      };
+
+      for (let appKey in SUB_APP_CONFIG) {
+        const uList = SUB_APP_CONFIG[appKey].units;
+        let sumP = 0;
+        uList.forEach(id => {
+          const u = unitsData[id];
+          if (u && u.status === 'RUN') sumP += (u.power || 0);
+        });
+        if (sumP === 0) sumP = fallbackDefaults[appKey] || 150;
+        powers[appKey] = sumP;
+      }
+      return powers;
     }
+
+    function getHourlyBreakdown() {
+      const livePowers = getSubAppLivePowers();
+      const currentHour = new Date().getHours();
+      const hourly = [];
+
+      for (let h = 0; h < 24; h++) {
+        const isPeak = (h >= 9 && h <= 21);
+        const subAppValues = {};
+        let totalKw = 0;
+
+        for (let appKey in SUB_APP_CONFIG) {
+          const base = livePowers[appKey];
+          const curveMult = SUB_APP_CURVES[appKey][h];
+          const kw = Math.round(base * curveMult * 10) / 10;
+          subAppValues[appKey] = kw;
+          totalKw += kw;
+        }
+
+        const rate = isPeak ? onPeakRateTOU : offPeakRateTOU;
+        const costHr = Math.round(totalKw * rate);
+
+        hourly.push({
+          hour: h,
+          hourStr: (h < 10 ? '0' + h : '' + h) + ':00',
+          isPeak: isPeak,
+          isNow: (h === currentHour),
+          totalKw: Math.round(totalKw * 10) / 10,
+          costHr: costHr,
+          subApps: subAppValues
+        });
+      }
+      return hourly;
+    }
+
+    function setTrendSubAppFilter(appKey) {
+      currentTrendFilterApp = appKey;
+      renderTrendChart();
+    }
+
+    function renderTrendChart() {
+      const svgContainer = document.getElementById('trendChartSvgContainer');
+      const tooltip = document.getElementById('trendChartTooltip');
+      if (!svgContainer) return;
+
+      const hourly = getHourlyBreakdown();
+      cachedHourlyData = hourly;
+      const maxKw = 5600;
+
+      // 1. KPI Calculations (On-Peak vs Off-Peak)
+      const onPeakHours = hourly.filter(item => item.isPeak);
+      const offPeakHours = hourly.filter(item => !item.isPeak);
+
+      const onPeakAvgKw = Math.round(onPeakHours.reduce((acc, x) => acc + x.totalKw, 0) / onPeakHours.length * 10) / 10;
+      const offPeakAvgKw = Math.round(offPeakHours.reduce((acc, x) => acc + x.totalKw, 0) / offPeakHours.length * 10) / 10;
+
+      const onPeakTotalKwh = Math.round(onPeakHours.reduce((acc, x) => acc + x.totalKw, 0));
+      const offPeakTotalKwh = Math.round(offPeakHours.reduce((acc, x) => acc + x.totalKw, 0));
+
+      const onPeakTotalCost = Math.round(onPeakTotalKwh * onPeakRateTOU);
+      const offPeakTotalCost = Math.round(offPeakTotalKwh * offPeakRateTOU);
+
+      const total24hKwh = onPeakTotalKwh + offPeakTotalKwh;
+      const total24hCost = onPeakTotalCost + offPeakTotalCost;
+
+      const elKpiOnAvg = document.getElementById('kpiOnPeakAvg');
+      if (elKpiOnAvg) elKpiOnAvg.textContent = `${onPeakAvgKw.toLocaleString()} kW`;
+      const elKpiOnKwh = document.getElementById('kpiOnPeakKwh');
+      if (elKpiOnKwh) elKpiOnKwh.textContent = `${onPeakTotalKwh.toLocaleString()} kWh`;
+      const elKpiOnCost = document.getElementById('kpiOnPeakCost');
+      if (elKpiOnCost) elKpiOnCost.textContent = `~${onPeakTotalCost.toLocaleString()} ฿`;
+
+      const elKpiOffAvg = document.getElementById('kpiOffPeakAvg');
+      if (elKpiOffAvg) elKpiOffAvg.textContent = `${offPeakAvgKw.toLocaleString()} kW`;
+      const elKpiOffKwh = document.getElementById('kpiOffPeakKwh');
+      if (elKpiOffKwh) elKpiOffKwh.textContent = `${offPeakTotalKwh.toLocaleString()} kWh`;
+      const elKpiOffCost = document.getElementById('kpiOffPeakCost');
+      if (elKpiOffCost) elKpiOffCost.textContent = `~${offPeakTotalCost.toLocaleString()} ฿`;
+
+      const elKpiTotKwh = document.getElementById('kpiTotal24hKwh');
+      if (elKpiTotKwh) elKpiTotKwh.textContent = `~${total24hKwh.toLocaleString()} kWh`;
+      const elKpiTotCost = document.getElementById('kpiTotal24hCost');
+      if (elKpiTotCost) elKpiTotCost.textContent = `~${total24hCost.toLocaleString()} ฿`;
+
+      // 2. Build High-Precision Scalable SVG Chart (1000 x 300)
+      const W = 1000;
+      const H = 300;
+      const plotH = 250;
+      const baselineY = 265;
+      const barStep = W / 24;
+      const barW = 28;
+      const barGap = (barStep - barW) / 2;
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" class="w-full h-full overflow-visible select-none" preserveAspectRatio="none">`;
+
+      // Grid lines
+      const gridLevels = [
+        { kw: 5000, y: baselineY - (5000 / maxKw) * plotH },
+        { kw: 4000, y: baselineY - (4000 / maxKw) * plotH },
+        { kw: 3000, y: baselineY - (3000 / maxKw) * plotH },
+        { kw: 2000, y: baselineY - (2000 / maxKw) * plotH },
+        { kw: 1000, y: baselineY - (1000 / maxKw) * plotH }
+      ];
+
+      gridLevels.forEach(gl => {
+        svg += `<line x1="0" y1="${gl.y.toFixed(1)}" x2="${W}" y2="${gl.y.toFixed(1)}" stroke="#334155" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="3 3"/>`;
+        svg += `<text x="6" y="${(gl.y - 4).toFixed(1)}" fill="#64748b" font-size="9" font-family="monospace">${gl.kw.toLocaleString()} kW</text>`;
+      });
+
+      // Background Zone Shading
+      // Off-Peak 1: 0 to 9 hours -> 0 to 375
+      svg += `<rect x="0" y="10" width="375" height="${baselineY - 10}" fill="#0f172a" fill-opacity="0.35"/>`;
+      // On-Peak: 9 to 22 hours -> 375 to 916.67 (13 hours)
+      svg += `<rect x="375" y="10" width="541.67" height="${baselineY - 10}" fill="#f59e0b" fill-opacity="0.05" stroke="#f59e0b" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 2"/>`;
+      // Off-Peak 2: 22 to 24 hours -> 916.67 to 1000 (2 hours)
+      svg += `<rect x="916.67" y="10" width="83.33" height="${baselineY - 10}" fill="#0f172a" fill-opacity="0.35"/>`;
+
+      // Render 24 Stacked Bars
+      hourly.forEach((hData, h) => {
+        const x = h * barStep + barGap;
+        let yCurr = baselineY;
+
+        // Render each sub-app segment
+        for (let appKey in SUB_APP_CONFIG) {
+          const cfg = SUB_APP_CONFIG[appKey];
+          const val = hData.subApps[appKey] || 0;
+          const segH = (val / maxKw) * plotH;
+          const ySeg = yCurr - segH;
+
+          let opacity = '0.92';
+          if (currentTrendFilterApp !== 'ALL') {
+            opacity = (currentTrendFilterApp === appKey) ? '1.0' : '0.12';
+          }
+
+          svg += `<rect x="${x.toFixed(1)}" y="${ySeg.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="${cfg.color}" opacity="${opacity}" rx="0.5"/>`;
+          yCurr = ySeg;
+        }
+
+        // Current Hour "NOW" Marker
+        if (hData.isNow) {
+          svg += `<rect x="${(x + barW/2 - 14).toFixed(1)}" y="${(yCurr - 18).toFixed(1)}" width="28" height="13" rx="3" fill="#2563eb"/>`;
+          svg += `<text x="${(x + barW/2).toFixed(1)}" y="${(yCurr - 9).toFixed(1)}" fill="#ffffff" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">NOW</text>`;
+          svg += `<line x1="${(x + barW/2).toFixed(1)}" y1="${(yCurr - 5).toFixed(1)}" x2="${(x + barW/2).toFixed(1)}" y2="${baselineY}" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="2 2"/>`;
+        }
+
+        // X-Axis Text Label
+        const isKeyHour = (h % 2 === 0);
+        const lblColor = hData.isNow ? '#60a5fa' : (hData.isPeak ? '#fbbf24' : '#94a3b8');
+        const hourStr = (h < 10 ? '0' + h : '' + h);
+        svg += `<text x="${(x + barW/2).toFixed(1)}" y="${(baselineY + 16).toFixed(1)}" fill="${lblColor}" font-size="9.5" font-family="monospace" font-weight="${hData.isNow || hData.isPeak ? 'bold' : 'normal'}" text-anchor="middle">${hourStr}h</text>`;
+
+        // Invisible Hover Hitbox for Tooltip
+        svg += `<rect x="${(h * barStep).toFixed(1)}" y="0" width="${barStep.toFixed(1)}" height="${H}" fill="transparent" class="cursor-pointer hover:fill-white/5" onmouseenter="onTrendBarHover(event, ${h})" onmouseleave="onTrendBarLeave()"/>`;
+      });
+
+      svg += `</svg>`;
+      svgContainer.innerHTML = svg;
+
+      // 3. Render Sub-App Interactive Filter Pills (Graph Header)
+      const pillsContainer = document.getElementById('trendSubAppFilterPills');
+      if (pillsContainer) {
+        pillsContainer.innerHTML = '';
+        
+        // "ทั้งหมด (All)" button
+        const allBtn = document.createElement('button');
+        allBtn.className = (currentTrendFilterApp === 'ALL')
+          ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium border border-blue-500 text-xs shadow-sm cursor-pointer'
+          : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
+        allBtn.textContent = '⊞ ทั้งหมด (Stacked)';
+        allBtn.onclick = () => setTrendSubAppFilter('ALL');
+        pillsContainer.appendChild(allBtn);
+
+        for (let appKey in SUB_APP_CONFIG) {
+          const cfg = SUB_APP_CONFIG[appKey];
+          const b = document.createElement('button');
+          const isAct = (currentTrendFilterApp === appKey);
+          b.className = isAct
+            ? 'px-2.5 py-1 rounded text-white font-medium text-xs shadow-sm cursor-pointer border'
+            : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
+          if (isAct) {
+            b.style.backgroundColor = cfg.color;
+            b.style.borderColor = cfg.color;
+          }
+          b.innerHTML = `<span class="inline-block w-2 h-2 rounded-full mr-1" style="background-color: ${cfg.color};"></span>${appKey} (${cfg.count})`;
+          b.onclick = () => setTrendSubAppFilter(appKey);
+          pillsContainer.appendChild(b);
+        }
+      }
+
+      // 4. Render Legend Items
+      const legendContainer = document.getElementById('trendLegendItems');
+      if (legendContainer) {
+        legendContainer.innerHTML = '';
+        for (let appKey in SUB_APP_CONFIG) {
+          const cfg = SUB_APP_CONFIG[appKey];
+          const isAct = (currentTrendFilterApp === 'ALL' || currentTrendFilterApp === appKey);
+          const item = document.createElement('div');
+          item.className = `flex items-center gap-1.5 cursor-pointer px-1.5 py-0.5 rounded transition ${isAct ? 'opacity-100 bg-slate-900/60' : 'opacity-40 hover:opacity-75'}`;
+          item.onclick = () => setTrendSubAppFilter(currentTrendFilterApp === appKey ? 'ALL' : appKey);
+          item.innerHTML = `
+            <span class="w-2.5 h-2.5 rounded-sm" style="background-color: ${cfg.color};"></span>
+            <span class="font-medium text-slate-300 text-[11px]">${cfg.name}</span>
+          `;
+          legendContainer.appendChild(item);
+        }
+      }
+
+      // 5. Render Detailed Comparison Table Body
+      const tbody = document.getElementById('trendComparisonTableBody');
+      if (tbody) {
+        tbody.innerHTML = '';
+        for (let appKey in SUB_APP_CONFIG) {
+          const cfg = SUB_APP_CONFIG[appKey];
+          
+          let onPeakSum = 0;
+          let offPeakSum = 0;
+          hourly.forEach(h => {
+            const val = h.subApps[appKey] || 0;
+            if (h.isPeak) onPeakSum += val;
+            else offPeakSum += val;
+          });
+
+          const onAvg = Math.round((onPeakSum / 13) * 10) / 10;
+          const offAvg = Math.round((offPeakSum / 11) * 10) / 10;
+          const deltaPct = offAvg > 0 ? Math.round(((onAvg - offAvg) / offAvg) * 1000) / 10 : 0;
+          const onCostHr = Math.round(onAvg * onPeakRateTOU);
+          const offCostHr = Math.round(offAvg * offPeakRateTOU);
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-900/60 transition';
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-semibold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-sm shrink-0" style="background-color: ${cfg.color};"></span>
+              <span>${cfg.name}</span>
+            </td>
+            <td class="py-2.5 px-2 text-center text-slate-400 font-mono">${cfg.count}</td>
+            <td class="py-2.5 px-2 text-right text-amber-300 font-bold">${onAvg.toLocaleString()} kW</td>
+            <td class="py-2.5 px-2 text-right text-emerald-300 font-bold">${offAvg.toLocaleString()} kW</td>
+            <td class="py-2.5 px-2 text-right ${deltaPct >= 0 ? 'text-amber-400' : 'text-emerald-400'} font-semibold">
+              ${deltaPct >= 0 ? '+' : ''}${deltaPct}%
+            </td>
+            <td class="py-2.5 px-2 text-right text-slate-200">~${onCostHr.toLocaleString()} ฿/ชม.</td>
+            <td class="py-2.5 px-2 text-right text-slate-400">~${offCostHr.toLocaleString()} ฿/ชม.</td>
+            <td class="py-2.5 px-3 text-[11px] text-cyan-400/90 font-sans">${cfg.tip}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      }
+
+      // 6. Update Department Share Percentages
+      if (typeof DEPT_CONFIG !== 'undefined') {
+        const pSLH = (DEPT_CONFIG['dept-slh'] ? DEPT_CONFIG['dept-slh'].units : []).map(id => unitsData[id]).filter(u => u && u.status === 'RUN').reduce((acc, u) => acc + (u.power || 0), 0);
+        const pFUT = (DEPT_CONFIG['dept-fut'] ? DEPT_CONFIG['dept-fut'].units : []).map(id => unitsData[id]).filter(u => u && u.status === 'RUN').reduce((acc, u) => acc + (u.power || 0), 0);
+        const pDOM = (DEPT_CONFIG['dept-dom'] ? DEPT_CONFIG['dept-dom'].units : []).map(id => unitsData[id]).filter(u => u && u.status === 'RUN').reduce((acc, u) => acc + (u.power || 0), 0);
+        const pTotal = pSLH + pFUT + pDOM || 1;
+
+        const pctSLH = Math.round((pSLH / pTotal) * 1000) / 10;
+        const pctFUT = Math.round((pFUT / pTotal) * 1000) / 10;
+        const pctDOM = Math.max(0.1, Math.round((100 - pctSLH - pctFUT) * 10) / 10);
+
+        const elShareTxtSLH = document.getElementById('sharePctSLH');
+        if (elShareTxtSLH) elShareTxtSLH.textContent = `${pctSLH}% (~${Math.round(pSLH * currentElectricityRate).toLocaleString()} ฿/ชม.)`;
+        const elShareBarSLH = document.getElementById('shareBarSLH');
+        if (elShareBarSLH) elShareBarSLH.style.width = `${pctSLH}%`;
+
+        const elShareTxtFUT = document.getElementById('sharePctFUT');
+        if (elShareTxtFUT) elShareTxtFUT.textContent = `${pctFUT}% (~${Math.round(pFUT * currentElectricityRate).toLocaleString()} ฿/ชม.)`;
+        const elShareBarFUT = document.getElementById('shareBarFUT');
+        if (elShareBarFUT) elShareBarFUT.style.width = `${pctFUT}%`;
+
+        const elShareTxtDOM = document.getElementById('sharePctDOM');
+        if (elShareTxtDOM) elShareTxtDOM.textContent = `${pctDOM}% (~${Math.round(pDOM * currentElectricityRate).toLocaleString()} ฿/ชม.)`;
+        const elShareBarDOM = document.getElementById('shareBarDOM');
+        if (elShareBarDOM) elShareBarDOM.style.width = `${pctDOM}%`;
+      }
+    }
+
+    function onTrendBarHover(event, hourIndex) {
+      if (!cachedHourlyData || !cachedHourlyData[hourIndex]) return;
+      const hData = cachedHourlyData[hourIndex];
+      const tooltip = document.getElementById('trendChartTooltip');
+      const wrapper = document.getElementById('trendChartSvgWrapper');
+      if (!tooltip || !wrapper) return;
+
+      let subAppRows = '';
+      for (let appKey in SUB_APP_CONFIG) {
+        const cfg = SUB_APP_CONFIG[appKey];
+        const val = hData.subApps[appKey] || 0;
+        const pct = hData.totalKw > 0 ? Math.round((val / hData.totalKw) * 1000) / 10 : 0;
+        const isHighlight = (currentTrendFilterApp === 'ALL' || currentTrendFilterApp === appKey);
+        subAppRows += `
+          <div class="flex justify-between items-center text-[10px] py-0.5 ${isHighlight ? 'text-slate-200' : 'text-slate-500'}">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-sm" style="background-color: ${cfg.color};"></span>
+              <span>${appKey}</span>
+            </span>
+            <span class="font-mono-num font-semibold">${val.toLocaleString()} kW (${pct}%)</span>
+          </div>
+        `;
+      }
+
+      tooltip.innerHTML = `
+        <div class="flex justify-between items-center pb-1.5 mb-1.5 border-b border-slate-700">
+          <div class="font-bold text-white text-xs flex items-center gap-1.5">
+            <span>⏱️</span> <span>เวลา ${hData.hourStr}</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded text-[9px] font-bold ${hData.isPeak ? 'bg-amber-950 text-amber-300 border border-amber-700' : 'bg-emerald-950 text-emerald-300 border border-emerald-700'}">
+            ${hData.isPeak ? '⚡ On-Peak' : '🌙 Off-Peak'}
+          </span>
+        </div>
+        <div class="flex justify-between items-center font-mono-num mb-1 text-xs">
+          <span class="text-slate-400">กำลังไฟรวม:</span>
+          <span class="font-bold text-white">${hData.totalKw.toLocaleString()} kW</span>
+        </div>
+        <div class="flex justify-between items-center font-mono-num mb-2 text-xs">
+          <span class="text-slate-400">ประมาณการค่าไฟ:</span>
+          <span class="font-bold text-amber-400">~${hData.costHr.toLocaleString()} ฿/ชม.</span>
+        </div>
+        <div class="pt-1.5 border-t border-slate-800 space-y-0.5">
+          <div class="text-[9px] text-slate-400 font-semibold mb-1">สัดส่วน 9 ระบบย่อย:</div>
+          ${subAppRows}
+        </div>
+      `;
+
+      const wrapperRect = wrapper.getBoundingClientRect();
+      let leftPos = event.clientX - wrapperRect.left - 130;
+      if (leftPos < 10) leftPos = 10;
+      if (leftPos > wrapperRect.width - 300) leftPos = wrapperRect.width - 300;
+
+      tooltip.style.left = `${leftPos}px`;
+      tooltip.style.top = '10px';
+      tooltip.classList.remove('hidden');
+    }
+
+    function onTrendBarLeave() {
+      const tooltip = document.getElementById('trendChartTooltip');
+      if (tooltip) tooltip.classList.add('hidden');
+    }
+
 
     // Rate Setting Update
     function updateRateSetting(newRate) {
@@ -2184,6 +2699,7 @@
         directWsLastRxTs = Date.now();
         updateCalculatedTotals();
         renderSummaryDots();
+        if (currentActiveTab === 'analytics') renderTrendChart();
         if (currentActiveTab.startsWith('dept-')) {
           if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
           else renderFleetCardsGrid();
@@ -2318,6 +2834,7 @@
           }
           updateCalculatedTotals();
           renderSummaryDots();
+        if (currentActiveTab === 'analytics') renderTrendChart();
           if (currentActiveTab.startsWith('dept-')) {
             if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
             else renderFleetCardsGrid();
@@ -2336,6 +2853,7 @@
         }
         updateCalculatedTotals();
         renderSummaryDots();
+        if (currentActiveTab === 'analytics') renderTrendChart();
         if (currentActiveTab.startsWith('dept-')) {
           if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
           else renderFleetCardsGrid();
@@ -2365,6 +2883,7 @@
 
     // Boot
     renderSummaryDots();
+        if (currentActiveTab === 'analytics') renderTrendChart();
     updateClock();
     loadBridgeConfig();
     syncLiveData();
