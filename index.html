@@ -2479,6 +2479,103 @@
       updateEngineerWatchlist();
     }
 
+    // Configuration and Data Bridge Management
+    function onBridgeModeChange(mode) {
+      const cardLive = document.getElementById('modeCardLive');
+      const cardSim = document.getElementById('modeCardSim');
+      const authBox = document.getElementById('liveAuthBox');
+      if (!cardLive || !cardSim) return;
+      if (mode === 'live') {
+        cardLive.className = 'cursor-pointer scada-inner p-3.5 border-2 border-blue-500 bg-blue-950/20 rounded-none flex items-start gap-3 transition';
+        cardSim.className = 'cursor-pointer scada-inner p-3.5 border-2 border-slate-800 rounded-none flex items-start gap-3 transition hover:border-slate-700';
+        authBox.classList.remove('opacity-60');
+      } else {
+        cardLive.className = 'cursor-pointer scada-inner p-3.5 border-2 border-slate-800 rounded-none flex items-start gap-3 transition hover:border-slate-700';
+        cardSim.className = 'cursor-pointer scada-inner p-3.5 border-2 border-blue-500 bg-blue-950/20 rounded-none flex items-start gap-3 transition';
+        authBox.classList.add('opacity-60');
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const p = document.getElementById('cfgPassword');
+      if (p.type === 'password') p.type = 'text';
+      else p.type = 'password';
+    }
+
+    async function loadBridgeConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const cfg = await res.json();
+          if (cfg.bridge_mode) {
+            const radios = document.getElementsByName('bridgeModeChoice');
+            for (let r of radios) {
+              if (r.value === cfg.bridge_mode) r.checked = true;
+            }
+            onBridgeModeChange(cfg.bridge_mode);
+          }
+          if (cfg.auth) {
+            if (cfg.auth.username) document.getElementById('cfgUsername').value = cfg.auth.username;
+            if (cfg.auth.has_password) document.getElementById('cfgPassword').placeholder = '•••••••• (บันทึกไว้แล้ว)';
+            if (cfg.auth.session_cookie) document.getElementById('cfgSessionCookie').value = cfg.auth.session_cookie;
+          }
+          if (cfg.electricity_rate_thb) {
+            document.getElementById('cfgRate').value = cfg.electricity_rate_thb;
+            currentElectricityRate = parseFloat(cfg.electricity_rate_thb);
+          }
+          if (cfg.sync_interval_seconds) {
+            document.getElementById('cfgInterval').value = cfg.sync_interval_seconds;
+          }
+          if (cfg.last_sync_status) {
+            const sEl = document.getElementById('liveStatusBannerText');
+            if (sEl) sEl.textContent = cfg.last_sync_status;
+          }
+        }
+      } catch (e) {
+        console.log('Local config load info:', e);
+      }
+    }
+
+    async function saveBridgeSettings() {
+      const modeChoice = document.querySelector('input[name="bridgeModeChoice"]:checked')?.value || 'simulation';
+      const username = document.getElementById('cfgUsername').value.trim();
+      const password = document.getElementById('cfgPassword').value;
+      const sessionCookie = document.getElementById('cfgSessionCookie').value.trim();
+      const rate = parseFloat(document.getElementById('cfgRate').value) || 3.50;
+      const interval = parseInt(document.getElementById('cfgInterval').value) || 10;
+
+      const payload = {
+        bridge_mode: modeChoice,
+        electricity_rate_thb: rate,
+        sync_interval_seconds: interval,
+        auth: {
+          username: username,
+          session_cookie: sessionCookie
+        }
+      };
+      if (password) {
+        payload.auth.password = password;
+      }
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          currentElectricityRate = rate;
+          updateCalculatedTotals();
+          alert('[SUCCESS] บันทึกการตั้งค่าเรียบร้อยแล้ว\nระบบเริ่มทำงานในโหมด: ' + (modeChoice === 'live' ? 'ดึงข้อมูลสด 1:1 จากเกตเวย์โรงงาน' : 'จำลองพฤติกรรมเสมือน (Simulation)'));
+          syncLiveData();
+          return;
+        }
+      } catch (e) {
+        alert('[INFO] บันทึกการตั้งค่าภายในเบราว์เซอร์เรียบร้อย (Server ออฟไลน์)');
+      }
+    }
+
     // ==============================================================
     // REAL-TIME MAINTENANCE DIAGNOSTIC & ALERT ENGINE
     // ==============================================================
@@ -2751,10 +2848,6 @@
             </div>
           `;
         }).join('');
-      }
-    }
-      } catch (e) {
-        alert('บันทึกการตั้งค่าภายในเบราว์เซอร์เรียบร้อย (Server ออฟไลน์)');
       }
     }
 
@@ -3081,7 +3174,9 @@
 
     // Boot
     renderSummaryDots();
-        if (currentActiveTab === 'analytics') renderTrendChart();
+    updateCalculatedTotals();
+    updateEngineerWatchlist();
+    if (currentActiveTab === 'analytics') renderTrendChart();
     updateClock();
     loadBridgeConfig();
     syncLiveData();
