@@ -9,24 +9,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
-    * {
+    /* ========================================================
+       ISA-101 DISCIPLINED INDUSTRIAL SCADA THEME (SHARP RECTANGLES)
+       - 100% Non-rounded 90-degree corners for mission-critical reliability
+       - Subdued, stable, high-credibility steel & slate palette
+       ======================================================== */
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      border-radius: 0px !important;
     }
     :root {
-      --bg-dark: #0a0f1d;
-      --card-bg: #111726;
+      --bg-dark: #090d16;
+      --card-bg: #101622;
       --card-border: #1e293b;
-      --inner-bg: #0c1220;
+      --inner-bg: #0c121e;
     }
     body {
       background-color: var(--bg-dark);
       background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: #e2e8f0;
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: #cbd5e1;
       font-family: 'Prompt', system-ui, sans-serif;
       min-height: 100vh;
     }
@@ -36,63 +42,68 @@
     .scada-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      border-radius: 0px !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
     .scada-inner {
       background: var(--inner-bg);
       border: 1px solid #1e293b;
-      border-radius: 6px;
+      border-radius: 0px !important;
     }
     .nav-tab-btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 18px;
-      border-radius: 6px;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 0px !important;
       font-size: 13px;
       font-weight: 500;
       color: #94a3b8;
       background: #0d1424;
       border: 1px solid #1e293b;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       cursor: pointer;
       user-select: none;
     }
     .nav-tab-btn:hover {
       color: #f8fafc;
-      background: #1e293b;
+      background: #182234;
       border-color: #334155;
     }
     .nav-tab-btn.active {
       color: #ffffff;
-      background: #1e293b;
-      border-color: #3b82f6;
-      border-bottom: 2px solid #3b82f6;
+      background: #182234;
+      border-color: #334155;
+      border-top: 2px solid #38bdf8;
+      border-bottom: 1px solid transparent;
       font-weight: 600;
     }
     /* Stable Telemetry Callouts on 3D Stage */
     .telemetry-hotspot {
       position: absolute;
       transform: translate(-50%, -50%);
-      background: rgba(13, 20, 35, 0.95);
+      background: rgba(12, 18, 30, 0.96);
       border: 1px solid #334155;
-      border-radius: 6px;
+      border-radius: 0px !important;
       padding: 4px 8px;
       font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
       color: #f8fafc;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
       z-index: 10;
       white-space: nowrap;
       pointer-events: auto;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
     .telemetry-hotspot:hover {
-      transform: translate(-50%, -50%) scale(1.04);
+      transform: translate(-50%, -50%) scale(1.03);
       border-color: #64748b;
       background: #0f172a;
+    }
+    /* Universal Sharp Industrial Shape Enforcement */
+    button, input, select, textarea, div, span, img, table, th, td, a, svg, rect {
+      border-radius: 0px !important;
     }
   </style>
 </head>
@@ -458,7 +469,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <button id="btnViewModeGrid" onclick="switchFleetViewMode('grid')" class="px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition">
+          <button id="btnViewModeGrid" onclick="switchFleetViewMode('grid')" class="px-3 py-1.5 rounded text-xs font-semibold bg-slate-700 text-white border border-slate-500 transition">
             ⊞ มุมมองการ์ดรวม
           </button>
           <button id="btnViewModeStage" onclick="switchFleetViewMode('stage')" class="px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
@@ -539,7 +550,7 @@
             <!-- Dynamic Machine Nameplate Overlaid on 3D Stage -->
             <div class="absolute top-3 left-4 scada-inner px-3 py-1.5 border border-slate-700 bg-slate-900/90 z-20 shadow-md">
               <div class="flex items-center gap-2">
-                <span id="stageBadgeNo" class="px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-400 font-mono font-bold text-xs border border-blue-500/40">NO.1</span>
+                <span id="stageBadgeNo" class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono font-bold text-xs border border-blue-500/40">NO.1</span>
                 <span id="stageMachineTitle" class="font-bold text-white text-sm font-mono-num">FUT.NO.1</span>
               </div>
               <div class="text-[11px] text-slate-400 font-mono mt-0.5 flex items-center gap-2">
@@ -701,7 +712,7 @@
       <!-- Top Row: On-Peak vs Off-Peak KPI Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <!-- Card 1: On-Peak -->
-        <div class="scada-card p-3.5 border-l-4 border-l-amber-500 flex flex-col justify-between">
+        <div class="scada-card p-3.5 border-l-2 border-l-amber-600/80 flex flex-col justify-between">
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-amber-400 flex items-center gap-1.5">
@@ -725,7 +736,7 @@
         </div>
 
         <!-- Card 2: Off-Peak -->
-        <div class="scada-card p-3.5 border-l-4 border-l-emerald-500 flex flex-col justify-between">
+        <div class="scada-card p-3.5 border-l-2 border-l-emerald-600/80 flex flex-col justify-between">
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1.5">
@@ -749,7 +760,7 @@
         </div>
 
         <!-- Card 3: Tariff Saving Delta & Daily Summary -->
-        <div class="scada-card p-3.5 border-l-4 border-l-blue-500 flex flex-col justify-between">
+        <div class="scada-card p-3.5 border-l-2 border-l-slate-500 flex flex-col justify-between">
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-blue-400 flex items-center gap-1.5">
@@ -1482,13 +1493,13 @@
       const viewGrid = document.getElementById('fleetGridModeView');
 
       if (mode === 'stage') {
-        btnStage.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition';
+        btnStage.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-slate-700 text-white border border-slate-500 transition';
         btnGrid.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition';
         viewStage.classList.remove('hidden');
         viewGrid.classList.add('hidden');
         selectFleetUnit(currentFleetUnitId);
       } else {
-        btnGrid.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition';
+        btnGrid.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-slate-700 text-white border border-slate-500 transition';
         btnStage.className = 'px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition';
         viewGrid.classList.remove('hidden');
         viewStage.classList.add('hidden');
@@ -1510,7 +1521,7 @@
       dept.subApps.forEach(item => {
         const isAct = (item.id === fleetFilterDept);
         const cls = isAct
-          ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium border border-blue-500 text-xs shadow-sm cursor-pointer'
+          ? 'px-2.5 py-1 rounded bg-slate-700 text-white font-semibold border border-slate-500 text-xs shadow-sm cursor-pointer'
           : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
 
         if (mainPills) {
@@ -1545,7 +1556,7 @@
       document.querySelectorAll('#fleetSubAppFilterPills button, #fleetSidebarFilterPills button').forEach(b => {
         const isAct = b.getAttribute('data-subapp') === subAppId;
         b.className = isAct 
-          ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium border border-blue-500 text-xs shadow-sm cursor-pointer'
+          ? 'px-2.5 py-1 rounded bg-slate-700 text-white font-semibold border border-slate-500 text-xs shadow-sm cursor-pointer'
           : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
       });
 
@@ -1603,7 +1614,7 @@
 
         const card = document.createElement('div');
         const isSelected = (i === currentFleetUnitId);
-        let borderCls = isSelected ? 'border-blue-600 bg-slate-800/90' : 'border-slate-800 bg-slate-900/50 hover:border-slate-700';
+        let borderCls = isSelected ? 'border-slate-500 bg-slate-800/80' : 'border-slate-800 bg-slate-900/50 hover:border-slate-700';
 
         card.className = `scada-inner p-2.5 rounded border transition cursor-pointer flex items-center justify-between ${borderCls}`;
         card.onclick = () => selectFleetUnit(i);
@@ -1621,7 +1632,7 @@
                 <span>${u.tag}</span>
                 ${stageBadge}
               </div>
-              <div class="text-[10px] text-cyan-400 mt-0.5 truncate max-w-[140px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
+              <div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[140px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
             </div>
           </div>
           <div class="text-right">
@@ -1684,11 +1695,11 @@
             <div class="flex items-center justify-between pb-2 border-b border-slate-800">
               <div>
                 <div class="font-bold text-white text-xs font-mono-num flex items-center gap-1.5">
-                  <span class="px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-400 text-[10px]">NO.${i}</span>
+                  <span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">NO.${i}</span>
                   <span>${u.tag.replace('NO.' + i + ' ', '')}</span>
                   ${stageBadge}
                 </div>
-                <div class="text-[10px] text-cyan-400 font-sans mt-0.5 truncate max-w-[170px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
+                <div class="text-[10px] text-slate-400 font-sans mt-0.5 truncate max-w-[170px]" title="${u.subApp} · ${u.location}">🏷️ ${u.subApp} · <span class="text-slate-400 font-mono">${u.model}</span></div>
               </div>
               <div>${statusBadge}</div>
             </div>
@@ -2022,15 +2033,15 @@
     // 24H POWER TIMELINE & ON-PEAK / OFF-PEAK SVG ENGINE
     // ==============================================
     const SUB_APP_CONFIG = {
-      'Air Blast':   { name: 'Air Blast', label: 'Air Blast (ตู้แช่แข็งเป่าลม)', color: '#0284c7', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00' },
-      'IQF':         { name: 'IQF', label: 'IQF (อุโมงค์ฟรีซเร็ว)', color: '#06b6d4', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน' },
-      'Cold Room':   { name: 'Cold Room', label: 'Cold Room (ห้องเย็นเก็บสินค้า)', color: '#3b82f6', units: [2, 3, 4, 20, 35, 36, 37, 39], count: 8, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak' },
-      'Air Chill':   { name: 'Air Chill', label: 'Air Chill (ลดอุณหภูมิซากไก่)', color: '#10b981', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่' },
-      'Water Chill': { name: 'Water Chill', label: 'Water Chill (ระบบทำน้ำเย็น)', color: '#6366f1', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน' },
-      'Glycol':      { name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#8b5cf6', units: [21, 23, 24, 42], count: 4, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C' },
-      'Chill Room':  { name: 'Chill Room', label: 'Chill Room (ห้องชิลซากไก่)', color: '#14b8a6', units: [17, 18, 26], count: 3, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง' },
-      'Office':      { name: 'Office', label: 'Office (แอร์สำนักงาน HVAC)', color: '#f59e0b', units: [1, 43], count: 2, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00' },
-      'Domestic':    { name: 'Domestic', label: 'Domestic (คลังห้องเย็น)', color: '#ec4899', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak' }
+      'Air Blast':   { name: 'Air Blast', label: 'Air Blast (ตู้แช่แข็งเป่าลม)', color: '#2563eb', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00' },
+      'IQF':         { name: 'IQF', label: 'IQF (อุโมงค์ฟรีซเร็ว)', color: '#0284c7', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน' },
+      'Cold Room':   { name: 'Cold Room', label: 'Cold Room (ห้องเย็นเก็บสินค้า)', color: '#475569', units: [2, 3, 4, 20, 35, 36, 37, 39], count: 8, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak' },
+      'Air Chill':   { name: 'Air Chill', label: 'Air Chill (ลดอุณหภูมิซากไก่)', color: '#0d9488', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่' },
+      'Water Chill': { name: 'Water Chill', label: 'Water Chill (ระบบทำน้ำเย็น)', color: '#0891b2', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน' },
+      'Glycol':      { name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#4338ca', units: [21, 23, 24, 42], count: 4, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C' },
+      'Chill Room':  { name: 'Chill Room', label: 'Chill Room (ห้องชิลซากไก่)', color: '#64748b', units: [17, 18, 26], count: 3, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง' },
+      'Office':      { name: 'Office', label: 'Office (แอร์สำนักงาน HVAC)', color: '#78716c', units: [1, 43], count: 2, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00' },
+      'Domestic':    { name: 'Domestic', label: 'Domestic (คลังห้องเย็น)', color: '#334155', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak' }
     };
 
     const SUB_APP_CURVES = {
@@ -2203,13 +2214,13 @@
             opacity = (currentTrendFilterApp === appKey) ? '1.0' : '0.12';
           }
 
-          svg += `<rect x="${x.toFixed(1)}" y="${ySeg.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="${cfg.color}" opacity="${opacity}" rx="0.5"/>`;
+          svg += `<rect x="${x.toFixed(1)}" y="${ySeg.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="${cfg.color}" opacity="${opacity}" />`;
           yCurr = ySeg;
         }
 
         // Current Hour "NOW" Marker
         if (hData.isNow) {
-          svg += `<rect x="${(x + barW/2 - 14).toFixed(1)}" y="${(yCurr - 18).toFixed(1)}" width="28" height="13" rx="3" fill="#2563eb"/>`;
+          svg += `<rect x="${(x + barW/2 - 14).toFixed(1)}" y="${(yCurr - 18).toFixed(1)}" width="28" height="13"  fill="#2563eb"/>`;
           svg += `<text x="${(x + barW/2).toFixed(1)}" y="${(yCurr - 9).toFixed(1)}" fill="#ffffff" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">NOW</text>`;
           svg += `<line x1="${(x + barW/2).toFixed(1)}" y1="${(yCurr - 5).toFixed(1)}" x2="${(x + barW/2).toFixed(1)}" y2="${baselineY}" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="2 2"/>`;
         }
@@ -2235,7 +2246,7 @@
         // "ทั้งหมด (All)" button
         const allBtn = document.createElement('button');
         allBtn.className = (currentTrendFilterApp === 'ALL')
-          ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium border border-blue-500 text-xs shadow-sm cursor-pointer'
+          ? 'px-2.5 py-1 rounded bg-slate-700 text-white font-semibold border border-slate-500 text-xs shadow-sm cursor-pointer'
           : 'px-2.5 py-1 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs transition cursor-pointer';
         allBtn.textContent = '⊞ ทั้งหมด (Stacked)';
         allBtn.onclick = () => setTrendSubAppFilter('ALL');
