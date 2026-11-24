@@ -105,9 +105,35 @@
     button, input, select, textarea, div, span, img, table, th, td, a, svg, rect {
       border-radius: 0px !important;
     }
-  </style>
+  
+    /* TV Kiosk Fullscreen Mode Styling */
+    body.tv-kiosk-mode {
+      background-color: #070d18 !important;
+      padding: 6px !important;
+    }
+    body.tv-kiosk-mode header {
+      padding-top: 4px !important;
+      padding-bottom: 4px !important;
+    }
+    body.tv-kiosk-mode nav {
+      padding: 4px 6px !important;
+    }
+    body.tv-kiosk-mode .nav-tab-btn {
+      padding: 5px 12px !important;
+      font-size: 12px !important;
+    }
+    </style>
 </head>
 <body class="p-4 md:p-6 text-sm antialiased">
+  <!-- TV Kiosk Fullscreen Indicator Toast -->
+  <div id="tvModeIndicator" class="fixed top-3 right-4 z-50 hidden bg-slate-950/95 text-slate-200 border border-slate-700 px-3.5 py-2 text-xs font-mono shadow-2xl backdrop-blur flex items-center gap-2.5 transition-opacity duration-300">
+    <span class="w-2 h-2 bg-emerald-400 animate-pulse"></span>
+    <span class="font-bold text-sky-300">TV KIOSK MODE</span>
+    <span class="text-slate-500">|</span>
+    <span class="text-slate-300">กดปุ่ม <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 text-amber-300 font-bold">Esc</kbd> เพื่อออกจากโหมดเต็มจอ</span>
+    <button onclick="toggleFullscreenTV()" class="ml-2 px-1.5 py-0.5 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-700 font-bold" title="ออกจากโหมดเต็มจอ">[X]</button>
+  </div>
+
   <div class="max-w-7xl mx-auto space-y-4">
 
     <!-- ============================================== -->
@@ -156,6 +182,12 @@
         <div class="scada-inner px-3 py-1.5 text-slate-400 font-mono-num text-[11px]" id="liveMasterClock">
           --:--:--
         </div>
+
+                <!-- Fullscreen TV Mode Button -->
+        <button onclick="toggleFullscreenTV()" class="btn-fullscreen-toggle scada-inner px-3 py-1.5 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm" title="ขยายแดชบอร์ดเต็มจอทีวี (TV Kiosk Mode) - กด Esc เพื่อออก">
+          <span class="w-2 h-2 border border-sky-400 inline-block"></span>
+          <span>[ ขยายเต็มจอทีวี (TV Mode) ]</span>
+        </button>
 
         <!-- Small Settings Gear Button (Hidden/Subtle beside Clock) -->
         <button id="btnHeaderSettings" onclick="toggleSettingsTab()" title="ตั้งค่าระบบ Data Bridge (Data Source & Credentials)" class="scada-inner px-2.5 py-1.5 text-slate-400 hover:text-white hover:border-slate-500 border border-slate-800 rounded transition flex items-center justify-center group" aria-label="Settings">
@@ -212,6 +244,10 @@
           </span>
           <span class="px-2.5 py-1 bg-slate-900 text-slate-300 border border-slate-700" id="dashLastSyncTime">ซิงก์ข้อมูลสด: กำลังเชื่อมต่อ...</span>
           <span class="px-2.5 py-1 bg-slate-800 text-sky-300 border border-slate-600 font-bold" id="dashLiveClock">--:--:-- น.</span>
+          <button onclick="toggleFullscreenTV()" class="btn-fullscreen-toggle px-2.5 py-1 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm" title="ขยายเต็มจอทีวี (กด Esc เพื่อออก)">
+            <span class="w-2 h-2 border border-sky-400 inline-block"></span>
+            <span>[ จอทีวีเต็มจอ ]</span>
+          </button>
         </div>
       </div>
 
@@ -4067,6 +4103,90 @@
         `;
       }).join('');
     }
+    
+    // =========================================================================
+    // FULLSCREEN TV KIOSK MODE LOGIC (กดเปิดเต็มจอทีวี / กด Esc เพื่อออก)
+    // =========================================================================
+    function toggleFullscreenTV() {
+      const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+      if (!isFull) {
+        if (currentActiveTab !== 'dashboard') {
+          switchMainTab('dashboard');
+        }
+        const el = document.documentElement;
+        if (el.requestFullscreen) {
+          el.requestFullscreen().catch(err => {
+            console.log('Fullscreen request notice:', err.message);
+            // Fallback kiosk styling even if browser blocks standard requestFullscreen
+            handleFullscreenChange(true);
+          });
+        } else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+        } else if (el.msRequestFullscreen) {
+          el.msRequestFullscreen();
+        } else {
+          handleFullscreenChange(true);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(err => console.log('Exit fullscreen notice:', err.message));
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        handleFullscreenChange(false);
+      }
+    }
+
+    function handleFullscreenChange(forcedState) {
+      const isFull = (typeof forcedState === 'boolean') 
+        ? forcedState 
+        : !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+      
+      document.body.classList.toggle('tv-kiosk-mode', isFull);
+      
+      const toast = document.getElementById('tvModeIndicator');
+      if (toast) {
+        if (isFull) {
+          toast.classList.remove('hidden');
+          toast.classList.remove('opacity-40');
+          setTimeout(() => {
+            const stillFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.body.classList.contains('tv-kiosk-mode'));
+            if (stillFull && toast) {
+              toast.classList.add('opacity-40');
+            }
+          }, 6000);
+        } else {
+          toast.classList.add('hidden');
+          toast.classList.remove('opacity-40');
+        }
+      }
+
+      const btns = document.querySelectorAll('.btn-fullscreen-toggle');
+      btns.forEach(btn => {
+        if (isFull) {
+          btn.innerHTML = `<span class="w-2 h-2 bg-amber-400 inline-block"></span><span>[ ออกจากเต็มจอ (Esc) ]</span>`;
+          btn.className = 'btn-fullscreen-toggle scada-inner px-3 py-1.5 text-xs font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-600 transition flex items-center gap-1.5 shadow-sm';
+        } else {
+          btn.innerHTML = `<span class="w-2 h-2 border border-sky-400 inline-block"></span><span>[ ขยายเต็มจอทีวี (TV Mode) ]</span>`;
+          btn.className = 'btn-fullscreen-toggle scada-inner px-3 py-1.5 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm';
+        }
+      });
+    }
+
+    document.addEventListener('fullscreenchange', () => handleFullscreenChange());
+    document.addEventListener('webkitfullscreenchange', () => handleFullscreenChange());
+    document.addEventListener('msfullscreenchange', () => handleFullscreenChange());
+
+    // Listen to Esc key to cleanly exit TV mode
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        if (document.body.classList.contains('tv-kiosk-mode')) {
+          handleFullscreenChange(false);
+        }
+      }
+    });
     </script>
 </body>
 </html>
