@@ -203,9 +203,9 @@
         </div>
 
                 <!-- Fullscreen TV Mode Button -->
-        <button onclick="toggleFullscreenTV()" class="btn-fullscreen-toggle scada-inner px-3 py-1.5 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm" title="ขยายแดชบอร์ดเต็มจอทีวี (TV Kiosk Mode) - กด Esc เพื่อออก">
+        <button onclick="toggleFullscreenTV()" class="btn-fullscreen-toggle scada-inner px-3 py-1.5 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm" title="DASHBOARD - เต็มจอทีวี (กด Esc เพื่อออก)">
           <span class="w-2 h-2 border border-sky-400 inline-block"></span>
-          <span>[ ขยายเต็มจอทีวี (TV Mode) ]</span>
+          <span>[ DASHBOARD ]</span>
         </button>
 
         <!-- Small Settings Gear Button (Hidden/Subtle beside Clock) -->
@@ -263,9 +263,9 @@
           </span>
           <span class="px-2.5 py-1 bg-slate-900 text-slate-300 border border-slate-700" id="dashLastSyncTime">ซิงก์ข้อมูลสด: กำลังเชื่อมต่อ...</span>
           <span class="px-2.5 py-1 bg-slate-800 text-sky-300 border border-slate-600 font-bold" id="dashLiveClock">--:--:-- น.</span>
-          <button onclick="toggleFullscreenTV()" class="btn-fullscreen-toggle px-2.5 py-1 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm" title="ขยายเต็มจอทีวี (กด Esc เพื่อออก)">
+          <button onclick="toggleFullscreenTV()" class="btn-fullscreen-toggle px-2.5 py-1 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm" title="DASHBOARD - เต็มจอทีวี (กด Esc เพื่อออก)">
             <span class="w-2 h-2 border border-sky-400 inline-block"></span>
-            <span>[ จอทีวีเต็มจอ ]</span>
+            <span>[ DASHBOARD ]</span>
           </button>
         </div>
       </div>
@@ -3521,8 +3521,15 @@
     // Real-Time Polling from Local Backend Server (if running) or Local Simulation Jitter
     async function syncLiveData() {
       try {
-        const res = await fetch('/api/telemetry');
-        if (!res.ok) throw new Error("HTTP status " + res.status);
+        let res = null;
+        try {
+          res = await fetch('/api/telemetry');
+          if (!res.ok) throw new Error("Local HTTP " + res.status);
+        } catch (localErr) {
+          // If on GitHub Pages or remote host, attempt to reach live Cloudflare tunnel bridge
+          res = await fetch('https://arkansas-mas-nails-parallel.trycloudflare.com/api/telemetry');
+          if (!res.ok) throw new Error("Tunnel HTTP " + res.status);
+        }
         if (res.ok) {
           const data = await res.json();
           
@@ -4188,7 +4195,7 @@
           btn.innerHTML = `<span class="w-2 h-2 bg-amber-400 inline-block"></span><span>[ ออกจากเต็มจอ (Esc) ]</span>`;
           btn.className = 'btn-fullscreen-toggle scada-inner px-3 py-1.5 text-xs font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-600 transition flex items-center gap-1.5 shadow-sm';
         } else {
-          btn.innerHTML = `<span class="w-2 h-2 border border-sky-400 inline-block"></span><span>[ ขยายเต็มจอทีวี (TV Mode) ]</span>`;
+          btn.innerHTML = `<span class="w-2 h-2 border border-sky-400 inline-block"></span><span>[ DASHBOARD ]</span>`;
           btn.className = 'btn-fullscreen-toggle scada-inner px-3 py-1.5 text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white border border-slate-600 transition flex items-center gap-1.5 shadow-sm';
         }
       });
