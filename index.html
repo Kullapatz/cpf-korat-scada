@@ -204,7 +204,7 @@
             <span class="ml-auto text-xs text-slate-400 font-medium">โหลดเฉลี่ย 74.2%</span>
           </div>
           <div class="w-full bg-slate-950 h-2 rounded overflow-hidden border border-slate-800 my-2">
-            <div id="sumPowerBar" class="bg-blue-600 h-full" style="width: 74%;"></div>
+            <div id="sumPowerBar" class="bg-slate-500 h-full" style="width: 74%;"></div>
           </div>
           <div class="flex justify-between text-[11px] text-slate-500">
             <span>0 kW/h</span>
@@ -677,7 +677,7 @@
                 <span id="cardLoadStatus" class="text-xs text-slate-400">Optimal</span>
               </div>
               <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-1">
-                <div id="cardLoadBar" class="bg-blue-600 h-full" style="width: 95%;"></div>
+                <div id="cardLoadBar" class="bg-slate-500 h-full" style="width: 95%;"></div>
               </div>
             </div>
           </div>
@@ -718,7 +718,7 @@
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-xs font-bold text-slate-400 font-mono">เลือกแท็บแผนกวิเคราะห์:</span>
           <div class="flex flex-wrap items-center gap-1.5" id="analyticsDeptTabs">
-            <button id="btnAnaSLH" onclick="setAnalyticsDept('dept-slh')" class="px-3.5 py-1.5 text-xs font-bold font-mono transition bg-blue-600 text-white border border-blue-500 shadow-sm">
+            <button id="btnAnaSLH" onclick="setAnalyticsDept('dept-slh')" class="px-3.5 py-1.5 text-xs font-bold font-mono transition bg-slate-800 text-slate-100 border border-slate-500 shadow-sm">
               SLH - โรงเชือดไก่ (27 เครื่อง)
             </button>
             <button id="btnAnaFUT" onclick="setAnalyticsDept('dept-fut')" class="px-3.5 py-1.5 text-xs font-bold font-mono transition bg-slate-900 text-slate-300 border border-slate-700 hover:border-slate-500">
@@ -749,7 +749,7 @@
       <!-- Top Row: On-Peak vs Off-Peak KPI Cards (Department Specific) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <!-- Card 1: On-Peak -->
-        <div class="scada-card p-3.5 border-l-2 border-l-amber-600/80 flex flex-col justify-between">
+        <div class="scada-card p-3.5 border-l-2 border-l-amber-700/50 flex flex-col justify-between">
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-amber-400 flex items-center gap-1.5">
@@ -773,7 +773,7 @@
         </div>
 
         <!-- Card 2: Off-Peak -->
-        <div class="scada-card p-3.5 border-l-2 border-l-emerald-600/80 flex flex-col justify-between">
+        <div class="scada-card p-3.5 border-l-2 border-l-emerald-700/50 flex flex-col justify-between">
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1.5">
@@ -1225,7 +1225,7 @@
               <span class="text-xs text-slate-400">Capacity</span>
             </div>
             <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
-              <div id="mLoadBar" class="bg-blue-600 h-full" style="width: 95%;"></div>
+              <div id="mLoadBar" class="bg-slate-500 h-full" style="width: 95%;"></div>
             </div>
           </div>
 
@@ -2041,47 +2041,47 @@
     // MULTI-DEPARTMENT & INDIVIDUAL SUB-PROCESS 24H ANALYTICS ENGINE
     // =========================================================================
     const SUB_APP_CONFIG = {
-      'Air Blast':   { name: 'Air Blast', label: 'Air Blast (ตู้แช่แข็งเป่าลม 11 เครื่อง)', color: '#2563eb', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00', dept: 'dept-slh', baseKw: 1050 },
-      'IQF':         { name: 'IQF', label: 'IQF (อุโมงค์ฟรีซเร็ว 9 เครื่อง)', color: '#0284c7', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน', dept: 'dept-fut', baseKw: 980 },
-      'Cold Room':   { name: 'Cold Room', label: 'Cold Room (ห้องเย็นเก็บสินค้า)', color: '#475569', units: [2, 3, 4, 20, 35, 36, 37, 39], count: 8, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', dept: 'MULTI', baseKw: 890 },
-      'Air Chill':   { name: 'Air Chill', label: 'Air Chill (ลดอุณหภูมิซากไก่ 3 เครื่อง)', color: '#0d9488', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่', dept: 'dept-slh', baseKw: 520 },
-      'Water Chill': { name: 'Water Chill', label: 'Water Chill (ระบบทำน้ำเย็น 2 เครื่อง)', color: '#0891b2', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน', dept: 'dept-slh', baseKw: 150 },
-      'Glycol':      { name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#4338ca', units: [21, 23, 24, 42], count: 4, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', dept: 'MULTI', baseKw: 200 },
-      'Chill Room':  { name: 'Chill Room', label: 'Chill Room (ห้องชิลซากไก่)', color: '#64748b', units: [17, 18, 26], count: 3, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', dept: 'MULTI', baseKw: 420 },
-      'Office':      { name: 'Office', label: 'Office (แอร์สำนักงาน HVAC)', color: '#78716c', units: [1, 43], count: 2, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', dept: 'MULTI', baseKw: 220 },
-      'Domestic':    { name: 'Domestic', label: 'Domestic (คลังห้องเย็น 2 เครื่อง)', color: '#334155', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak', dept: 'dept-dom', baseKw: 200 }
+      'Air Blast':   { name: 'Air Blast', label: 'Air Blast (ตู้แช่แข็งเป่าลม 11 เครื่อง)', color: '#3a5670', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00', dept: 'dept-slh', baseKw: 1050 },
+      'IQF':         { name: 'IQF', label: 'IQF (อุโมงค์ฟรีซเร็ว 9 เครื่อง)', color: '#47667e', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน', dept: 'dept-fut', baseKw: 980 },
+      'Cold Room':   { name: 'Cold Room', label: 'Cold Room (ห้องเย็นเก็บสินค้า)', color: '#374351', units: [2, 3, 4, 20, 35, 36, 37, 39], count: 8, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', dept: 'MULTI', baseKw: 890 },
+      'Air Chill':   { name: 'Air Chill', label: 'Air Chill (ลดอุณหภูมิซากไก่ 3 เครื่อง)', color: '#4e6d78', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่', dept: 'dept-slh', baseKw: 520 },
+      'Water Chill': { name: 'Water Chill', label: 'Water Chill (ระบบทำน้ำเย็น 2 เครื่อง)', color: '#5b7b8c', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน', dept: 'dept-slh', baseKw: 150 },
+      'Glycol':      { name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#495368', units: [21, 23, 24, 42], count: 4, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', dept: 'MULTI', baseKw: 200 },
+      'Chill Room':  { name: 'Chill Room', label: 'Chill Room (ห้องชิลซากไก่)', color: '#566270', units: [17, 18, 26], count: 3, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', dept: 'MULTI', baseKw: 420 },
+      'Office':      { name: 'Office', label: 'Office (แอร์สำนักงาน HVAC)', color: '#626c77', units: [1, 43], count: 2, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', dept: 'MULTI', baseKw: 220 },
+      'Domestic':    { name: 'Domestic', label: 'Domestic (คลังห้องเย็น 2 เครื่อง)', color: '#2c3642', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak', dept: 'dept-dom', baseKw: 200 }
     };
 
     const DEPT_SUBAPP_MAP = {
       'dept-slh': [
-        { key: 'Air Blast', name: 'Air Blast', label: 'Air Blast (ตู้แช่แข็งเป่าลม)', color: '#2563eb', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00', baseKw: 1050 },
-        { key: 'Cold Room', name: 'Cold Room', label: 'Cold Room (ห้องเย็นจัดเก็บ)', color: '#475569', units: [20, 35, 36, 37, 39], count: 5, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', baseKw: 550 },
-        { key: 'Air Chill', name: 'Air Chill', label: 'Air Chill (ลดอุณหภูมิซากไก่)', color: '#0d9488', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่', baseKw: 520 },
-        { key: 'Water Chill', name: 'Water Chill', label: 'Water Chill (ระบบทำน้ำเย็น)', color: '#0891b2', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน', baseKw: 150 },
-        { key: 'Glycol', name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#4338ca', units: [21, 42], count: 2, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', baseKw: 100 },
-        { key: 'Chill Room', name: 'Chill Room', label: 'Chill Room (ห้องชิลซากไก่)', color: '#64748b', units: [17, 18], count: 2, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', baseKw: 280 },
-        { key: 'Office', name: 'Office', label: 'Office (แอร์สำนักงาน)', color: '#78716c', units: [43], count: 1, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', baseKw: 110 }
+        { key: 'Air Blast', name: 'Air Blast', label: 'Air Blast (ตู้แช่แข็งเป่าลม)', color: '#3a5670', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00', baseKw: 1050 },
+        { key: 'Cold Room', name: 'Cold Room', label: 'Cold Room (ห้องเย็นจัดเก็บ)', color: '#374351', units: [20, 35, 36, 37, 39], count: 5, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', baseKw: 550 },
+        { key: 'Air Chill', name: 'Air Chill', label: 'Air Chill (ลดอุณหภูมิซากไก่)', color: '#4e6d78', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่', baseKw: 520 },
+        { key: 'Water Chill', name: 'Water Chill', label: 'Water Chill (ระบบทำน้ำเย็น)', color: '#5b7b8c', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน', baseKw: 150 },
+        { key: 'Glycol', name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#495368', units: [21, 42], count: 2, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', baseKw: 100 },
+        { key: 'Chill Room', name: 'Chill Room', label: 'Chill Room (ห้องชิลซากไก่)', color: '#566270', units: [17, 18], count: 2, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', baseKw: 280 },
+        { key: 'Office', name: 'Office', label: 'Office (แอร์สำนักงาน)', color: '#626c77', units: [43], count: 1, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', baseKw: 110 }
       ],
       'dept-fut': [
-        { key: 'IQF', name: 'IQF', label: 'IQF (อุโมงค์ฟรีซเร็ว)', color: '#0284c7', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน', baseKw: 980 },
-        { key: 'Cold Room', name: 'Cold Room', label: 'Cold Room (ห้องเย็นเก็บสินค้า)', color: '#475569', units: [2, 3, 4], count: 3, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', baseKw: 340 },
-        { key: 'Glycol', name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#4338ca', units: [23, 24], count: 2, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', baseKw: 100 },
-        { key: 'Chill Room', name: 'Chill Room', label: 'Chill Room (ห้องชิล)', color: '#64748b', units: [26], count: 1, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', baseKw: 140 },
-        { key: 'Office', name: 'Office', label: 'Office (แอร์สำนักงาน)', color: '#78716c', units: [1], count: 1, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', baseKw: 110 }
+        { key: 'IQF', name: 'IQF', label: 'IQF (อุโมงค์ฟรีซเร็ว 9 เครื่อง)', color: '#47667e', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน', baseKw: 980 },
+        { key: 'Cold Room', name: 'Cold Room', label: 'Cold Room (ห้องเย็นจัดเก็บ)', color: '#374351', units: [2, 3, 4], count: 3, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', baseKw: 340 },
+        { key: 'Glycol', name: 'Glycol', label: 'Glycol (ชิลเลอร์หล่อเย็น)', color: '#495368', units: [23, 24], count: 2, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', baseKw: 100 },
+        { key: 'Chill Room', name: 'Chill Room', label: 'Chill Room (ห้องชิล)', color: '#566270', units: [26], count: 1, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', baseKw: 140 },
+        { key: 'Office', name: 'Office', label: 'Office (แอร์สำนักงาน)', color: '#626c77', units: [1], count: 1, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', baseKw: 110 }
       ],
       'dept-dom': [
-        { key: 'Domestic', name: 'Domestic', label: 'Domestic (คลังห้องเย็นสำเร็จรูป)', color: '#334155', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak', baseKw: 200 }
+        { key: 'Domestic', name: 'Domestic', label: 'Domestic (คลังห้องเย็น 2 เครื่อง)', color: '#2c3642', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak', baseKw: 200 }
       ],
       'ALL': [
-        { key: 'Air Blast', name: 'Air Blast', label: 'Air Blast (11 เครื่อง)', color: '#2563eb', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00', baseKw: 1050 },
-        { key: 'IQF', name: 'IQF', label: 'IQF (9 เครื่อง)', color: '#0284c7', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน', baseKw: 980 },
-        { key: 'Cold Room', name: 'Cold Room', label: 'Cold Room (8 เครื่อง)', color: '#475569', units: [2, 3, 4, 20, 35, 36, 37, 39], count: 8, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', baseKw: 890 },
-        { key: 'Air Chill', name: 'Air Chill', label: 'Air Chill (3 เครื่อง)', color: '#0d9488', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่', baseKw: 520 },
-        { key: 'Water Chill', name: 'Water Chill', label: 'Water Chill (2 เครื่อง)', color: '#0891b2', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน', baseKw: 150 },
-        { key: 'Glycol', name: 'Glycol', label: 'Glycol (4 เครื่อง)', color: '#4338ca', units: [21, 23, 24, 42], count: 4, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', baseKw: 200 },
-        { key: 'Chill Room', name: 'Chill Room', label: 'Chill Room (3 เครื่อง)', color: '#64748b', units: [17, 18, 26], count: 3, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', baseKw: 420 },
-        { key: 'Office', name: 'Office', label: 'Office (2 เครื่อง)', color: '#78716c', units: [1, 43], count: 2, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', baseKw: 220 },
-        { key: 'Domestic', name: 'Domestic', label: 'Domestic (2 เครื่อง)', color: '#334155', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak', baseKw: 200 }
+        { key: 'Air Blast', name: 'Air Blast', label: 'Air Blast (11 เครื่อง)', color: '#3a5670', units: [10, 11, 12, 13, 14, 15, 16, 32, 33, 34, 38], count: 11, tip: 'บริหารรอบฟรีซ หลีกเลี่ยงพีก 13:00-15:00', baseKw: 1050 },
+        { key: 'IQF', name: 'IQF', label: 'IQF (9 เครื่อง)', color: '#47667e', units: [5, 6, 7, 8, 27, 28, 29, 30, 31], count: 9, tip: 'ล้างทำความสะอาด CIP ช่วง Off-Peak กลางคืน', baseKw: 980 },
+        { key: 'Cold Room', name: 'Cold Room', label: 'Cold Room (8 เครื่อง)', color: '#374351', units: [2, 3, 4, 20, 35, 36, 37, 39], count: 8, tip: 'จำกัดการเปิดประตูคลังช่วงบ่าย On-Peak', baseKw: 890 },
+        { key: 'Air Chill', name: 'Air Chill', label: 'Air Chill (3 เครื่อง)', color: '#4e6d78', units: [19, 40, 45], count: 3, tip: 'ปรับสปีดพัดลมตามรอบเชือดไก่', baseKw: 520 },
+        { key: 'Water Chill', name: 'Water Chill', label: 'Water Chill (2 เครื่อง)', color: '#5b7b8c', units: [22, 44], count: 2, tip: 'กักเก็บความเย็นสะสม (Ice Storage) ช่วงกลางคืน', baseKw: 150 },
+        { key: 'Glycol', name: 'Glycol', label: 'Glycol (4 เครื่อง)', color: '#495368', units: [21, 23, 24, 42], count: 4, tip: 'ควบคุมอุณหภูมิจ่ายคงที่ 0°C ถึง +2°C', baseKw: 200 },
+        { key: 'Chill Room', name: 'Chill Room', label: 'Chill Room (3 เครื่อง)', color: '#566270', units: [17, 18, 26], count: 3, tip: 'รักษาระดับอุณหภูมิห้องชิลไม่ให้แกว่ง', baseKw: 420 },
+        { key: 'Office', name: 'Office', label: 'Office (2 เครื่อง)', color: '#626c77', units: [1, 43], count: 2, tip: 'ตั้งอุณหภูมิ 25-26°C ปิดระบบหลัง 17:00', baseKw: 220 },
+        { key: 'Domestic', name: 'Domestic', label: 'Domestic (2 เครื่อง)', color: '#2c3642', units: [9, 46], count: 2, tip: 'จัดรอบเบิกจ่ายสินค้าช่วงเช้า Off-Peak', baseKw: 200 }
       ]
     };
 
@@ -2119,7 +2119,7 @@
         const el = document.getElementById(t.id);
         if (el) {
           if (t.key === deptKey) {
-            el.className = 'px-3.5 py-1.5 text-xs font-bold font-mono transition bg-blue-600 text-white border border-blue-500 shadow-sm';
+            el.className = 'px-3.5 py-1.5 text-xs font-bold font-mono transition bg-slate-800 text-slate-100 border border-slate-500 shadow-sm';
           } else {
             el.className = 'px-3.5 py-1.5 text-xs font-bold font-mono transition bg-slate-900 text-slate-300 border border-slate-700 hover:border-slate-500';
           }
@@ -2287,7 +2287,7 @@
       // Update Sub-App Filter Pills on Main Chart
       const pillsContainer = document.getElementById('trendSubAppFilterPills');
       if (pillsContainer) {
-        let pillsHtml = `<button onclick="setTrendSubAppFilter('ALL')" class="px-2.5 py-1 rounded-none font-bold text-xs transition ${currentTrendFilterApp === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-700'}">ทั้งหมด (${activeSubApps.length} ระบบ)</button>`;
+        let pillsHtml = `<button onclick="setTrendSubAppFilter('ALL')" class="px-2.5 py-1 rounded-none font-bold text-xs transition ${currentTrendFilterApp === 'ALL' ? 'bg-slate-700 text-white border border-slate-500' : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'}">ทั้งหมด (${activeSubApps.length} ระบบ)</button>`;
         activeSubApps.forEach(sa => {
           const isAct = (currentTrendFilterApp === sa.key);
           pillsHtml += `<button onclick="setTrendSubAppFilter('${sa.key}')" class="px-2 py-1 rounded-none text-xs transition flex items-center gap-1.5 ${isAct ? 'bg-slate-800 text-white border border-slate-500 font-bold' : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 border border-slate-800'}">
@@ -2331,7 +2331,7 @@
 
       // Background Zone Shading
       svg += `<rect x="0" y="10" width="375" height="${baselineY - 10}" fill="#0f172a" fill-opacity="0.35"/>`;
-      svg += `<rect x="375" y="10" width="541.67" height="${baselineY - 10}" fill="#f59e0b" fill-opacity="0.05" stroke="#f59e0b" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 2"/>`;
+      svg += `<rect x="375" y="10" width="541.67" height="${baselineY - 10}" fill="#d97706" fill-opacity="0.03" stroke="#d97706" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="3 2"/>`;
       svg += `<rect x="916.67" y="10" width="83.33" height="${baselineY - 10}" fill="#0f172a" fill-opacity="0.35"/>`;
 
       // Render 24 Stacked Bars
@@ -2351,7 +2351,7 @@
           }
 
           if (segH > 0.5) {
-            svg += `<rect x="${x.toFixed(1)}" y="${ySeg.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="${sa.color}" fill-opacity="${opacity}" class="transition-opacity duration-150 cursor-pointer"/>`;
+            svg += `<rect x="${x.toFixed(1)}" y="${ySeg.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="${sa.color}" fill-opacity="${opacity}" stroke="#0b111e" stroke-width="0.5" class="transition-opacity duration-150 cursor-pointer"/>`;
           }
           yCurr = ySeg;
         });
@@ -2364,9 +2364,9 @@
 
         // Current Hour Indicator (NOW)
         if (hData.isNow) {
-          svg += `<line x1="${(x + barW / 2).toFixed(1)}" y1="10" x2="${(x + barW / 2).toFixed(1)}" y2="${baselineY}" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2 2"/>`;
-          svg += `<rect x="${(x + barW / 2 - 14).toFixed(1)}" y="1" width="28" height="12" fill="#0284c7" rx="0"/>`;
-          svg += `<text x="${(x + barW / 2).toFixed(1)}" y="10" fill="#ffffff" font-size="8" font-family="monospace" font-weight="bold" text-anchor="middle">NOW</text>`;
+          svg += `<line x1="${(x + barW / 2).toFixed(1)}" y1="10" x2="${(x + barW / 2).toFixed(1)}" y2="${baselineY}" stroke="#64748b" stroke-width="1" stroke-dasharray="2 2"/>`;
+          svg += `<rect x="${(x + barW / 2 - 14).toFixed(1)}" y="1" width="28" height="12" fill="#334155" rx="0"/>`;
+          svg += `<text x="${(x + barW / 2).toFixed(1)}" y="10" fill="#cbd5e1" font-size="8" font-family="monospace" font-weight="bold" text-anchor="middle">NOW</text>`;
         }
       });
 
@@ -2424,15 +2424,14 @@
           const segH = (val / maxChartKw) * plotH;
           const x = h * barStep + barGap;
           const y = baselineY - segH;
-          const opacity = isPeak ? '0.95' : '0.75';
-          const stroke = isPeak ? 'stroke="#f59e0b" stroke-width="0.8"' : '';
+          const opacity = isPeak ? '0.90' : '0.55';
 
           if (segH > 0.5) {
-            svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="${sa.color}" fill-opacity="${opacity}" ${stroke}/>`;
+            svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="${sa.color}" fill-opacity="${opacity}" stroke="#0b111e" stroke-width="0.5"/>`;
           }
 
           if (h % 3 === 0 || h === 23) {
-            svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${baselineY + 12}" fill="${isPeak ? '#f59e0b' : '#64748b'}" font-size="8" font-family="monospace" text-anchor="middle">${h < 10 ? '0' + h : h}h</text>`;
+            svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${baselineY + 12}" fill="${isPeak ? '#94a3b8' : '#64748b'}" font-size="8" font-family="monospace" text-anchor="middle">${h < 10 ? '0' + h : h}h</text>`;
           }
         }
         svg += `</svg>`;
@@ -2452,12 +2451,12 @@
               </div>
               <div class="grid grid-cols-2 gap-2 mt-1.5 text-[11px] font-mono-num text-slate-400 border-t border-slate-800/80 pt-1">
                 <div>
-                  <span class="text-[10px] text-amber-400/90 block">On-Peak เฉลี่ย:</span>
-                  <span class="font-bold text-amber-300">${onPeakAvg.toLocaleString()} kW</span>
+                  <span class="text-[10px] text-slate-400 block">On-Peak เฉลี่ย:</span>
+                  <span class="font-bold text-slate-200">${onPeakAvg.toLocaleString()} kW</span>
                 </div>
                 <div class="text-right">
-                  <span class="text-[10px] text-emerald-400/90 block">Off-Peak เฉลี่ย:</span>
-                  <span class="font-bold text-emerald-300">${offPeakAvg.toLocaleString()} kW</span>
+                  <span class="text-[10px] text-slate-400 block">Off-Peak เฉลี่ย:</span>
+                  <span class="font-bold text-slate-300">${offPeakAvg.toLocaleString()} kW</span>
                   <span class="text-[9px] ${deltaPct > 0 ? 'text-amber-400' : 'text-slate-400'}"> (+${deltaPct}%)</span>
                 </div>
               </div>
@@ -2469,7 +2468,7 @@
             </div>
 
             <div class="text-[10px] text-slate-400 leading-snug pt-1 border-t border-slate-800/60">
-              <span class="font-mono text-sky-400">▪ แนวทาง:</span> ${sa.tip}
+              <span class="font-mono text-slate-400">▪ แนวทาง:</span> ${sa.tip}
             </div>
           </div>
         `;
@@ -2499,9 +2498,9 @@
               <span>${sa.name}</span>
             </td>
             <td class="py-2.5 px-3 text-center text-slate-400">${sa.count}</td>
-            <td class="py-2.5 px-3 text-right font-bold text-amber-400">${onPeakAvg.toLocaleString()} kW</td>
-            <td class="py-2.5 px-3 text-right text-emerald-400">${offPeakAvg.toLocaleString()} kW</td>
-            <td class="py-2.5 px-3 text-right font-bold ${deltaPct > 0 ? 'text-amber-400' : 'text-slate-400'}">+${deltaPct}%</td>
+            <td class="py-2.5 px-3 text-right font-bold text-slate-200">${onPeakAvg.toLocaleString()} kW</td>
+            <td class="py-2.5 px-3 text-right text-slate-300">${offPeakAvg.toLocaleString()} kW</td>
+            <td class="py-2.5 px-3 text-right font-bold text-slate-300">+${deltaPct}%</td>
             <td class="py-2.5 px-3 text-right text-slate-300">~${costOn.toLocaleString()} ฿/ชม.</td>
             <td class="py-2.5 px-3 text-right text-slate-400">~${costOff.toLocaleString()} ฿/ชม.</td>
             <td class="py-2.5 px-3 text-slate-400 text-[11px]">${sa.tip}</td>
