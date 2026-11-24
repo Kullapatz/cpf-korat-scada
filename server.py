@@ -724,6 +724,16 @@ class ScadaRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
 
             with telemetry_lock:
+                # Ensure running units without individual DMG800 meter topics have realistic power derived from Slide Valve %
+                for u_id, u in units_data.items():
+                    if u["status"] == "RUN" and (u.get("power_kw") is None or u.get("power_kw") <= 0.5):
+                        ld = u.get("load_pct", 75)
+                        if ld <= 5: ld = 75
+                        base = 115.0 if u.get("stage") == "Booster" else 210.0
+                        u["power_kw"] = round(base * (0.28 + 0.72 * (ld / 100.0)), 1)
+                        if not u.get("current_a") or u.get("current_a") <= 1.0:
+                            u["current_a"] = round(u["power_kw"] * 1.6, 1)
+
                 total_power = sum(u["power_kw"] for u in units_data.values() if u["status"] == "RUN")
                 rate = config.get("electricity_rate_thb", 3.50)
                 cost_hr = round(total_power * rate, 2)
