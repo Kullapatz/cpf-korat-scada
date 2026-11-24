@@ -106,10 +106,29 @@
       border-radius: 0px !important;
     }
   
+    /* Full-Width Edge-to-Edge SCADA Layout */
+    html, body {
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden;
+      margin: 0 !important;
+    }
+    #mainAppContainer {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+    }
     /* TV Kiosk Fullscreen Mode Styling */
     body.tv-kiosk-mode {
       background-color: #070d18 !important;
-      padding: 6px !important;
+      padding: 4px !important;
+      width: 100vw !important;
+    }
+    body.tv-kiosk-mode #mainAppContainer {
+      padding-left: 4px !important;
+      padding-right: 4px !important;
     }
     body.tv-kiosk-mode header {
       padding-top: 4px !important;
@@ -119,12 +138,12 @@
       padding: 4px 6px !important;
     }
     body.tv-kiosk-mode .nav-tab-btn {
-      padding: 5px 12px !important;
-      font-size: 12px !important;
+      padding: 6px 14px !important;
+      font-size: 13px !important;
     }
     </style>
 </head>
-<body class="p-4 md:p-6 text-sm antialiased">
+<body class="p-2 sm:p-3 text-sm antialiased w-full overflow-x-hidden">
   <!-- TV Kiosk Fullscreen Indicator Toast -->
   <div id="tvModeIndicator" class="fixed top-3 right-4 z-50 hidden bg-slate-950/95 text-slate-200 border border-slate-700 px-3.5 py-2 text-xs font-mono shadow-2xl backdrop-blur flex items-center gap-2.5 transition-opacity duration-300">
     <span class="w-2 h-2 bg-emerald-400 animate-pulse"></span>
@@ -134,7 +153,7 @@
     <button onclick="toggleFullscreenTV()" class="ml-2 px-1.5 py-0.5 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-700 font-bold" title="ออกจากโหมดเต็มจอ">[X]</button>
   </div>
 
-  <div class="max-w-7xl mx-auto space-y-4">
+  <div class="w-full max-w-none space-y-3.5" id="mainAppContainer">
 
     <!-- ============================================== -->
     <!-- TOP MASTER HEADER -->
@@ -252,15 +271,15 @@
       </div>
 
       <!-- 2. Power Consumption Hero Cards (รวมทั้งหมด & แยกแต่ละกลุ่ม) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <!-- Card 1: Plant Total -->
-        <div class="scada-card p-3.5 border-l-2 border-l-blue-500">
+        <div class="scada-card p-4 border-l-4 border-l-blue-500">
           <div class="flex justify-between items-start text-xs text-slate-400">
             <span class="font-bold text-slate-200">กำลังไฟฟ้ารวมทั้งโรงงาน</span>
             <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">46 ยูนิต</span>
           </div>
           <div class="flex items-baseline gap-1.5 my-1.5">
-            <span id="dashTotalPower" class="text-2xl font-bold font-mono-num text-white">4,825.8</span>
+            <span id="dashTotalPower" class="text-3xl xl:text-4xl font-bold font-mono-num text-white">4,825.8</span>
             <span class="text-xs text-slate-400 font-medium">kW</span>
             <span id="dashTotalLoadPct" class="ml-auto text-xs text-slate-400 font-mono">74.2% โหลด</span>
           </div>
@@ -274,13 +293,13 @@
         </div>
 
         <!-- Card 2: SLH Group -->
-        <div class="scada-card p-3.5 border-l-2 border-l-cyan-500">
+        <div class="scada-card p-4 border-l-4 border-l-cyan-500">
           <div class="flex justify-between items-start text-xs text-slate-400">
             <span class="font-bold text-slate-200">กลุ่ม SLH - โรงเชือดไก่</span>
             <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">27 ยูนิต</span>
           </div>
           <div class="flex items-baseline gap-1.5 my-1.5">
-            <span id="dashPowerSLH" class="text-2xl font-bold font-mono-num text-white">2,414.6</span>
+            <span id="dashPowerSLH" class="text-3xl xl:text-4xl font-bold font-mono-num text-white">2,414.6</span>
             <span class="text-xs text-slate-400 font-medium">kW</span>
             <span id="dashShareSLH" class="ml-auto text-xs text-slate-400 font-mono">50.0% ส่วนแบ่ง</span>
           </div>
@@ -294,13 +313,13 @@
         </div>
 
         <!-- Card 3: FUT Group -->
-        <div class="scada-card p-3.5 border-l-2 border-l-indigo-500">
+        <div class="scada-card p-4 border-l-4 border-l-indigo-500">
           <div class="flex justify-between items-start text-xs text-slate-400">
             <span class="font-bold text-slate-200">กลุ่ม FUT - แปรรูปปรุงสุก</span>
             <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">17 ยูนิต</span>
           </div>
           <div class="flex items-baseline gap-1.5 my-1.5">
-            <span id="dashPowerFUT" class="text-2xl font-bold font-mono-num text-white">2,289.1</span>
+            <span id="dashPowerFUT" class="text-3xl xl:text-4xl font-bold font-mono-num text-white">2,289.1</span>
             <span class="text-xs text-slate-400 font-medium">kW</span>
             <span id="dashShareFUT" class="ml-auto text-xs text-slate-400 font-mono">47.4% ส่วนแบ่ง</span>
           </div>
@@ -314,13 +333,13 @@
         </div>
 
         <!-- Card 4: Domestic Group -->
-        <div class="scada-card p-3.5 border-l-2 border-l-purple-500">
+        <div class="scada-card p-4 border-l-4 border-l-purple-500">
           <div class="flex justify-between items-start text-xs text-slate-400">
             <span class="font-bold text-slate-200">กลุ่ม Domestic - คลังสินค้า</span>
             <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">2 ยูนิต</span>
           </div>
           <div class="flex items-baseline gap-1.5 my-1.5">
-            <span id="dashPowerDOM" class="text-2xl font-bold font-mono-num text-white">122.1</span>
+            <span id="dashPowerDOM" class="text-3xl xl:text-4xl font-bold font-mono-num text-white">122.1</span>
             <span class="text-xs text-slate-400 font-medium">kW</span>
             <span id="dashShareDOM" class="ml-auto text-xs text-slate-400 font-mono">2.6% ส่วนแบ่ง</span>
           </div>
@@ -358,7 +377,7 @@
           </div>
 
           <!-- SVG 24h Combined Chart Container -->
-          <div class="w-full h-56 bg-slate-950 p-2 border border-slate-800/80 relative" id="dashCombinedChartContainer">
+          <div class="w-full h-64 sm:h-72 bg-slate-950 p-2 sm:p-3 border border-slate-800/80 relative" id="dashCombinedChartContainer">
             <!-- Rendered by renderDashboardCombinedChart() -->
           </div>
 
@@ -456,11 +475,11 @@
             <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-800/80 text-xs font-mono-num">
               <div>
                 <span class="text-slate-400 text-[10px] block">Slide เฉลี่ยทั้งวัน:</span>
-                <span class="text-lg font-bold text-white" id="highStageAvgSlide">--%</span>
+                <span class="text-2xl sm:text-3xl font-bold font-mono-num text-white" id="highStageAvgSlide">--%</span>
               </div>
               <div>
                 <span class="text-slate-400 text-[10px] block">กำลังไฟฟ้ารวม:</span>
-                <span class="text-lg font-bold text-slate-200" id="highStageTotalKw">-- kW</span>
+                <span class="text-2xl sm:text-3xl font-bold font-mono-num text-slate-200" id="highStageTotalKw">-- kW</span>
               </div>
               <div class="text-right">
                 <span class="text-slate-400 text-[10px] block">ระดับประสิทธิภาพ:</span>
@@ -483,11 +502,11 @@
             <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-800/80 text-xs font-mono-num">
               <div>
                 <span class="text-slate-400 text-[10px] block">Slide เฉลี่ยทั้งวัน:</span>
-                <span class="text-lg font-bold text-white" id="boosterStageAvgSlide">--%</span>
+                <span class="text-2xl sm:text-3xl font-bold font-mono-num text-white" id="boosterStageAvgSlide">--%</span>
               </div>
               <div>
                 <span class="text-slate-400 text-[10px] block">กำลังไฟฟ้ารวม:</span>
-                <span class="text-lg font-bold text-slate-200" id="boosterStageTotalKw">-- kW</span>
+                <span class="text-2xl sm:text-3xl font-bold font-mono-num text-slate-200" id="boosterStageTotalKw">-- kW</span>
               </div>
               <div class="text-right">
                 <span class="text-slate-400 text-[10px] block">ระดับประสิทธิภาพ:</span>
@@ -3785,10 +3804,10 @@
       if (!container) return;
 
       const hourly = getHourlyBreakdown();
-      const W = 800;
-      const H = 200;
-      const baselineY = 175;
-      const plotH = 145;
+      const W = 1000;
+      const H = 230;
+      const baselineY = 195;
+      const plotH = 165;
       const barStep = W / 24;
       const barW = 20;
       const barGap = (barStep - barW) / 2;
@@ -3809,13 +3828,13 @@
       gridLevels.forEach(kw => {
         const y = baselineY - (kw / maxKw) * plotH;
         svg += `<line x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="#334155" stroke-opacity="0.25" stroke-width="1" stroke-dasharray="3 3"/>`;
-        svg += `<text x="6" y="${(y - 4).toFixed(1)}" fill="#64748b" font-size="8.5" font-family="monospace">${kw.toLocaleString()} kW</text>`;
+        svg += `<text x="8" y="${(y - 4).toFixed(1)}" fill="#94a3b8" font-size="10" font-family="monospace" font-weight="bold">${kw.toLocaleString()} kW</text>`;
       });
 
       // 3. Peak Demand limit line at 5,000 kW
       const yLimit = baselineY - (5000 / maxKw) * plotH;
       svg += `<line x1="0" y1="${yLimit.toFixed(1)}" x2="${W}" y2="${yLimit.toFixed(1)}" stroke="#e2e8f0" stroke-opacity="0.4" stroke-width="1" stroke-dasharray="4 2"/>`;
-      svg += `<text x="${W - 8}" y="${(yLimit - 4).toFixed(1)}" fill="#cbd5e1" font-size="8.5" font-family="monospace" text-anchor="end">พีกเป้าหมาย 5,000 kW</text>`;
+      svg += `<text x="${W - 10}" y="${(yLimit - 5).toFixed(1)}" fill="#e2e8f0" font-size="10.5" font-family="monospace" font-weight="bold" text-anchor="end">พีกเป้าหมาย 5,000 kW</text>`;
 
       // 4. 24 Hourly bars with vibrant On-Peak vs Off-Peak distinction
       for (let h = 0; h < 24; h++) {
@@ -3836,7 +3855,7 @@
         // X Axis labels
         const txtColor = (h === nowH) ? '#38bdf8' : (isPeak ? '#94a3b8' : '#64748b');
         const txtWeight = (h === nowH) ? 'bold' : 'normal';
-        svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${baselineY + 14}" fill="${txtColor}" font-size="8.5" font-family="monospace" font-weight="${txtWeight}" text-anchor="middle">${h < 10 ? '0' + h : h}h</text>`;
+        svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${baselineY + 18}" fill="${txtColor}" font-size="10" font-family="monospace" font-weight="${txtWeight}" text-anchor="middle">${h < 10 ? '0' + h : h}h</text>`;
 
         // NOW Pin
         if (h === nowH) {
@@ -3895,21 +3914,21 @@
         const costHr = Math.round(kw * rate);
 
         return `
-          <div class="scada-inner p-2 border border-slate-800 space-y-1">
-            <div class="flex justify-between items-center text-xs">
-              <span class="font-medium text-slate-200 flex items-center gap-1.5 truncate">
-                <span class="w-2 h-2 rounded-none inline-block" style="background-color: ${sa.color}"></span>
+          <div class="scada-inner p-2.5 border border-slate-800 space-y-1.5 hover:border-slate-600 transition">
+            <div class="flex justify-between items-center text-xs sm:text-sm">
+              <span class="font-bold text-white flex items-center gap-2 truncate">
+                <span class="w-2.5 h-2.5 rounded-none inline-block shadow-sm" style="background-color: ${sa.color}"></span>
                 <span class="truncate">${sa.name}</span>
-                <span class="text-[10px] text-slate-400 font-mono">(${sa.runUnits}/${sa.count})</span>
+                <span class="text-xs text-slate-300 font-mono font-medium">(${sa.runUnits}/${sa.count})</span>
               </span>
-              <span class="font-bold text-white font-mono-num text-xs">${kw.toLocaleString()} kW</span>
+              <span class="font-bold text-white font-mono-num text-sm sm:text-base">${kw.toLocaleString()} kW</span>
             </div>
-            <div class="w-full bg-slate-950 h-1 rounded-none overflow-hidden border border-slate-800">
-              <div class="h-full rounded-none" style="width: ${share}%; background-color: ${sa.color}"></div>
+            <div class="w-full bg-slate-950 h-2 rounded-none overflow-hidden border border-slate-800">
+              <div class="h-full rounded-none transition-all duration-300" style="width: ${share}%; background-color: ${sa.color}"></div>
             </div>
-            <div class="flex justify-between text-[10px] text-slate-400 font-mono-num">
-              <span>ส่วนแบ่ง ${share}%</span>
-              <span>~${costHr.toLocaleString()} ฿/ชม.</span>
+            <div class="flex justify-between text-xs text-slate-300 font-mono-num">
+              <span class="font-medium">ส่วนแบ่ง ${share}%</span>
+              <span class="font-bold text-slate-200">~${costHr.toLocaleString()} ฿/ชม.</span>
             </div>
           </div>
         `;
@@ -3943,7 +3962,7 @@
               <span class="font-bold text-slate-200">${dept.name}</span>
               <span class="text-[10px] font-mono text-slate-400">เดิน ${uList.filter(u => u.status === 'RUN').length} / ${uList.length} เครื่อง</span>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 2xl:grid-cols-9 gap-2.5 sm:gap-3">
         `;
 
         uList.forEach(u => {
@@ -3962,23 +3981,23 @@
 
           const isBooster = (u.stage === 'Booster');
           const stageBadge = isBooster
-            ? '<span class="px-1 py-0.2 text-[8px] font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-700">BOOST</span>'
-            : '<span class="px-1 py-0.2 text-[8px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700">HIGH</span>';
+            ? '<span class="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-600">BOOST</span>'
+            : '<span class="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-600">HIGH</span>';
 
           html += `
-            <div class="scada-inner p-2 border ${borderClass} flex flex-col justify-between hover:border-slate-500 transition cursor-pointer select-none" onclick="openModal(${u.id})">
-              <div class="flex justify-between items-center gap-1">
-                <span class="font-bold text-white font-mono text-xs">NO.${u.id}</span>
+            <div class="scada-inner p-2.5 sm:p-3 border ${borderClass} flex flex-col justify-between hover:border-sky-400 transition cursor-pointer select-none shadow-sm" onclick="openModal(${u.id})">
+              <div class="flex justify-between items-center gap-1.5">
+                <span class="font-bold text-white font-mono text-sm sm:text-base tracking-wide">NO.${u.id}</span>
                 ${stageBadge}
               </div>
-              <div class="text-[10px] text-slate-400 truncate mt-0.5" title="${u.name} - ${u.subApp}">${u.name}</div>
-              <div class="flex justify-between items-center mt-1 pt-1 border-t border-slate-800/60">
-                <span class="flex items-center gap-1">${statusBadge}</span>
-                <span class="font-mono-num text-[11px] font-bold text-white">${Number(u.power).toFixed(0)} kW</span>
+              <div class="text-xs text-slate-300 truncate mt-1 font-medium font-sans" title="${u.name} - ${u.subApp}">${u.name}</div>
+              <div class="flex justify-between items-center mt-1.5 pt-1.5 border-t border-slate-800/80">
+                <span class="flex items-center gap-1.5">${statusBadge}</span>
+                <span class="font-mono-num text-xs sm:text-sm font-bold text-white">${Number(u.power).toFixed(0)} kW</span>
               </div>
-              <div class="flex justify-between items-center text-[9px] text-slate-400 font-mono mt-0.5">
-                <span>SV: <strong class="text-slate-200">${u.load}%</strong></span>
-                <span>${u.suctionP}b</span>
+              <div class="flex justify-between items-center text-[10px] sm:text-xs text-slate-300 font-mono mt-1">
+                <span>SV: <strong class="text-white font-bold">${u.load}%</strong></span>
+                <span class="text-slate-400">${u.suctionP}b</span>
               </div>
             </div>
           `;
