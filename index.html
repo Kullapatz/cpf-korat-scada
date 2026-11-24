@@ -168,6 +168,9 @@
     <!-- MAIN NAVIGATION TABS (Clean Operational View) -->
     <!-- ============================================== -->
     <nav class="scada-card p-2 flex flex-wrap items-center gap-2">
+      <button class="nav-tab-btn" data-tab="dashboard" onclick="switchMainTab('dashboard')">
+        แดชบอร์ดปฏิบัติการ (Operations Dashboard)
+      </button>
       <button class="nav-tab-btn active" data-tab="summary" onclick="switchMainTab('summary')">
         สรุปภาพรวม (Executive Summary)
       </button>
@@ -188,6 +191,300 @@
     <!-- ============================================== -->
     <!-- TAB 1: EXECUTIVE SUMMARY -->
     <!-- ============================================== -->
+    <!-- ============================================== -->
+    <!-- TAB 0: OPERATIONS DASHBOARD (แดชบอร์ดภาพรวม) -->
+    <!-- ============================================== -->
+    <div id="tab-dashboard" class="hidden space-y-4">
+
+      <!-- 1. Header & Live Telemetry Bar -->
+      <div class="scada-card p-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-2.5 h-2.5 bg-emerald-500 animate-pulse"></div>
+          <div>
+            <h3 class="font-bold text-white text-sm">แดชบอร์ดภาพรวมการปฏิบัติการ (Operations & Fleet Dashboard)</h3>
+            <div class="text-xs text-slate-400">ระบบมอนิเตอร์กำลังไฟฟ้า โครงสร้างสเตจ และประสิทธิภาพสไลด์วาล์ว 46 ยูนิต CPF Korat</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono">
+          <span class="px-2.5 py-1 bg-slate-900 text-slate-300 border border-slate-700">เกตเวย์: B019217D9612KR</span>
+          <span class="px-2.5 py-1 bg-slate-800 text-sky-400 border border-slate-600 font-bold" id="dashLiveClock">--:--:--</span>
+        </div>
+      </div>
+
+      <!-- 2. Power Consumption Hero Cards (รวมทั้งหมด & แยกแต่ละกลุ่ม) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Card 1: Plant Total -->
+        <div class="scada-card p-3.5 border-l-2 border-l-slate-400">
+          <div class="flex justify-between items-start text-xs text-slate-400">
+            <span class="font-bold text-slate-200">กำลังไฟฟ้ารวมทั้งโรงงาน</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">46 ยูนิต</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 my-1.5">
+            <span id="dashTotalPower" class="text-2xl font-bold font-mono-num text-white">4,825.8</span>
+            <span class="text-xs text-slate-400 font-medium">kW</span>
+            <span id="dashTotalLoadPct" class="ml-auto text-xs text-slate-400 font-mono">74.2% โหลด</span>
+          </div>
+          <div class="w-full bg-slate-950 h-1.5 overflow-hidden border border-slate-800 my-1.5">
+            <div id="dashTotalPowerBar" class="bg-slate-500 h-full" style="width: 74%;"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 font-mono-num pt-1 border-t border-slate-800/80">
+            <span id="dashTotalCostHr">~16,890 ฿/ชม.</span>
+            <span id="dashTotalUnitsRun">เดิน 33 / 46 เครื่อง</span>
+          </div>
+        </div>
+
+        <!-- Card 2: SLH Group -->
+        <div class="scada-card p-3.5 border-l-2 border-l-slate-500">
+          <div class="flex justify-between items-start text-xs text-slate-400">
+            <span class="font-bold text-slate-200">กลุ่ม SLH - โรงเชือดไก่</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">27 ยูนิต</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 my-1.5">
+            <span id="dashPowerSLH" class="text-2xl font-bold font-mono-num text-white">2,414.6</span>
+            <span class="text-xs text-slate-400 font-medium">kW</span>
+            <span id="dashShareSLH" class="ml-auto text-xs text-slate-400 font-mono">50.0% ส่วนแบ่ง</span>
+          </div>
+          <div class="w-full bg-slate-950 h-1.5 overflow-hidden border border-slate-800 my-1.5">
+            <div id="dashBarSLH" class="bg-slate-600 h-full" style="width: 50%;"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 font-mono-num pt-1 border-t border-slate-800/80">
+            <span id="dashCostSLH">~8,451 ฿/ชม.</span>
+            <span id="dashUnitsSLH">เดิน 21 / 27 เครื่อง</span>
+          </div>
+        </div>
+
+        <!-- Card 3: FUT Group -->
+        <div class="scada-card p-3.5 border-l-2 border-l-slate-500">
+          <div class="flex justify-between items-start text-xs text-slate-400">
+            <span class="font-bold text-slate-200">กลุ่ม FUT - แปรรูปปรุงสุก</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">17 ยูนิต</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 my-1.5">
+            <span id="dashPowerFUT" class="text-2xl font-bold font-mono-num text-white">2,289.1</span>
+            <span class="text-xs text-slate-400 font-medium">kW</span>
+            <span id="dashShareFUT" class="ml-auto text-xs text-slate-400 font-mono">47.4% ส่วนแบ่ง</span>
+          </div>
+          <div class="w-full bg-slate-950 h-1.5 overflow-hidden border border-slate-800 my-1.5">
+            <div id="dashBarFUT" class="bg-slate-600 h-full" style="width: 47%;"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 font-mono-num pt-1 border-t border-slate-800/80">
+            <span id="dashCostFUT">~8,012 ฿/ชม.</span>
+            <span id="dashUnitsFUT">เดิน 10 / 17 เครื่อง</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Domestic Group -->
+        <div class="scada-card p-3.5 border-l-2 border-l-slate-600">
+          <div class="flex justify-between items-start text-xs text-slate-400">
+            <span class="font-bold text-slate-200">กลุ่ม Domestic - คลังสินค้า</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700">2 ยูนิต</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 my-1.5">
+            <span id="dashPowerDOM" class="text-2xl font-bold font-mono-num text-white">122.1</span>
+            <span class="text-xs text-slate-400 font-medium">kW</span>
+            <span id="dashShareDOM" class="ml-auto text-xs text-slate-400 font-mono">2.6% ส่วนแบ่ง</span>
+          </div>
+          <div class="w-full bg-slate-950 h-1.5 overflow-hidden border border-slate-800 my-1.5">
+            <div id="dashBarDOM" class="bg-slate-700 h-full" style="width: 2.6%;"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 font-mono-num pt-1 border-t border-slate-800/80">
+            <span id="dashCostDOM">~427 ฿/ชม.</span>
+            <span id="dashUnitsDOM">เดิน 2 / 2 เครื่อง</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Power Profile Chart 24h & Sub-Process Breakdown -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <!-- Combined 24h On-Off Peak Chart (2 Cols) -->
+        <div class="scada-card p-4 lg:col-span-2 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+            <div>
+              <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                กราฟรวมภาระไฟฟ้าทั้งโรงงาน On-Peak vs Off-Peak (24h Total Power Profile)
+              </h4>
+              <div class="text-xs text-slate-400 mt-0.5">
+                เปรียบเทียบภาระไฟฟ้ารวมทั้งโรงงาน 46 เครื่อง เทียบช่วง On-Peak (09:00 - 22:00) vs Off-Peak
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono">
+              <span class="flex items-center gap-1.5 text-slate-400">
+                <span class="w-2.5 h-2.5 bg-amber-500/20 border border-amber-500/40"></span> On-Peak 13h (~4.32 ฿)
+              </span>
+              <span class="flex items-center gap-1.5 text-slate-400">
+                <span class="w-2.5 h-2.5 bg-slate-800 border border-slate-700"></span> Off-Peak 11h (~2.60 ฿)
+              </span>
+            </div>
+          </div>
+
+          <!-- SVG 24h Combined Chart Container -->
+          <div class="w-full h-56 bg-slate-950 p-2 border border-slate-800/80 relative" id="dashCombinedChartContainer">
+            <!-- Rendered by renderDashboardCombinedChart() -->
+          </div>
+
+          <!-- Footer Stats -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800/80 text-xs font-mono-num">
+            <div class="scada-inner p-2">
+              <span class="text-slate-400 text-[10px] block">On-Peak เฉลี่ย:</span>
+              <span class="font-bold text-slate-200" id="dashOnPeakAvgKw">-- kW</span>
+            </div>
+            <div class="scada-inner p-2">
+              <span class="text-slate-400 text-[10px] block">Off-Peak เฉลี่ย:</span>
+              <span class="font-bold text-slate-200" id="dashOffPeakAvgKw">-- kW</span>
+            </div>
+            <div class="scada-inner p-2">
+              <span class="text-slate-400 text-[10px] block">ส่วนต่าง On/Off:</span>
+              <span class="font-bold text-slate-300" id="dashPeakDeltaKw">-- kW</span>
+            </div>
+            <div class="scada-inner p-2">
+              <span class="text-slate-400 text-[10px] block">ประมาณการค่าไฟวัน:</span>
+              <span class="font-bold text-slate-200" id="dashEstDailyCost">-- ฿</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Power Consumption by Sub-Process Group (1 Col) -->
+        <div class="scada-card p-4 space-y-3">
+          <div class="pb-2 border-b border-slate-800 flex justify-between items-center">
+            <div>
+              <h4 class="font-bold text-white text-sm">สัดส่วนการใช้ไฟแยกรายระบบ</h4>
+              <div class="text-xs text-slate-400">9 กระบวนการผลิตหลัก</div>
+            </div>
+            <span class="text-xs font-mono text-slate-400 font-bold" id="dashSubAppCount">9 ระบบ</span>
+          </div>
+
+          <div class="space-y-2 max-h-[300px] overflow-y-auto pr-1" id="dashSubAppList">
+            <!-- Rendered dynamically by renderDashboardSubAppsPower() -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Compressor Status Mimic Map (แผนผังสถานะคอมเพรสเซอร์ 46 เครื่อง แยกตามกลุ่มและเบอร์เครื่อง) -->
+      <div class="scada-card p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+          <div>
+            <h4 class="font-bold text-white text-sm flex items-center gap-2">
+              แผนผังสถานะคอมเพรสเซอร์ 46 เครื่อง (Compressor Status & Mimic Grid)
+            </h4>
+            <div class="text-xs text-slate-400 mt-0.5">
+              จำแนกตามกลุ่มกระบวนการผลิต เบอร์เครื่อง (NO.1 - NO.46) สเตจ (High / Booster) และสถานะเดินเครื่องสด
+            </div>
+          </div>
+          <!-- Filter controls -->
+          <div class="flex items-center gap-1.5 text-xs font-mono">
+            <button onclick="filterDashMap('ALL')" id="btnDashMapALL" class="px-2.5 py-1 font-bold bg-slate-800 text-white border border-slate-600">ทั้งหมด 46</button>
+            <button onclick="filterDashMap('SLH')" id="btnDashMapSLH" class="px-2.5 py-1 bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">SLH (27)</button>
+            <button onclick="filterDashMap('FUT')" id="btnDashMapFUT" class="px-2.5 py-1 bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">FUT (17)</button>
+            <button onclick="filterDashMap('DOM')" id="btnDashMapDOM" class="px-2.5 py-1 bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">Domestic (2)</button>
+          </div>
+        </div>
+
+        <!-- The 46 Units Matrix Grid -->
+        <div id="dashCompressorMimicGrid" class="space-y-3">
+          <!-- Grouped and rendered by renderDashboardMimicGrid() -->
+        </div>
+      </div>
+
+      <!-- 5. Compressor Efficiency & Slide Valve Load Section (แบ่ง High & Boost) -->
+      <div class="scada-card p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+          <div>
+            <h4 class="font-bold text-white text-sm flex items-center gap-2">
+              ประสิทธิภาพการเดินเครื่องจักรและการปรับโหลด Slide Valve (Daily Slide Valve Efficiency)
+            </h4>
+            <div class="text-xs text-slate-400 mt-0.5">
+              วิเคราะห์ค่าเฉลี่ย Slide Valve โหลดทั้งวัน (%) เพื่อประเมินประสิทธิภาพทางความร้อน (COP) แยกตามสเตจ High Stage และ Booster Stage
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs font-mono">
+            <button onclick="filterEfficiencyStage('ALL')" id="btnEffALL" class="px-2.5 py-1 font-bold bg-slate-800 text-white border border-slate-600">รวม 46 เครื่อง</button>
+            <button onclick="filterEfficiencyStage('High')" id="btnEffHigh" class="px-2.5 py-1 bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">High Stage (27)</button>
+            <button onclick="filterEfficiencyStage('Booster')" id="btnEffBooster" class="px-2.5 py-1 bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">Booster Stage (19)</button>
+          </div>
+        </div>
+
+        <!-- Dual Stage Benchmark KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- High Stage KPI -->
+          <div class="scada-inner p-3.5 border border-slate-800">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-slate-200 flex items-center gap-2">
+                <span class="w-2 h-2 bg-slate-400"></span> สเตจความดันสูง (High Stage Compressors - 27 เครื่อง)
+              </span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">27 ยูนิต</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-800/80 text-xs font-mono-num">
+              <div>
+                <span class="text-slate-400 text-[10px] block">Slide เฉลี่ยทั้งวัน:</span>
+                <span class="text-lg font-bold text-white" id="highStageAvgSlide">--%</span>
+              </div>
+              <div>
+                <span class="text-slate-400 text-[10px] block">กำลังไฟฟ้ารวม:</span>
+                <span class="text-lg font-bold text-slate-200" id="highStageTotalKw">-- kW</span>
+              </div>
+              <div class="text-right">
+                <span class="text-slate-400 text-[10px] block">ระดับประสิทธิภาพ:</span>
+                <span class="text-xs font-bold text-slate-200 px-1.5 py-0.5 bg-slate-800 border border-slate-700" id="highStageEffRating">OPTIMAL</span>
+              </div>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 leading-snug">
+              ▪ วิศวกรรม: High Stage รองรับโหลด Discharge ควบคุมแรงดันคอนเดนเซอร์ ควรเดินที่ SV > 80% เพื่อรักษาประสิทธิภาพทางกล
+            </div>
+          </div>
+
+          <!-- Booster Stage KPI -->
+          <div class="scada-inner p-3.5 border border-slate-800">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-slate-200 flex items-center gap-2">
+                <span class="w-2 h-2 bg-slate-400"></span> สเตจบู้สเตอร์ (Booster Stage Compressors - 19 เครื่อง)
+              </span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">19 ยูนิต</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-800/80 text-xs font-mono-num">
+              <div>
+                <span class="text-slate-400 text-[10px] block">Slide เฉลี่ยทั้งวัน:</span>
+                <span class="text-lg font-bold text-white" id="boosterStageAvgSlide">--%</span>
+              </div>
+              <div>
+                <span class="text-slate-400 text-[10px] block">กำลังไฟฟ้ารวม:</span>
+                <span class="text-lg font-bold text-slate-200" id="boosterStageTotalKw">-- kW</span>
+              </div>
+              <div class="text-right">
+                <span class="text-slate-400 text-[10px] block">ระดับประสิทธิภาพ:</span>
+                <span class="text-xs font-bold text-slate-200 px-1.5 py-0.5 bg-slate-800 border border-slate-700" id="boosterStageEffRating">OPTIMAL</span>
+              </div>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 leading-snug">
+              ▪ วิศวกรรม: Booster Stage ดึงความดันดูดต่ำจากอุโมงค์แช่แข็ง (-38°C ถึง -40°C) หากโหลดต่ำกว่า 50% อัตราส่วนความดันจะสูงผิดปกติ
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Compressor Slide Valve Efficiency Table -->
+        <div class="overflow-x-auto border border-slate-800">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/90 text-[11px] text-slate-400 uppercase font-mono border-b border-slate-800">
+              <tr>
+                <th class="py-2.5 px-3">เบอร์เครื่องจักร (Unit Tag)</th>
+                <th class="py-2.5 px-3">แผนก & ระบบงาน</th>
+                <th class="py-2.5 px-3 text-center">สเตจ</th>
+                <th class="py-2.5 px-3 text-center">สถานะ</th>
+                <th class="py-2.5 px-3 text-right">กำลังไฟ (kW)</th>
+                <th class="py-2.5 px-3 text-right">Slide วาล์วสด</th>
+                <th class="py-2.5 px-3 text-right">Slide เฉลี่ยทั้งวัน</th>
+                <th class="py-2.5 px-3 text-center">ระดับประสิทธิภาพ</th>
+                <th class="py-2.5 px-3">คำแนะนำการเดินเครื่อง</th>
+              </tr>
+            </thead>
+            <tbody id="dashEfficiencyTableBody" class="divide-y divide-slate-800/60 font-mono-num">
+              <!-- Populated by renderDashboardEfficiencyTable() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
     <div id="tab-summary" class="space-y-4">
       
       <!-- 3 Hero Cards -->
@@ -1273,6 +1570,8 @@
     // Live State
     let currentElectricityRate = 3.50;
     let currentActiveTab = 'summary';
+    var dashMapFilter = 'ALL';
+    var dashEffStageFilter = 'ALL';
     let currentFleetViewMode = 'stage'; // 'stage' or 'grid'
     let currentFleetUnitId = 1;
     let currentModalUnitId = 1;
@@ -1996,8 +2295,13 @@
       document.getElementById('tab-fleet').classList.add('hidden');
       document.getElementById('tab-analytics').classList.add('hidden');
       document.getElementById('tab-settings').classList.add('hidden');
+      const tabDash = document.getElementById('tab-dashboard');
+      if (tabDash) tabDash.classList.add('hidden');
 
-      if (tabKey === 'summary') {
+      if (tabKey === 'dashboard') {
+        if (tabDash) tabDash.classList.remove('hidden');
+        renderDashboardView();
+      } else if (tabKey === 'summary') {
         document.getElementById('tab-summary').classList.remove('hidden');
       } else if (tabKey === 'dept-slh' || tabKey === 'dept-fut' || tabKey === 'dept-dom') {
         document.getElementById('tab-fleet').classList.remove('hidden');
@@ -3074,6 +3378,7 @@
         directWsLastRxTs = Date.now();
         updateCalculatedTotals();
         renderSummaryDots();
+        if (currentActiveTab === 'dashboard') renderDashboardView();
         if (currentActiveTab === 'analytics') renderTrendChart();
         if (currentActiveTab.startsWith('dept-')) {
           if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
@@ -3209,6 +3514,7 @@
           }
           updateCalculatedTotals();
           renderSummaryDots();
+        if (currentActiveTab === 'dashboard') renderDashboardView();
         if (currentActiveTab === 'analytics') renderTrendChart();
           if (currentActiveTab.startsWith('dept-')) {
             if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
@@ -3228,6 +3534,7 @@
         }
         updateCalculatedTotals();
         renderSummaryDots();
+        if (currentActiveTab === 'dashboard') renderDashboardView();
         if (currentActiveTab === 'analytics') renderTrendChart();
         if (currentActiveTab.startsWith('dept-')) {
           if (currentFleetViewMode === 'stage') selectFleetUnit(currentFleetUnitId);
@@ -3260,7 +3567,8 @@
     renderSummaryDots();
     updateCalculatedTotals();
     updateEngineerWatchlist();
-    if (currentActiveTab === 'analytics') renderTrendChart();
+    if (currentActiveTab === 'dashboard') renderDashboardView();
+        if (currentActiveTab === 'analytics') renderTrendChart();
     updateClock();
     loadBridgeConfig();
     syncLiveData();
@@ -3273,7 +3581,7 @@
       if (!rawHash) return;
       const hashParts = rawHash.split('?');
       const targetTab = hashParts[0];
-      if (targetTab && ['summary', 'dept-slh', 'dept-fut', 'dept-dom', 'analytics', 'settings'].includes(targetTab)) {
+      if (targetTab && ['dashboard', 'summary', 'dept-slh', 'dept-fut', 'dept-dom', 'analytics', 'settings'].includes(targetTab)) {
         switchMainTab(targetTab);
       }
       if (hashParts[1]) {
@@ -3293,6 +3601,445 @@
     window.addEventListener('hashchange', handleHashRoute);
     window.addEventListener('load', handleHashRoute);
     handleHashRoute();
-  </script>
+  
+    // =========================================================================
+    // OPERATIONS DASHBOARD LOGIC (แดชบอร์ดภาพรวม 46 เครื่อง)
+    // =========================================================================
+    // dashMapFilter & dashEffStageFilter declared above
+
+    function filterDashMap(deptKey) {
+      dashMapFilter = deptKey;
+      ['ALL', 'SLH', 'FUT', 'DOM'].forEach(k => {
+        const btnId = k === 'ALL' ? 'btnDashMapALL' : (k === 'SLH' ? 'btnDashMapSLH' : (k === 'FUT' ? 'btnDashMapFUT' : 'btnDashMapDOM'));
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          if (k === deptKey) {
+            btn.className = 'px-2.5 py-1 font-bold bg-slate-800 text-white border border-slate-600';
+          } else {
+            btn.className = 'px-2.5 py-1 bg-slate-900 text-slate-400 border border-slate-800 hover:text-white';
+          }
+        }
+      });
+      renderDashboardMimicGrid();
+    }
+
+    function filterEfficiencyStage(stageKey) {
+      dashEffStageFilter = stageKey;
+      ['ALL', 'High', 'Booster'].forEach(k => {
+        const btnId = k === 'ALL' ? 'btnEffALL' : (k === 'High' ? 'btnEffHigh' : 'btnEffBooster');
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          if (k === stageKey) {
+            btn.className = 'px-2.5 py-1 font-bold bg-slate-800 text-white border border-slate-600';
+          } else {
+            btn.className = 'px-2.5 py-1 bg-slate-900 text-slate-400 border border-slate-800 hover:text-white';
+          }
+        }
+      });
+      renderDashboardEfficiencyTable();
+    }
+
+    function renderDashboardView() {
+      renderDashboardPowerCards();
+      renderDashboardCombinedChart();
+      renderDashboardSubAppsPower();
+      renderDashboardMimicGrid();
+      renderDashboardEfficiencyTable();
+
+      const clockEl = document.getElementById('dashLiveClock');
+      if (clockEl) {
+        const now = new Date();
+        clockEl.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} น.`;
+      }
+    }
+
+    function renderDashboardPowerCards() {
+      let totalP = 0, slhP = 0, futP = 0, domP = 0;
+      let totalRun = 0, slhRun = 0, futRun = 0, domRun = 0;
+
+      for (let i = 1; i <= 46; i++) {
+        const u = unitsData[i];
+        if (!u) continue;
+        const p = Number(u.power) || 0;
+        const isRun = (u.status === 'RUN');
+        totalP += p;
+        if (isRun) totalRun++;
+
+        if (u.dept === 'SLH') {
+          slhP += p;
+          if (isRun) slhRun++;
+        } else if (u.dept === 'FUT') {
+          futP += p;
+          if (isRun) futRun++;
+        } else if (u.dept === 'DOM') {
+          domP += p;
+          if (isRun) domRun++;
+        }
+      }
+
+      totalP = Math.round(totalP * 10) / 10;
+      slhP = Math.round(slhP * 10) / 10;
+      futP = Math.round(futP * 10) / 10;
+      domP = Math.round(domP * 10) / 10;
+
+      const rate = currentElectricityRate || 3.50;
+      const loadPct = Math.min(100, Math.round((totalP / 6500) * 1000) / 10);
+      const slhShare = totalP > 0 ? Math.round((slhP / totalP) * 1000) / 10 : 0;
+      const futShare = totalP > 0 ? Math.round((futP / totalP) * 1000) / 10 : 0;
+      const domShare = totalP > 0 ? Math.round((domP / totalP) * 1000) / 10 : 0;
+
+      const setT = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setT('dashTotalPower', totalP.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+      setT('dashTotalLoadPct', `${loadPct}% โหลด`);
+      setT('dashTotalCostHr', `~${Math.round(totalP * rate).toLocaleString()} ฿/ชม.`);
+      setT('dashTotalUnitsRun', `เดิน ${totalRun} / 46 เครื่อง`);
+
+      const barTot = document.getElementById('dashTotalPowerBar');
+      if (barTot) barTot.style.width = `${loadPct}%`;
+
+      setT('dashPowerSLH', slhP.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+      setT('dashShareSLH', `${slhShare}% ส่วนแบ่ง`);
+      setT('dashCostSLH', `~${Math.round(slhP * rate).toLocaleString()} ฿/ชม.`);
+      setT('dashUnitsSLH', `เดิน ${slhRun} / 27 เครื่อง`);
+      const barSlh = document.getElementById('dashBarSLH');
+      if (barSlh) barSlh.style.width = `${slhShare}%`;
+
+      setT('dashPowerFUT', futP.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+      setT('dashShareFUT', `${futShare}% ส่วนแบ่ง`);
+      setT('dashCostFUT', `~${Math.round(futP * rate).toLocaleString()} ฿/ชม.`);
+      setT('dashUnitsFUT', `เดิน ${futRun} / 17 เครื่อง`);
+      const barFut = document.getElementById('dashBarFUT');
+      if (barFut) barFut.style.width = `${futShare}%`;
+
+      setT('dashPowerDOM', domP.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+      setT('dashShareDOM', `${domShare}% ส่วนแบ่ง`);
+      setT('dashCostDOM', `~${Math.round(domP * rate).toLocaleString()} ฿/ชม.`);
+      setT('dashUnitsDOM', `เดิน ${domRun} / 2 เครื่อง`);
+      const barDom = document.getElementById('dashBarDOM');
+      if (barDom) barDom.style.width = `${domShare}%`;
+    }
+
+    function renderDashboardCombinedChart() {
+      const container = document.getElementById('dashCombinedChartContainer');
+      if (!container) return;
+
+      const hourly = getHourlyBreakdown();
+      const W = 800;
+      const H = 200;
+      const baselineY = 175;
+      const plotH = 145;
+      const barStep = W / 24;
+      const barW = 20;
+      const barGap = (barStep - barW) / 2;
+      const maxKw = 5500;
+      const nowH = new Date().getHours();
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" class="w-full h-full select-none" preserveAspectRatio="none">`;
+
+      // 1. On-Peak zone shading (09:00 - 22:00 = hour 9 to 21)
+      const xPeakStart = 9 * barStep;
+      const wPeak = 13 * barStep;
+      svg += `<rect x="0" y="10" width="${xPeakStart}" height="${baselineY - 10}" fill="#0f172a" fill-opacity="0.3"/>`;
+      svg += `<rect x="${xPeakStart}" y="10" width="${wPeak}" height="${baselineY - 10}" fill="#d97706" fill-opacity="0.04" stroke="#d97706" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="3 2"/>`;
+      svg += `<rect x="${xPeakStart + wPeak}" y="10" width="${W - (xPeakStart + wPeak)}" height="${baselineY - 10}" fill="#0f172a" fill-opacity="0.3"/>`;
+
+      // 2. Horizontal grid lines
+      const gridLevels = [1000, 2000, 3000, 4000, 5000];
+      gridLevels.forEach(kw => {
+        const y = baselineY - (kw / maxKw) * plotH;
+        svg += `<line x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="#334155" stroke-opacity="0.25" stroke-width="1" stroke-dasharray="3 3"/>`;
+        svg += `<text x="6" y="${(y - 4).toFixed(1)}" fill="#64748b" font-size="8.5" font-family="monospace">${kw.toLocaleString()} kW</text>`;
+      });
+
+      // 3. Peak Demand limit line at 5,000 kW
+      const yLimit = baselineY - (5000 / maxKw) * plotH;
+      svg += `<line x1="0" y1="${yLimit.toFixed(1)}" x2="${W}" y2="${yLimit.toFixed(1)}" stroke="#e2e8f0" stroke-opacity="0.4" stroke-width="1" stroke-dasharray="4 2"/>`;
+      svg += `<text x="${W - 8}" y="${(yLimit - 4).toFixed(1)}" fill="#cbd5e1" font-size="8.5" font-family="monospace" text-anchor="end">พีกเป้าหมาย 5,000 kW</text>`;
+
+      // 4. 24 Hourly bars
+      for (let h = 0; h < 24; h++) {
+        const hData = hourly[h];
+        const val = hData ? hData.totalKw : 0;
+        const isPeak = (h >= 9 && h < 22);
+        const segH = (val / maxKw) * plotH;
+        const x = h * barStep + barGap;
+        const y = baselineY - segH;
+        const opacity = isPeak ? '0.90' : '0.65';
+
+        if (segH > 1) {
+          svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="${segH.toFixed(1)}" fill="#3a5670" fill-opacity="${opacity}" stroke="#0b111e" stroke-width="0.5"/>`;
+        }
+
+        // X Axis labels
+        const txtColor = (h === nowH) ? '#38bdf8' : (isPeak ? '#94a3b8' : '#64748b');
+        const txtWeight = (h === nowH) ? 'bold' : 'normal';
+        svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${baselineY + 14}" fill="${txtColor}" font-size="8.5" font-family="monospace" font-weight="${txtWeight}" text-anchor="middle">${h < 10 ? '0' + h : h}h</text>`;
+
+        // NOW Pin
+        if (h === nowH) {
+          svg += `<line x1="${(x + barW / 2).toFixed(1)}" y1="10" x2="${(x + barW / 2).toFixed(1)}" y2="${baselineY}" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>`;
+          svg += `<rect x="${(x + barW / 2 - 14).toFixed(1)}" y="2" width="28" height="12" fill="#334155" rx="0"/>`;
+          svg += `<text x="${(x + barW / 2).toFixed(1)}" y="11" fill="#cbd5e1" font-size="8" font-family="monospace" font-weight="bold" text-anchor="middle">NOW</text>`;
+        }
+      }
+      svg += `</svg>`;
+      container.innerHTML = svg;
+
+      // Calculate Stats
+      const onPeakHours = hourly.filter(item => item.isPeak);
+      const offPeakHours = hourly.filter(item => !item.isPeak);
+      const onPeakAvg = Math.round(onPeakHours.reduce((acc, x) => acc + x.totalKw, 0) / onPeakHours.length * 10) / 10;
+      const offPeakAvg = Math.round(offPeakHours.reduce((acc, x) => acc + x.totalKw, 0) / offPeakHours.length * 10) / 10;
+      const delta = Math.round((onPeakAvg - offPeakAvg) * 10) / 10;
+      const onPeakKwh = onPeakHours.reduce((acc, x) => acc + x.totalKw, 0);
+      const offPeakKwh = offPeakHours.reduce((acc, x) => acc + x.totalKw, 0);
+      const estCostDay = Math.round((onPeakKwh * 4.32) + (offPeakKwh * 2.60));
+
+      const setT = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setT('dashOnPeakAvgKw', `${onPeakAvg.toLocaleString()} kW`);
+      setT('dashOffPeakAvgKw', `${offPeakAvg.toLocaleString()} kW`);
+      setT('dashPeakDeltaKw', `+${delta.toLocaleString()} kW`);
+      setT('dashEstDailyCost', `~${estCostDay.toLocaleString()} ฿`);
+    }
+
+    function renderDashboardSubAppsPower() {
+      const container = document.getElementById('dashSubAppList');
+      if (!container) return;
+
+      let totalP = 0;
+      const appMap = {};
+      for (let key in SUB_APP_CONFIG) {
+        appMap[key] = { ...SUB_APP_CONFIG[key], liveKw: 0, runUnits: 0 };
+      }
+
+      for (let i = 1; i <= 46; i++) {
+        const u = unitsData[i];
+        if (!u) continue;
+        const p = Number(u.power) || 0;
+        totalP += p;
+        if (appMap[u.subApp]) {
+          appMap[u.subApp].liveKw += p;
+          if (u.status === 'RUN') appMap[u.subApp].runUnits++;
+        }
+      }
+
+      const list = Object.values(appMap).sort((a, b) => b.liveKw - a.liveKw);
+      const rate = currentElectricityRate || 3.50;
+
+      container.innerHTML = list.map(sa => {
+        const kw = Math.round(sa.liveKw * 10) / 10;
+        const share = totalP > 0 ? Math.round((kw / totalP) * 1000) / 10 : 0;
+        const costHr = Math.round(kw * rate);
+
+        return `
+          <div class="scada-inner p-2 border border-slate-800 space-y-1">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-medium text-slate-200 flex items-center gap-1.5 truncate">
+                <span class="w-2 h-2 rounded-none inline-block" style="background-color: ${sa.color}"></span>
+                <span class="truncate">${sa.name}</span>
+                <span class="text-[10px] text-slate-400 font-mono">(${sa.runUnits}/${sa.count})</span>
+              </span>
+              <span class="font-bold text-white font-mono-num text-xs">${kw.toLocaleString()} kW</span>
+            </div>
+            <div class="w-full bg-slate-950 h-1 rounded-none overflow-hidden border border-slate-800">
+              <div class="h-full rounded-none" style="width: ${share}%; background-color: ${sa.color}"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono-num">
+              <span>ส่วนแบ่ง ${share}%</span>
+              <span>~${costHr.toLocaleString()} ฿/ชม.</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderDashboardMimicGrid() {
+      const container = document.getElementById('dashCompressorMimicGrid');
+      if (!container) return;
+
+      const depts = [
+        { key: 'SLH', name: 'กลุ่ม SLH - โรงเชือดไก่ (27 เครื่อง)', total: 27 },
+        { key: 'FUT', name: 'กลุ่ม FUT - แปรรูปปรุงสุก & ฟรีซ (17 เครื่อง)', total: 17 },
+        { key: 'DOM', name: 'กลุ่ม Domestic - คลังสินค้าห้องเย็น (2 เครื่อง)', total: 2 }
+      ];
+
+      const visibleDepts = (dashMapFilter === 'ALL') ? depts : depts.filter(d => d.key === dashMapFilter);
+
+      let html = '';
+      visibleDepts.forEach(dept => {
+        // Collect units in this department
+        const uList = [];
+        for (let i = 1; i <= 46; i++) {
+          const u = unitsData[i];
+          if (u && u.dept === dept.key) uList.push(u);
+        }
+
+        html += `
+          <div class="space-y-2 pt-1 border-t border-slate-800 first:border-t-0">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-slate-200">${dept.name}</span>
+              <span class="text-[10px] font-mono text-slate-400">เดิน ${uList.filter(u => u.status === 'RUN').length} / ${uList.length} เครื่อง</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
+        `;
+
+        uList.forEach(u => {
+          let statusBadge = '';
+          let borderClass = 'border-slate-800';
+          if (u.status === 'RUN') {
+            statusBadge = '<span class="w-1.5 h-1.5 rounded-none bg-emerald-400 animate-pulse"></span><span class="text-[9px] text-emerald-400 font-mono font-bold">RUN</span>';
+            borderClass = 'border-slate-700 bg-slate-900/80';
+          } else if (u.status === 'STOP') {
+            statusBadge = '<span class="w-1.5 h-1.5 rounded-none bg-slate-500"></span><span class="text-[9px] text-slate-400 font-mono">STOP</span>';
+            borderClass = 'border-slate-800/80 bg-slate-950/60 opacity-75';
+          } else { // LOST
+            statusBadge = '<span class="w-1.5 h-1.5 rounded-none bg-amber-500"></span><span class="text-[9px] text-amber-400 font-mono">LOST</span>';
+            borderClass = 'border-amber-900/40 bg-amber-950/20';
+          }
+
+          const isBooster = (u.stage === 'Booster');
+          const stageBadge = isBooster
+            ? '<span class="px-1 py-0.2 text-[8px] font-mono bg-slate-800 text-slate-300 border border-slate-700">BOOST</span>'
+            : '<span class="px-1 py-0.2 text-[8px] font-mono bg-slate-800/80 text-slate-400 border border-slate-700">HIGH</span>';
+
+          html += `
+            <div class="scada-inner p-2 border ${borderClass} flex flex-col justify-between hover:border-slate-500 transition cursor-pointer select-none" onclick="openModal(${u.id})">
+              <div class="flex justify-between items-center gap-1">
+                <span class="font-bold text-white font-mono text-xs">NO.${u.id}</span>
+                ${stageBadge}
+              </div>
+              <div class="text-[10px] text-slate-400 truncate mt-0.5" title="${u.name} - ${u.subApp}">${u.name}</div>
+              <div class="flex justify-between items-center mt-1 pt-1 border-t border-slate-800/60">
+                <span class="flex items-center gap-1">${statusBadge}</span>
+                <span class="font-mono-num text-[11px] font-bold text-white">${Number(u.power).toFixed(0)} kW</span>
+              </div>
+              <div class="flex justify-between items-center text-[9px] text-slate-400 font-mono mt-0.5">
+                <span>SV: <strong class="text-slate-200">${u.load}%</strong></span>
+                <span>${u.suctionP}b</span>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderDashboardEfficiencyTable() {
+      const tbody = document.getElementById('dashEfficiencyTableBody');
+      if (!tbody) return;
+
+      const unitsList = [];
+      let highRunCount = 0, highSlideSum = 0, highKwSum = 0;
+      let boosterRunCount = 0, boosterSlideSum = 0, boosterKwSum = 0;
+
+      const curH = new Date().getHours();
+
+      for (let i = 1; i <= 46; i++) {
+        const u = unitsData[i];
+        if (!u) continue;
+
+        // Calculate Daily Avg Slide Valve % based on diurnal refrigeration curve
+        const curve = SUB_APP_CURVES[u.subApp] || SUB_APP_CURVES['Air Blast'];
+        const avgFactor = curve.reduce((a, b) => a + b, 0) / 24;
+        const curFactor = curve[curH] || 1.0;
+        let dailyAvg = 0;
+
+        if (u.status === 'RUN') {
+          dailyAvg = Math.min(100, Math.max(25, Math.round(u.load * (avgFactor / curFactor))));
+          if (u.stage === 'High') {
+            highRunCount++;
+            highSlideSum += dailyAvg;
+            highKwSum += Number(u.power);
+          } else {
+            boosterRunCount++;
+            boosterSlideSum += dailyAvg;
+            boosterKwSum += Number(u.power);
+          }
+        }
+
+        unitsList.push({
+          ...u,
+          dailyAvgSlide: dailyAvg
+        });
+      }
+
+      // Update Dual Stage Benchmark KPIs
+      const highAvgSlide = highRunCount > 0 ? Math.round(highSlideSum / highRunCount) : 0;
+      const boosterAvgSlide = boosterRunCount > 0 ? Math.round(boosterSlideSum / boosterRunCount) : 0;
+
+      const setT = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setT('highStageAvgSlide', `${highAvgSlide}%`);
+      setT('highStageTotalKw', `${Math.round(highKwSum).toLocaleString()} kW`);
+      setT('highStageEffRating', highAvgSlide >= 80 ? 'OPTIMAL' : 'MODERATE');
+
+      setT('boosterStageAvgSlide', `${boosterAvgSlide}%`);
+      setT('boosterStageTotalKw', `${Math.round(boosterKwSum).toLocaleString()} kW`);
+      setT('boosterStageEffRating', boosterAvgSlide >= 75 ? 'OPTIMAL' : 'MODERATE');
+
+      // Filter by stage
+      let filtered = unitsList;
+      if (dashEffStageFilter === 'High') {
+        filtered = unitsList.filter(u => u.stage === 'High');
+      } else if (dashEffStageFilter === 'Booster') {
+        filtered = unitsList.filter(u => u.stage === 'Booster');
+      }
+
+      // Render table rows
+      tbody.innerHTML = filtered.map(u => {
+        let statusPill = '';
+        if (u.status === 'RUN') statusPill = '<span class="text-emerald-400 font-mono font-bold">RUN</span>';
+        else if (u.status === 'STOP') statusPill = '<span class="text-slate-400 font-mono">STOP</span>';
+        else statusPill = '<span class="text-amber-400 font-mono font-bold">LOST</span>';
+
+        const isBooster = (u.stage === 'Booster');
+        const stageBadge = isBooster
+          ? '<span class="px-1.5 py-0.5 text-[9px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Booster</span>'
+          : '<span class="px-1.5 py-0.5 text-[9px] font-mono bg-slate-800/80 text-slate-400 border border-slate-700">High Stage</span>';
+
+        let ratingBadge = '';
+        let advice = '';
+
+        if (u.status !== 'RUN') {
+          ratingBadge = '<span class="px-2 py-0.5 text-[10px] font-mono bg-slate-900 text-slate-500 border border-slate-800">STANDBY / STOP</span>';
+          advice = '<span class="text-slate-400 text-[11px] font-sans">เครื่องพักแสตนด์บาย พร้อมรองรับโหลดฉุกเฉิน</span>';
+        } else if (u.dailyAvgSlide >= 85) {
+          ratingBadge = '<span class="px-2 py-0.5 text-[10px] font-mono font-bold bg-slate-800 text-emerald-400 border border-slate-700">OPTIMAL (85-100%)</span>';
+          advice = '<span class="text-slate-300 text-[11px] font-sans">ภาระเต็ม ประสิทธิภาพเชิงความร้อน (COP) สูงสุด</span>';
+        } else if (u.dailyAvgSlide >= 60) {
+          ratingBadge = '<span class="px-2 py-0.5 text-[10px] font-mono font-bold bg-slate-800 text-sky-300 border border-slate-700">MODERATE (60-84%)</span>';
+          advice = '<span class="text-slate-300 text-[11px] font-sans">โหลดปานกลาง หากช่วง Off-Peak แนะนำเกลี่ยรวมโหลด</span>';
+        } else {
+          ratingBadge = '<span class="px-2 py-0.5 text-[10px] font-mono font-bold bg-amber-950/40 text-amber-300 border border-amber-800/60">LOW LOAD (&lt;60%)</span>';
+          advice = '<span class="text-amber-300/90 text-[11px] font-sans">โหลดต่ำ แนะนำพิจารณาดับเครื่องเพื่อรวมโหลดเข้าเครื่องอื่น</span>';
+        }
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="py-2.5 px-3 font-medium text-white flex items-center gap-2">
+              <span class="font-mono font-bold text-slate-200">NO.${u.id}</span>
+              <span class="text-slate-400 font-sans truncate">${u.name}</span>
+            </td>
+            <td class="py-2.5 px-3 text-slate-300 font-sans">
+              <span class="text-slate-400 font-mono font-bold">${u.dept}</span> · 
+              <span class="font-medium">${u.subApp}</span>
+            </td>
+            <td class="py-2.5 px-3 text-center">${stageBadge}</td>
+            <td class="py-2.5 px-3 text-center">${statusPill}</td>
+            <td class="py-2.5 px-3 text-right font-bold text-white font-mono-num">${Number(u.power).toFixed(1)} kW</td>
+            <td class="py-2.5 px-3 text-right font-mono-num text-slate-200">${u.load}%</td>
+            <td class="py-2.5 px-3 text-right font-mono-num font-bold text-white">${u.dailyAvgSlide}%</td>
+            <td class="py-2.5 px-3 text-center">${ratingBadge}</td>
+            <td class="py-2.5 px-3">${advice}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+    </script>
 </body>
 </html>
